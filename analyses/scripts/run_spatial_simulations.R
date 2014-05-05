@@ -1,16 +1,16 @@
 rm(list=ls())
 
 # Parameters and functions
-setwd("/home/DominiqueGravel/Bureau/analyses/data")
+setwd("/home/DominiqueGravel/Documents/Projects_On_Going/Maple_migration/transition_maple/analyses/data")
 par = read.table("par.txt")
 
-setwd("/home/DominiqueGravel/Bureau/analyses/scripts")
+setwd("/home/DominiqueGravel/Documents/Projects_On_Going/Maple_migration/transition_maple/analyses/scripts")
 source("get_transitions.R")
 source("spatial_model.R")
 source("plot_map")
 
 # Initial conditions
-setwd("/home/DominiqueGravel/Bureau/analyses/data")
+setwd("/home/DominiqueGravel/Documents/Projects_On_Going/Maple_migration/transition_maple/analyses/data")
 
 BIC = read.table("state_BIC.txt")
 XY = BIC[,1:2]
@@ -20,7 +20,7 @@ N = nrow(XY)
 
 # Run a short simulation, step by step
 plot_map(XY,pres,"2010")
-setwd("/home/DominiqueGravel/Bureau/analyses/figures")
+setwd("/home/DominiqueGravel/Documents/Projects_On_Going/Maple_migration/transition_maple/analyses/figures")
 dev.copy2pdf(file = "BIC2010.pdf")
 
 for(i in 1:10) {

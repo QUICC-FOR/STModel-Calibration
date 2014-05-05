@@ -1,7 +1,7 @@
 
 
 
-setwd("/home/DominiqueGravel/Bureau/analyses/scripts")
+setwd("/home/DominiqueGravel/Documents/Projects_On_Going/Maple_migration/transition_maple/analyses/scripts")
 #source("data_prep.R")
 source("SDM.R")
 source("transition_model.R")
