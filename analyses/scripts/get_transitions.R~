@@ -1,0 +1,94 @@
+# optimisation
+# prerun the model with glm to find some parameter values that are not jointly constrained
+# use logits
+
+######################################################
+get_transitions = function(t0,EC,ED,EM,ENV,par) 
+{
+with(par, {
+	p = numeric(4)
+
+	# Compute the logit
+	logit_alphac 	= ac0 + ac1*ENV + ac2*ENV^2
+	logit_alphad 	= ad0 + ad1*ENV + ad2*ENV^2
+	logit_betac 	= bc0 + bc1*ENV + bc2*ENV^2
+	logit_betad 	= bd0 + bd1*ENV + bd2*ENV^2
+	logit_thetac	= tc0 + tc1*ENV + tc2*ENV^2
+	logit_thetad	= td0 + td1*ENV + td2*ENV^2
+	logit_eps 		= e0  + e1*ENV  + e2*ENV^2
+
+	# Back transform into probabilities
+	alphac = exp(logit_alphac)/(1+exp(logit_alphac))
+	alphad = exp(logit_alphad)/(1+exp(logit_alphad))
+	betac = exp(logit_betac)/(1+exp(logit_betac))*(EC+EM)
+	betad = exp(logit_betad)/(1+exp(logit_betad))*(ED+EM)
+	thetac = exp(logit_thetac)/(1+exp(logit_thetac))
+	thetad = exp(logit_thetad)/(1+exp(logit_thetad))
+	eps = exp(logit_eps)/(1+exp(logit_eps))
+	phic = alphac*(EM + EC)*(1-alphad*(ED+EM))
+	phid = alphad*(EM + ED)*(1-alphac*(EC+EM))
+	phim = phic*phid
+	
+	if(t0 == "C") { 
+		p[1] = (1 - eps - betad)
+		p[2] = 0
+		p[3] = betad
+		p[4] = eps
+	}
+	
+	else if(t0 == "D") { 
+		p[1] = 0
+		p[2] = (1 - eps - betac)
+		p[3] = betac	
+		p[4] = eps
+	}	
+
+	else if(t0 == "M") { 
+		p[1] = thetac
+		p[2] = thetad
+		p[3] = 1 - thetac - thetad - eps
+		p[4] = eps
+	}	
+
+	else if(t0 == "T") { 
+		p[1] = phic
+		p[2] = phid
+		p[3] = phim
+		p[4] = 1-phic-phid-phim
+	}			
+	p
+	})
+}
+
+######################################################
+get_transitions_landscape = function(x) get_transitions(t0=x[1],EC=as.numeric(x[2]),ED=as.numeric(x[3]),EM=as.numeric(x[4]),ENV=as.numeric(x[5]),par)
+
+######################################################
+get_matrix = function(EC,ED,EM,ENV,par) {
+	mat = matrix(nr = 4, nc = 4)
+	mat[1,] = get_transitions(t0="C",EC,ED,EM,ENV,par)
+	mat[2,] = get_transitions(t0="D",EC,ED,EM,ENV,par)
+	mat[3,] = get_transitions(t0="M",EC,ED,EM,ENV,par)
+	mat[4,] = get_transitions(t0="T",EC,ED,EM,ENV,par)			
+	return(mat)
+}
+
+######################################################
+get_eq = function(p,ENV,par) {
+	for(i in 1:100) {
+		mat = get_matrix(EC = p[1],ED = p[2],EM = p[3],ENV,par)
+		p = p%*%mat
+			}	
+	return(p)
+}
+
+p[1]*mat[1,1] + p[2]*mat[2,1] + p[3]*mat[3,1] + p[4]*mat[4,1]
+p[1]*mat[1,2] + p[2]*mat[2,2] + p[3]*mat[3,2] + p[4]*mat[4,2]
+p[1]*mat[1,3] + p[2]*mat[2,3] + p[3]*mat[3,3] + p[4]*mat[4,3]
+p[1]*mat[1,4] + p[2]*mat[2,4] + p[3]*mat[3,4] + p[4]*mat[4,4]
+
+
+
+
+
+

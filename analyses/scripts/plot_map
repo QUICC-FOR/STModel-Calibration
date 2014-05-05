@@ -1,0 +1,30 @@
+
+
+
+plot_map = function(XY,map,title) {
+
+	# Map the results of the spatial model
+	X = sort(unique(XY[,1]))
+	Y = sort(unique(XY[,2]))
+
+	# Convert the presence data in the right format
+	pres_int = as.factor(map)
+#	pres_int = (map)
+	n = 1
+	Z = matrix(nr = length(X), nc = length(Y))
+	for(x in 1:length(X)) 
+		for(y in 1:length(Y)) 	
+			Z[x,y] = pres_int[XY[,1] == X[x] & XY[,2]==Y[y]]	
+
+	# Plot the results
+	x11(width = 8, height = 8)
+	layout(matrix(c(1,2),nr=2,nc=1,byrow=TRUE),heights = c(1.5,8))
+	par(mar=c(0,0,2,0))
+	plot(1, type = "n", axes=FALSE, xlab="", ylab="")
+	title(title,cex=2)
+	legend("center",legend = c("C","M","D","T"),fill = grey(c(0:3)/3),bty = "n",horiz = TRUE,cex = 1.5)
+	par(mar=c(5,5,0,5))
+	image(X,Y,Z,cex.axis = 1.5, cex.lab = 1.25, col = grey(c(0:3)/3))
+}
+
+
