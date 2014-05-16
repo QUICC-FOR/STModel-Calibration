@@ -1,8 +1,5 @@
-setwd("/home/DominiqueGravel/Documents/Projects_On_Going/Maple_migration/transition_maple/analyses/data")
-attach(read.table("par.txt"))
-
-setwd("/home/DominiqueGravel/Documents/Projects_On_Going/Maple_migration/transition_maple/analyses/scripts")
-source("get_transitions.R")
+attach(read.table("data/par.txt"))
+source("scripts/get_transitions.R")
 
 # Compute equilibrium for two initial conditions
 Tgrad = seq(-1,5,0.05)
@@ -29,6 +26,5 @@ lines(Tgrad,reshigh[,4],col = "darkgreen",lty = 3,lwd = 2)
 
 legend("top",bty = "n", col = c("black","darkred","darkblue","darkgreen"),legend = c("C","D","M","T"),lty = 1,horiz=TRUE,lwd=3)
 
-setwd("/home/DominiqueGravel/Documents/Projects_On_Going/Maple_migration/transition_maple/analyses/figures")
-dev.copy2pdf(file = "SDMeq.pdf")
+dev.copy2pdf(file = "figures/SDMeq.pdf")
 

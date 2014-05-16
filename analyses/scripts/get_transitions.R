@@ -82,11 +82,6 @@ get_eq = function(p,ENV,par) {
 	return(p)
 }
 
-p[1]*mat[1,1] + p[2]*mat[2,1] + p[3]*mat[3,1] + p[4]*mat[4,1]
-p[1]*mat[1,2] + p[2]*mat[2,2] + p[3]*mat[3,2] + p[4]*mat[4,2]
-p[1]*mat[1,3] + p[2]*mat[2,3] + p[3]*mat[3,3] + p[4]*mat[4,3]
-p[1]*mat[1,4] + p[2]*mat[2,4] + p[3]*mat[3,4] + p[4]*mat[4,4]
-
 
 
 

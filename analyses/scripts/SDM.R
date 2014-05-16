@@ -1,8 +1,6 @@
 library(nnet)
-
 # Load data
-setwd("/home/DominiqueGravel/Bureau/analyses/data")
-data = as.data.frame(read.table("data_categorical.txt"))
+data = as.data.frame(read.table("data/data_categorical.txt"))
 data$E = data$av_annual_mean_tp
 data$E2 = data$E^2
 
@@ -25,8 +23,7 @@ lines(seq(-2,6,0.01),pred_gradient[,4],col = "darkgreen",lwd = 2)
 abline(v = 3.2,lty = 3)
 legend("topright",bty = "n", col = c("black","darkred","darkblue","darkgreen"),legend = c("C","D","M","T"),lty=1)
 
-setwd("/home/DominiqueGravel/Bureau/analyses/figures")
-dev.copy2pdf(file = "SDM.pdf")
+dev.copy2pdf(file = "figures/SDM.pdf")
 
 
 

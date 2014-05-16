@@ -1,6 +1,6 @@
-setwd("/home/DominiqueGravel/Documents/Projects_On_Going/Maple_migration/transition_maple/analyses/data")
-attach(read.table("par.txt"))
-pred = read.table("data_pred_gradient.txt")
+
+attach(read.table("data/par.txt"))
+pred = read.table("data/data_pred_gradient.txt")
 ENV = pred[,1]
 EC = pred[,2]
 ED = pred[,3]
@@ -41,8 +41,7 @@ lines(ENV,betac,col = "darkred",lwd = 2)
 lines(ENV,thetac,col = "darkblue",lwd = 2)
 legend("top",bty = "n", col = c("darkgreen","darkred","darkblue"),legend = c("T-->C","D-->M","M-->C"),lty=1,horiz=TRUE,lwd = 3)
 
-setwd("/home/DominiqueGravel/Documents/Projects_On_Going/Maple_migration/transition_maple/analyses/figures")
-dev.copy2pdf(file = "Transitions.pdf")
+dev.copy2pdf(file = "figures/Transitions.pdf")
 
 
 

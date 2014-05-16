@@ -1,15 +1,18 @@
-
-
-
-setwd("/home/DominiqueGravel/Documents/Projects_On_Going/Maple_migration/transition_maple/analyses/scripts")
+setwd("~/Documents/GitHub/STM_Maple/analyses/")
 #source("data_prep.R")
-source("SDM.R")
-source("transition_model.R")
-source("fit_model.R")
-source("run_mean_field_simulations.R")
-source("plot_transitions.R")
-source("sim_MF_CC.R")
-source("run_spatial_simulations.R")
+
+
+# H1 ----------------------------------------------------------------------
+source("scripts/SDM.R")
+source("scripts/transition_model.R")
+source("scripts/fit_model.R")
+source("scripts/run_mean_field_simulations.R")
+source("scripts/plot_transitions.R")
+
+
+# H2 ----------------------------------------------------------------------
+source("scripts/sim_MF_CC.R")
+source("scripts/run_spatial_simulations.R")
 
 
 

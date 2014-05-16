@@ -1,9 +1,8 @@
 # Source packages
-setwd("/home/DominiqueGravel/Documents/Projects_On_Going/Maple_migration/transition_maple/analyses/scripts")
-source("anneal_custom.R")
-source("likeli.R")
-source("analyze_function.R")
-source("likdisplay.R")
+source("scripts/anneal_custom.R")
+source("scripts/likeli.R")
+source("scripts/analyze_function.R")
+source("scripts/likdisplay.R")
 
 var = list()
 var$t0 = "t0"
@@ -13,8 +12,8 @@ var$lik = "predicted"
 var$EC = "EC"
 var$ED = "ED"
 var$EM = "EM"
-setwd("/home/DominiqueGravel/Documents/Projects_On_Going/Maple_migration/transition_maple/analyses/data")
-data = as.data.frame(read.table("data_categorical.txt"))
+
+data = as.data.frame(read.table("data/data_categorical.txt"))
 test = numeric(nrow(data))
 test[data$t0 == "D" & data$t1 == "C"] = 1
 test[data$t0 == "C" & data$t1 == "D"] = 1
