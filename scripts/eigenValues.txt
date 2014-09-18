@@ -1,0 +1,36 @@
+var('C, D, M, T')
+var('aC, aD, bC, bD, sC, sD, e')
+
+# Empty state
+E = 1 - C - D - M
+
+# Fraction of empty patches converted into the different states following a disturbance
+pC = aC*(C+M)
+pD = aD*(D+M)
+pM = pC*pD
+pC_ = pC*(1-pD)
+pD_ = pD*(1-pC)
+
+# Differential equations describing the dynamics of the state variables
+dCdt = pC_*E + sC*M - bD*(D+M)*C - e*C
+dDdt = pD_*E + sD*M - bC*(C+M)*D - e*D
+dMdt = pM*E + bC*(C+M)*D + bD*(D+M)*C - sC*M - sD*M - e*M
+
+# Compute the Jacobian
+J = jacobian([dCdt,dDdt,dMdt],[C,D,M])
+
+# Solve the model for the case where C and M are at 0
+# and D = 1 - e/aD
+J_D = J.substitute(C==0)
+J_D = J_D.substitute(M==0)
+J_D = J_D.substitute(D==1-e/aD)
+
+eigs_J_D = J_D.eigenvalues()
+
+# Solve the model for the case where D and M are at 0
+# and C = 1 - e/aC
+J_C = J.substitute(D==0)
+J_C = J_C.substitute(M==0)
+J_C = J_C.substitute(C==1-e/aC)
+
+eigs_J_C = J_C.eigenvalues()

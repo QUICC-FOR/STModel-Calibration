@@ -1,0 +1,375 @@
+xx
+par[xx]
+par[xx]-par_lo[xx]
+par_lo[xx]
+as.numeric(par_lo[xx])
+max(abs(as.numeric(par[x])-as.numeric(par_lo[x])), abs(as.numeric(par[x])-as.numeric(par_hi[x])))
+par_initStep =lapply(names(par), function(x){max(abs(as.numeric(par[x])-as.numeric(par_lo[x])), abs(as.numeric(par[x])-as.numeric(par_hi[x])))})
+par_initStep
+c(0:10)
+c(0:10)->xx
+0%in%x
+x==0
+xx==0
+sum(xx==0)
+ENV
+Source packagessource("fit_fonctions/anneal_custom.R")source("fit_fonctions/likeli.R")source("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay.R")source("4-init_param.R")var = list(t0 = "t0", t1 = "t1", ENV = "ENV", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")
+ENV
+rm(list=ls())source("4-init_param.R")var = list(t0 = "t0", t1 = "t1", ENV = "ENV", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")#
+# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")#
+source("3-transition_model.R")source("fit_fonctions/anneal_ibou.R")test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 20, initial_temp = 0.5, note = "", progress = TRUE, display=FALSE, support = FALSE)
+rm(list=ls())source("4-init_params.R")var = list(t0 = "t0", t1 = "t1", ENV = "ENV", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")#
+# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")#
+source("3-transition_model.R")source("fit_fonctions/anneal_ibou.R")test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 20, initial_temp = 0.5, note = "", progress = TRUE, display=FALSE, support = FALSE)
+par_initStep
+names(par_initStep) = names(par)
+rm(list=ls())source("4-init_params.R")var = list(t0 = "t0", t1 = "t1", ENV = "ENV", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")#
+# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")#
+source("3-transition_model.R")source("fit_fonctions/anneal_ibou.R")test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 20, initial_temp = 0.5, note = "", progress = TRUE, display=FALSE, support = FALSE)
+rm(list=ls())source("4-init_params.R")var = list(t0 = "t0", t1 = "t1", ENV = "ENV", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")#
+# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")#
+source("3-transition_model.R")source("fit_fonctions/anneal_ibou.R")test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 20, initial_temp = 0.5, note = "", progress = TRUE, display=FALSE, support = FALSE)
+rm(list=ls())source("4-init_params.R")var = list(t0 = "t0", t1 = "t1", ENV = "ENV", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")#
+# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")#
+source("3-transition_model.R")source("fit_fonctions/anneal_ibou.R")test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 20, initial_temp = 0.5, note = "", progress = TRUE, display=FALSE, support = FALSE)
+rm(list=ls())source("4-init_params.R")var = list(t0 = "t0", t1 = "t1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")#
+# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")#
+source("3-transition_model.R")source("fit_fonctions/anneal_ibou.R")test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 20, initial_temp = 0.5, note = "", progress = TRUE, display=FALSE, support = FALSE)#
+par = test1$best_parswrite.table(test$best_pars,"../estimated_par/par.txt")
+rm(list=ls())source("4-init_params.R")var = list(t0 = "t0", t1 = "t1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")#
+# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")#
+source("3-transition_model.R")source("fit_fonctions/anneal_ibou.R")test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 20, initial_temp = 0.5, note = "", progress = TRUE, display=FALSE, support = FALSE)#
+par = test1$best_parswrite.table(test$best_pars,"../estimated_par/par.txt")
+rm(list=ls())source("4-init_params.R")var = list(t0 = "t0", t1 = "t1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")#
+# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")#
+source("3-transition_model.R")source("fit_fonctions/anneal_ibou.R")test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 20, initial_temp = 0.5, note = "", progress = TRUE, display=FALSE, support = FALSE)#
+par = test1$best_parswrite.table(test$best_pars,"../estimated_par/par.txt")
+rm(list=ls())source("4-init_params.R")var = list(t0 = "t0", t1 = "t1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")#
+# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")#
+source("3-transition_model.R")source("fit_fonctions/anneal_ibou.R")test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 20, initial_temp = 0.5, note = "", progress = TRUE, display=FALSE, support = FALSE)#
+par = test1$best_parswrite.table(test$best_pars,"../estimated_par/par.txt")
+rm(list=ls())source("4-init_params.R")var = list(t0 = "t0", t1 = "t1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")#
+# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")#
+source("3-transition_model.R")source("fit_fonctions/anneal_ibou.R")test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 20, initial_temp = 0.5, note = "", progress = TRUE, display=FALSE, support = FALSE)#
+par = test1$best_parswrite.table(test$best_pars,"../estimated_par/par.txt")
+rm(list=ls())source("4-init_params.R")var = list(t0 = "t0", t1 = "t1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")#
+# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")#
+source("3-transition_model.R")source("fit_fonctions/anneal_ibou.R")test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 20, initial_temp = 0.5, note = "", progress = TRUE, display=FALSE, support = FALSE)#
+par = test1$best_parswrite.table(test$best_pars,"../estimated_par/par.txt")
+rm(list=ls())source("4-init_params.R")var = list(t0 = "t0", t1 = "t1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")#
+# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")#
+source("3-transition_model.R")source("fit_fonctions/anneal_ibou.R")test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 20, initial_temp = 0.5, note = "", progress = TRUE, display=FALSE, support = FALSE)#
+par = test1$best_parswrite.table(test$best_pars,"../estimated_par/par.txt")
+rm(list=ls())source("4-init_params.R")var = list(t0 = "t0", t1 = "t1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")#
+# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")#
+source("3-transition_model.R")source("fit_fonctions/anneal_ibou.R")test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 20, initial_temp = 0.5, note = "", progress = TRUE, display=FALSE, support = FALSE)#
+par = test1$best_parswrite.table(test$best_pars,"../estimated_par/par.txt")
+rm(list=ls())source("4-init_params.R")var = list(t0 = "t0", t1 = "t1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")#
+# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")#
+source("3-transition_model.R")source("fit_fonctions/anneal_ibou.R")test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 20, initial_temp = 0.5, note = "", progress = TRUE, display=FALSE, support = FALSE)#
+par = test1$best_parswrite.table(test$best_pars,"../estimated_par/par.txt")
+rm(list=ls())source("4-init_params.R")var = list(t0 = "t0", t1 = "t1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")#
+# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")#
+source("3-transition_model.R")source("fit_fonctions/anneal_ibou.R")test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 20, initial_temp = 0.5, note = "", progress = TRUE, display=FALSE, support = FALSE)#
+par = test1$best_parswrite.table(test$best_pars,"../estimated_par/par.txt")
+rm(list=ls())source("4-init_params.R")var = list(t0 = "t0", t1 = "t1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")#
+# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")#
+source("3-transition_model.R")source("fit_fonctions/anneal_ibou.R")test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 20, initial_temp = 0.5, note = "", progress = TRUE, display=FALSE, support = FALSE)#
+par = test1$best_parswrite.table(test$best_pars,"../estimated_par/par.txt")
+rm(list=ls())source("4-init_params.R")var = list(t0 = "t0", t1 = "t1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")#
+# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")#
+source("3-transition_model.R")source("fit_fonctions/anneal_ibou.R")test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 20, initial_temp = 0.5, note = "", progress = TRUE, display=FALSE, support = FALSE)#
+par = test1$best_parswrite.table(test$best_pars,"../estimated_par/par.txt")
+rm(list=ls())source("4-init_params.R")var = list(t0 = "t0", t1 = "t1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")#
+# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")#
+source("3-transition_model.R")source("fit_fonctions/anneal_ibou.R")test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 20, initial_temp = 0.5, note = "", progress = TRUE, display=FALSE, support = FALSE)#
+par = test1$best_parswrite.table(test$best_pars,"../estimated_par/par.txt")
+rm(list=ls())source("4-init_params.R")var = list(t0 = "t0", t1 = "t1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")#
+# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")#
+source("3-transition_model.R")source("fit_fonctions/anneal_ibou.R")test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 20, initial_temp = 0.5, note = "", progress = TRUE, display=FALSE, support = FALSE)#
+par = test1$best_parswrite.table(test$best_pars,"../estimated_par/par.txt")
+1/0
+0/0
+is.infinite(1/0)
+rm(list=ls())source("4-init_params.R")var = list(t0 = "t0", t1 = "t1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")#
+# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")#
+source("3-transition_model.R")source("fit_fonctions/anneal_ibou.R")test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 20, initial_temp = 0.5, note = "", progress = TRUE, display=FALSE, support = FALSE)##par = test1$best_pars#write.table(test$best_pars,"../estimated_par/par.txt")
+rm(list=ls())source("4-init_params.R")var = list(t0 = "t0", t1 = "t1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")#
+# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")#
+source("3-transition_model.R")source("fit_fonctions/anneal_ibou.R")test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 20, initial_temp = 0.5, note = "", progress = TRUE, display=FALSE, support = FALSE)##par = test1$best_pars#write.table(test$best_pars,"../estimated_par/par.txt")
+rm(list=ls())source("4-init_params.R")var = list(t0 = "t0", t1 = "t1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")#
+# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")#
+source("3-transition_model.R")source("fit_fonctions/anneal_ibou.R")test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 20, initial_temp = 0.5, note = "", progress = TRUE, display=FALSE, support = FALSE)##par = test1$best_pars#write.table(test$best_pars,"../estimated_par/par.txt")
+rm(list=ls())source("4-init_params.R")var = list(t0 = "t0", t1 = "t1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")#
+# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")#
+source("3-transition_model.R")source("fit_fonctions/anneal_ibou.R")test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 20, initial_temp = 0.5, note = "", progress = TRUE, display=FALSE, support = FALSE)##par = test1$best_pars#write.table(test$best_pars,"../estimated_par/par.txt")
+rm(list=ls())source("4-init_params.R")var = list(t0 = "t0", t1 = "t1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")#
+# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")#
+source("3-transition_model.R")source("fit_fonctions/anneal_ibou.R")test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 20, initial_temp = 0.5, note = "", progress = TRUE, display=FALSE, support = FALSE)##par = test1$best_pars#write.table(test$best_pars,"../estimated_par/par.txt")
+par$ab1
+par$ab1 * data$ENV1
+rm(list=ls())source("4-init_params.R")var = list(t0 = "t0", t1 = "t1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")#
+# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")#
+source("3-transition_model.R")source("fit_fonctions/anneal_ibou.R")test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 20, initial_temp = 0.5, note = "", progress = TRUE, display=FALSE, support = FALSE)##par = test1$best_pars#write.table(test$best_pars,"../estimated_par/par.txt")
+rm(list=ls())source("4-init_params.R")var = list(t0 = "t0", t1 = "t1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")#
+# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")#
+source("3-transition_model.R")source("fit_fonctions/anneal_ibou.R")test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 20, initial_temp = 0.5, note = "", progress = TRUE, display=FALSE, support = FALSE)##par = test1$best_pars#write.table(test$best_pars,"../estimated_par/par.txt")
+rm(list=ls())source("4-init_params.R")var = list(t0 = "t0", t1 = "t1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")#
+# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")#
+source("3-transition_model.R")source("fit_fonctions/anneal_ibou.R")test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 20, initial_temp = 0.5, note = "", progress = TRUE, display=FALSE, support = FALSE)##par = test1$best_pars#write.table(test$best_pars,"../estimated_par/par.txt")
+head(data)
+rm(list=ls())source("4-init_params.R")var = list(t0 = "t0", t1 = "t1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")#
+# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")#
+source("3-transition_model.R")source("fit_fonctions/anneal_ibou.R")test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 20, initial_temp = 0.5, note = "", progress = TRUE, display=FALSE, support = FALSE)##par = test1$best_pars#write.table(test$best_pars,"../estimated_par/par.txt")
+dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 20, initial_temp = 0.5, note = "", progress = TRUE, display=TRUE, support = FALSE)
+test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 20, initial_temp = 0.5, note = "", progress = TRUE, display=TRUE, support = FALSE)
+warnings()
+log(0)
+log(1)
+test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 20, initial_temp = 0.5, note = "", progress = TRUE, display=TRUE, support = FALSE)
+warnings()
+test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 20, initial_temp = 0.5, note = "", progress = TRUE, display=TRUE, support = FALSE)
+rm(list=ls())source("4-init_params.R")var = list(t0 = "t0", t1 = "t1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")#
+# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")#
+source("3-transition_model.R")source("fit_fonctions/anneal_ibou.R")test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 20, initial_temp = 0.5, note = "", progress = TRUE, display=TRUE, support = FALSE)##par = test1$best_pars#write.table(test$best_pars,"../estimated_par/par.txt")
+rm(list=ls())source("4-init_params.R")var = list(t0 = "t0", t1 = "t1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")#
+# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")#
+source("3-transition_model.R")source("fit_fonctions/anneal_ibou.R")test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 20, initial_temp = 0.5, note = "", progress = TRUE, display=TRUE, support = FALSE)##par = test1$best_pars#write.table(test$best_pars,"../estimated_par/par.txt")
+par
+attach(par)
+attach(data)
+lik = numeric(length(t0))
+lik
+logit_alphab 	= ab0 + ab1*ENV1 + ab2*ENV1^2 + ab3*ENV2 + ab4*ENV2^2
+logit_alphat 	= at0 + at1*ENV1 + at2*ENV1^2 + at3*ENV2 + at4*ENV2^2
+logit_betab 	= bb0 + bb1*ENV1 + bb2*ENV1^2 + bb3*ENV2 + bb4*ENV2^2
+logit_betat 	= bt0 + bt1*ENV1 + bt2*ENV1^2 + bt3*ENV2 + bt4*ENV2^2
+logit_thetab	= tb0 + tb1*ENV1 + tb2*ENV1^2 + tb3*ENV2 + tb4*ENV2^2
+logit_thetat	= tt0 + tt1*ENV1 + tt2*ENV1^2 + tt3*ENV2 + tt4*ENV2^2
+logit_eps 	= e0  + e1*ENV1  + e2*ENV1^2 + e3*ENV2 + e4*ENV2^2
+logit_alphab
+logit_alphat
+logit_betab
+logit_betat
+alphab = exp(logit_alphab)/(1+exp(logit_alphab))    alphat = exp(logit_alphat)/(1+exp(logit_alphat))    betab = exp(logit_betab)/(1+exp(logit_betab))    betat = exp(logit_betat)/(1+exp(logit_betat))    thetab = exp(logit_thetab)/(1+exp(logit_thetab))    thetat = exp(logit_thetat)/(1+exp(logit_thetat))    eps = exp(logit_eps)/(1+exp(logit_eps))
+alphab
+alphat
+betab
+betat
+ENV1
+ENV1
+ENV2
+alphab
+data$ENV1 = data$av_annual_mean_tp
+data$ENV1
+data$ENV1 = data$av_annual_mean_tp * 10
+data$ENV1
+data$ENV2 = data$av_annual_pp/100
+data$ENV2
+rm(list=ls())source("4-init_params.R")var = list(t0 = "t0", t1 = "t1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")#
+# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")#
+source("3-transition_model.R")source("fit_fonctions/anneal_ibou.R")test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 20, initial_temp = 0.5, note = "", progress = TRUE, display=TRUE, support = FALSE)##par = test1$best_pars#write.table(test$best_pars,"../estimated_par/par.txt")
+attach(par)
+attach(data)
+lik = numeric(length(t0))#
+    logit_alphab 	= ab0 + ab1*ENV1 + ab2*ENV1^2 + ab3*ENV2 + ab4*ENV2^2    logit_alphat 	= at0 + at1*ENV1 + at2*ENV1^2 + at3*ENV2 + at4*ENV2^2    logit_betab 	= bb0 + bb1*ENV1 + bb2*ENV1^2 + bb3*ENV2 + bb4*ENV2^2    logit_betat 	= bt0 + bt1*ENV1 + bt2*ENV1^2 + bt3*ENV2 + bt4*ENV2^2    logit_thetab	= tb0 + tb1*ENV1 + tb2*ENV1^2 + tb3*ENV2 + tb4*ENV2^2    logit_thetat	= tt0 + tt1*ENV1 + tt2*ENV1^2 + tt3*ENV2 + tt4*ENV2^2    logit_eps 	= e0  + e1*ENV1  + e2*ENV1^2 + e3*ENV2 + e4*ENV2^2    alphab = exp(logit_alphab)/(1+exp(logit_alphab))    alphat = exp(logit_alphat)/(1+exp(logit_alphat))    betab = exp(logit_betab)/(1+exp(logit_betab))    betat = exp(logit_betat)/(1+exp(logit_betat))    thetab = exp(logit_thetab)/(1+exp(logit_thetab))    thetat = exp(logit_thetat)/(1+exp(logit_thetat))    eps = exp(logit_eps)/(1+exp(logit_eps))
+alphab
+alphat
+betab
+betat
+thetab
+thetat
+eps
+data$ENV1 = data$av_annual_mean_tp * 100data$ENV2 = data$av_annual_pp/10
+attach(data)
+lik = numeric(length(t0))#
+    logit_alphab 	= ab0 + ab1*ENV1 + ab2*ENV1^2 + ab3*ENV2 + ab4*ENV2^2    logit_alphat 	= at0 + at1*ENV1 + at2*ENV1^2 + at3*ENV2 + at4*ENV2^2    logit_betab 	= bb0 + bb1*ENV1 + bb2*ENV1^2 + bb3*ENV2 + bb4*ENV2^2    logit_betat 	= bt0 + bt1*ENV1 + bt2*ENV1^2 + bt3*ENV2 + bt4*ENV2^2    logit_thetab	= tb0 + tb1*ENV1 + tb2*ENV1^2 + tb3*ENV2 + tb4*ENV2^2    logit_thetat	= tt0 + tt1*ENV1 + tt2*ENV1^2 + tt3*ENV2 + tt4*ENV2^2    logit_eps 	= e0  + e1*ENV1  + e2*ENV1^2 + e3*ENV2 + e4*ENV2^2    alphab = exp(logit_alphab)/(1+exp(logit_alphab))    alphat = exp(logit_alphat)/(1+exp(logit_alphat))    betab = exp(logit_betab)/(1+exp(logit_betab))    betat = exp(logit_betat)/(1+exp(logit_betat))    thetab = exp(logit_thetab)/(1+exp(logit_thetab))    thetat = exp(logit_thetat)/(1+exp(logit_thetat))    eps = exp(logit_eps)/(1+exp(logit_eps))
+alphab
+ENV1
+ab0
+ab1
+ab2
+ab3
+ab4
+alphab
+alphat
+betab
+betat
+thetab
+thetat
+eps
+k0 = 0.5    u = 1000 ; v = 500 ;  w= 200 ; x= 300    omegatHa = 0.3    omegabHa = 0.3    omegatHv = 0.5    omegabHv = 0    kappata = 0.5    kappaba = 0.3    kappatv = 0.265    kappabv = 0.175    # moose    za = 1    ca = 0.7    ma0 = 0.05    mas = 0.2    taua = 17    pa = 6    mua = taua    nua = taua    phia = 0.3    ra = 5    #deer    zv = 1    cv = 0.7    mv = 0.2    tauv = 8.75    pv = 5    muv = tauv    nuv = tauv    phiv = 0.2    rv = 5#
+	# impact of the herbivore    # herbivores competition	k = exp(-log(1/k0)*Hv/Ha)#
+	# neighborgh t0	R = 1-ET -EB-EM	TT = ET	B = EB	M = EM#
+	# moose and B	ma_B = mas/(1+(mas/ma0-1)*B)#
+	# intakes    Fa = u*k*R/Ha    Ga = k*(v*TT+w*B+x*M)/Ha    Fa[is.nan(Fa)] = 0    Ga[is.nan(Ga)] = 0    Fa[is.infinite(Fa)] = 0    Ga[is.infinite(Ga)] = 0#
+    Fv = u*(1-k)*R/Hv    Gv = (1-k)*(v*TT+w*B+x*M)/Hv    Fv[is.nan(Fv)] = 0    Gv[is.nan(Gv)] = 0    Fv[is.infinite(Fv)] = 0    Gv[is.infinite(Gv)] = 0#
+    Ia1 = taua*Fa/(mua+Fa)    Ia2 = (taua*Ga/(nua + Ga) )* (phia + (1-phia)/( 1 + exp(ra*( taua*Fa/(mua + Fa) -pa) ) ) )    Iv1 = tauv*Fv/(muv+Fv)    Iv2 = (tauv*Gv/(nuv + Gv) )* (phiv + (1-phiv)/( 1 + exp(rv*( tauv*Fv/(muv + Fv) -pv) ) ) )        #
+    # herbivore pressure#
+    PRB = (Ha*Ia1*kappaba + Hv*Iv1*kappabv)/(u*R)    PRT = (Ha*Ia1*kappaba + Hv*Iv1*kappabv)/(u*R)    PRB[is.nan(PRB)] = 0    PRT[is.nan(PRT)] = 0    PRB[is.infinite(PRB)] = 0    PRT[is.infinite(PRT)] = 0#
+    sumOHa = omegatHa * T + omegabHa * B + (1-omegatHa-omegabHa) * M    OtHa = omegatHa*T /sumOHa    ObHa = omegabHa*B /sumOHa    OmHa = (1-omegatHa-omegabHa)*M /sumOHa    sumOHv = omegatHv * T + omegabHv * B + (1-omegatHv-omegabHv) * M    OtHv = omegatHv*T /sumOHv    ObHv = omegabHv*B /sumOHv    OmHv = (1-omegatHv-omegabHv)*M /sumOHv#
+    PTB = (OtHa*Ha*Ia2*kappaba + OtHv*Hv*Iv2*kappabv)/(v*TT)    PTT = (OtHa*Ha*Ia2*kappata + OtHv*Hv*Iv2*kappatv)/(v*TT)    PBB = (ObHa*Ha*Ia2*kappaba + ObHv*Hv*Ia2*kappabv)/(w*B)     PBT = (ObHa*Ha*Ia2*kappata + ObHv*Hv*Ia2*kappatv)/(w*B)     PMB = (OmHa*Ha*Ia2*kappaba + OmHv*Hv*Iv2*kappabv)/(x*M)     PMT = (OmHa*Ha*Ia2*kappata + OmHv*Hv*Iv2*kappatv)/(x*M)     PTB[is.nan(PTB)] = 0    PTT[is.nan(PTT)] = 0    PBB[is.nan(PBB)] = 0    PMB[is.nan(PMB)] = 0    PBT[is.nan(PBT)] = 0    PMT[is.nan(PMT)] = 0#
+    PTB[is.infinite(PTB)] = 0    PTT[is.infinite(PTT)] = 0    PBB[is.infinite(PBB)] = 0    PMB[is.infinite(PMB)] = 0    PBT[is.infinite(PBT)] = 0    PMT[is.infinite(PMT)] = 0#
+    # compute modified alpha, theta and beta    alphab_h = alphab*(1-PRB)    alphat_h = alphat*(1-PRT)#
+    thetab_h = thetab*(1-PMB)    thetat_h = thetat*(1-PMT)#
+    betab_h = (1/2)*(1 + betab * cos(pi*PTB) + (1-betab)*cos(pi*(1+PTT)) )     betat_h = (1/2)*(1 + betat * cos(pi*PBT) + (1-betat)*cos(pi*(1+PBB)) )
+alphab_h
+alphat_h
+thetab_h
+thetat_h
+PMB
+betab_h
+betat_h
+Compute the likelihood of observations	lik[t0 == "B" & t1 == "M"] = (betat_h*(ET+EM))[t0 == "B" & t1 == "M"] 	lik[t0 == "B" & t1 == "R"] = eps[t0 == "B" & t1 == "R"] 		lik[t0 == "B" & t1 == "B"] = (1 - eps - betat_h*(ET+EM))[t0 == "B" & t1 == "B"]	lik[t0 == "TT" & t1 == "TT"] = (1 - eps - betab_h*(EB+EM))[t0 == "TT" & t1 == "TT"] 		lik[t0 == "TT" & t1 == "M"] = (betab_h*(ET+EM))[t0 == "TT" & t1 == "M"] 				lik[t0 == "TT" & t1 == "R"] = eps[t0 == "TT" & t1 == "R"] 		#
+	lik[t0 == "M" & t1 == "B"] = thetab_h[t0 == "M" & t1 == "B"]		lik[t0 == "M" & t1 == "TT"] = thetat_h[t0 == "M" & t1 == "TT"] 		lik[t0 == "M" & t1 == "M"] = (1 - eps - thetab_h - thetat_h)[t0 == "M" & t1 == "M"] 				lik[t0 == "M" & t1 == "R"] = eps[t0 == "M" & t1 == "R"] #
+	lik[t0 == "R" & t1 == "B"] = (alphab_h*(EM + EB)*(1-alphat_h*(ET+EM)))[t0 == "R" & t1 == "B"] 		lik[t0 == "R" & t1 == "TT"] = (alphat*(EM + ET)*(1-alphab*(EB+EM)))[t0 == "R" & t1 == "TT"]		lik[t0 == "R" & t1 == "M"] = (alphab_h*(EM + EB)*alphat*(EM + ET))[t0 == "R" & t1 == "M"] 			#
+	phib = alphab_h*(EM + EB)*(1-alphat_h*(ET+EM))	phit = alphat*(EM + ET)*(1-alphab*(EB+EM))	phim = alphab_h*(EM + EB)*alphat*(EM + ET)	lik[t0 == "R" & t1 == "R"] = (1 - phib - phit - phim)[t0 == "R" & t1 == "R"]
+lik
+log(lik)
+PDF = function(t1,lik) log(lik+1)
+log(lik+1)
+rm(list=ls())source("4-init_params.R")var = list(t0 = "t0", t1 = "t1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")#
+# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")#
+source("3-transition_model.R")source("fit_fonctions/anneal_ibou.R")test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 20, initial_temp = 0.5, note = "", progress = TRUE, display=TRUE, support = FALSE)##par = test1$best_pars#write.table(test$best_pars,"../estimated_par/par.txt")
+rm(list=ls())source("4-init_params.R")var = list(t0 = "t0", t1 = "t1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")#
+# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")#
+source("3-transition_model.R")source("fit_fonctions/anneal_ibou.R")test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 10000, initial_temp = 0.5, note = "", progress = TRUE, display=FALSE, support = FALSE)#par = test1$best_parssave(test1, file="../estimated_par/test1")write.table(test1$best_pars,"../estimated_par/par_herbivores.txt")
+alphat_h
+data$ET
+summary(data)
+summary(data$ET+data$EM)
+rm(list=ls())# Load datadataProj = as.data.frame(read.table("../data/data_reshaped_RBTM_herbivores.txt"))dataProj$E = dataProj$av_annual_mean_tpdataProj$P = dataProj$av_annual_ppdata = as.data.frame(read.table("../data/data_allyears_RBTM.txt"))data$E = data$annual_mean_tempdata$P = data$annual_ppdata$state = data$pred_classdata = data[-which(data$state=="Unclass"),]data$state = as.factor(as.character(data$state))str(data)# cross validationsource("BoulangeatEcoLet2012_fct.r")sampl = sample(1:nrow(data), 2*nrow(data)/3)calib = data #data[sampl,] valid = data #data[-sampl,]
+library(randomForest)set.seed(23)SDM2 = randomForest(state ~ . , data = data[, c("state", "E", "P","lat", "lon")], ntree = 500)set.seed(23)pred2 = predict(SDM2,new=valid,"response", OOB=TRUE)(HK2 = HK(pred2, valid$state)) set.seed(23)pred_proba = predict(SDM2,new=valid,"prob", OOB=TRUE)
+pred_proba
+summary(pred_proba)
+library(nnet)SDM1 = multinom(state ~ poly(E,3,raw=TRUE) + poly(P,3,raw=TRUE) + E:P +lon + lat, data = calib)pred1 = predict(SDM1, new=valid,"class")(HK1 = HK(pred1, valid$state)) pred_proba1 = predict(SDM1,new=valid,"prob")
+pred_proba1
+plot(pred_proba$B, pred_proba1$B, xlab = "RF", ylab = "multinom")
+head(pred_proba)
+plot(pred_proba[,"B"], pred_proba1[,"B"], xlab = "RF", ylab = "multinom")
+head(pred_proba1)
+plot(pred_proba[,"B"], pred_proba1[,"B"], xlab = "RF", ylab = "multinom")
+plot(lowess(cbind(pred_proba[,"B"], pred_proba1[,"B"])), xlab = "RF", ylab = "multinom")
+plot(lowess(cbind(pred_proba[,"B"], pred_proba1[,"B"])), type = "l", xlab = "RF", ylab = "multinom")
+plot(lowess(cbind(pred_proba[,"B"], pred_proba1[,"B"])), type = "l", xlab = "RF", ylab = "multinom", xlim = c(0,1), ylim - c(0,1))
+plot(lowess(cbind(pred_proba[,"B"], pred_proba1[,"B"])), type = "l", xlab = "RF", ylab = "multinom", xlim = c(0,1), ylim = c(0,1))
+abline(1,1,lty=2)
+abline(0,1,lty=2)
+-- graphspar(mfrow = c(2,2))plot(lowess(cbind(pred_proba[,"B"], pred_proba1[,"B"])), type = "l", xlab = "RF", ylab = "multinom", xlim = c(0,1), ylim = c(0,1), main = "Boreal")abline(0,1,lty=2)plot(lowess(cbind(pred_proba[,"T"], pred_proba1[,"T"])), type = "l", xlab = "RF", ylab = "multinom", xlim = c(0,1), ylim = c(0,1), main = "Temperate")abline(0,1,lty=2)plot(lowess(cbind(pred_proba[,"M"], pred_proba1[,"M"])), type = "l", xlab = "RF", ylab = "multinom", xlim = c(0,1), ylim = c(0,1), main = "Mixed")abline(0,1,lty=2)plot(lowess(cbind(pred_proba[,"R"], pred_proba1[,"R"])), type = "l", xlab = "RF", ylab = "multinom", xlim = c(0,1), ylim = c(0,1), main = "Early succession")abline(0,1,lty=2)
+par(mfrow = c(2,2))plot(lowess(cbind(valid$E,pred_proba[,"B"]), f=1/10), type = "l", xlab = "Annual temperature", ylab="Boreal probability", ylim = c(0,1))plot(lowess(cbind(valid$E,pred_proba[,"T"]), f=1/10), type = "l", xlab = "Annual temperature", ylab="Temperate probability", ylim = c(0,1))plot(lowess(cbind(valid$E,pred_proba[,"M"]), f=1/10), type = "l", xlab = "Annual temperature", ylab="Mixed probability", ylim = c(0,1))plot(lowess(cbind(valid$E,pred_proba[,"R"]), f=1/10), type = "l", xlab = "Annual temperature", ylab="Early succession probability", ylim = c(0,1))
+par(mfrow = c(2,2))boxplot(split(pred_proba[,"B"], ifelse(data$state=="B", "dominant", "non-dominant")), main="Boreal", ylab = "predicted probability")boxplot(split(pred_proba[,"T"], ifelse(data$state=="T", "dominant", "non-dominant")), main="Temperate", ylab = "predicted probability")boxplot(split(pred_proba[,"M"], ifelse(data$state=="M", "dominant", "non-dominant")), main="Mixed", ylab = "predicted probability")boxplot(split(pred_proba[,"R"], ifelse(data$state=="R", "dominant", "non-dominant")), main="Early succession", ylab = "predicted probability")
+pred_proba = pred_proba1 # pour graphs multinompar(mfrow = c(2,2))plot(lowess(cbind(valid$E,pred_proba[,"B"]), f=1/10), type = "l", xlab = "Annual temperature", ylab="Boreal probability", ylim = c(0,1))plot(lowess(cbind(valid$E,pred_proba[,"T"]), f=1/10), type = "l", xlab = "Annual temperature", ylab="Temperate probability", ylim = c(0,1))plot(lowess(cbind(valid$E,pred_proba[,"M"]), f=1/10), type = "l", xlab = "Annual temperature", ylab="Mixed probability", ylim = c(0,1))plot(lowess(cbind(valid$E,pred_proba[,"R"]), f=1/10), type = "l", xlab = "Annual temperature", ylab="Early succession probability", ylim = c(0,1))
+SDM = SDM1 #multinom
+pred_real = predict(SDM,new=dataProj,"prob")
+pred_real
+write.table(pred_real,"../data/data_pred_states_multinom.txt")
+par(mfrow = c(2,2))boxplot(split(pred_proba[,"B"], ifelse(data$state=="B", "dominant", "non-dominant")), main="Boreal", ylab = "predicted probability")boxplot(split(pred_proba[,"T"], ifelse(data$state=="T", "dominant", "non-dominant")), main="Temperate", ylab = "predicted probability")boxplot(split(pred_proba[,"M"], ifelse(data$state=="M", "dominant", "non-dominant")), main="Mixed", ylab = "predicted probability")boxplot(split(pred_proba[,"R"], ifelse(data$state=="R", "dominant", "non-dominant")), main="Early succession", ylab = "predicted probability")
+rm(list=ls())source("4-init_params.R")var = list(t0 = "t0", t1 = "t1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")#
+# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")#
+source("3-transition_model.R")source("fit_fonctions/anneal_ibou.R")test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 10000, initial_temp = 0.5, note = "", progress = TRUE, display=FALSE, support = FALSE)#par = test1$best_parssave(test1, file="../estimated_par/test1")write.table(test1$best_pars,"../estimated_par/par_herbivores.txt")
+attach(par)
+attach9data
+attach(data)
+lik = numeric(length(t0))#
+    logit_alphab 	= ab0 + ab1*ENV1 + ab2*ENV1^2 + ab3*ENV2 + ab4*ENV2^2    logit_alphat 	= at0 + at1*ENV1 + at2*ENV1^2 + at3*ENV2 + at4*ENV2^2    logit_betab 	= bb0 + bb1*ENV1 + bb2*ENV1^2 + bb3*ENV2 + bb4*ENV2^2    logit_betat 	= bt0 + bt1*ENV1 + bt2*ENV1^2 + bt3*ENV2 + bt4*ENV2^2    logit_thetab	= tb0 + tb1*ENV1 + tb2*ENV1^2 + tb3*ENV2 + tb4*ENV2^2    logit_thetat	= tt0 + tt1*ENV1 + tt2*ENV1^2 + tt3*ENV2 + tt4*ENV2^2    logit_eps 	= e0  + e1*ENV1  + e2*ENV1^2 + e3*ENV2 + e4*ENV2^2    alphab = exp(logit_alphab)/(1+exp(logit_alphab))    alphat = exp(logit_alphat)/(1+exp(logit_alphat))    betab = exp(logit_betab)/(1+exp(logit_betab))    betat = exp(logit_betat)/(1+exp(logit_betat))    thetab = exp(logit_thetab)/(1+exp(logit_thetab))    thetat = exp(logit_thetat)/(1+exp(logit_thetat))    eps = exp(logit_eps)/(1+exp(logit_eps))
+alphab
+alphat
+betab
+betat
+thetab
+thetat
+eps
+k0 = 0.5    u = 1000 ; v = 500 ;  w= 200 ; x= 300    omegatHa = 0.3    omegabHa = 0.3    omegatHv = 0.5    omegabHv = 0    kappata = 0.5    kappaba = 0.3    kappatv = 0.265    kappabv = 0.175    # moose    za = 1    ca = 0.7    ma0 = 0.05    mas = 0.2    taua = 17    pa = 6    mua = taua    nua = taua    phia = 0.3    ra = 5    #deer    zv = 1    cv = 0.7    mv = 0.2    tauv = 8.75    pv = 5    muv = tauv    nuv = tauv    phiv = 0.2    rv = 5#
+	# impact of the herbivore    # herbivores competition	k = exp(-log(1/k0)*Hv/Ha)#
+	# neighborgh t0	R = 1-ET -EB-EM	TT = ET	B = EB	M = EM
+R
+TT
+B
+M
+moose and B	ma_B = mas/(1+(mas/ma0-1)*B)#
+	# intakes    Fa = u*k*R/Ha    Ga = k*(v*TT+w*B+x*M)/Ha    Fa[is.nan(Fa)] = 0    Ga[is.nan(Ga)] = 0    Fa[is.infinite(Fa)] = 0    Ga[is.infinite(Ga)] = 0#
+    Fv = u*(1-k)*R/Hv    Gv = (1-k)*(v*TT+w*B+x*M)/Hv    Fv[is.nan(Fv)] = 0    Gv[is.nan(Gv)] = 0    Fv[is.infinite(Fv)] = 0    Gv[is.infinite(Gv)] = 0#
+    Ia1 = taua*Fa/(mua+Fa)    Ia2 = (taua*Ga/(nua + Ga) )* (phia + (1-phia)/( 1 + exp(ra*( taua*Fa/(mua + Fa) -pa) ) ) )    Iv1 = tauv*Fv/(muv+Fv)    Iv2 = (tauv*Gv/(nuv + Gv) )* (phiv + (1-phiv)/( 1 + exp(rv*( tauv*Fv/(muv + Fv) -pv) ) ) )        #
+    # herbivore pressure#
+    PRB = (Ha*Ia1*kappaba + Hv*Iv1*kappabv)/(u*R)    PRT = (Ha*Ia1*kappaba + Hv*Iv1*kappabv)/(u*R)    PRB[is.nan(PRB)] = 0    PRT[is.nan(PRT)] = 0    PRB[is.infinite(PRB)] = 0    PRT[is.infinite(PRT)] = 0#
+    sumOHa = omegatHa * T + omegabHa * B + (1-omegatHa-omegabHa) * M    OtHa = omegatHa*T /sumOHa    ObHa = omegabHa*B /sumOHa    OmHa = (1-omegatHa-omegabHa)*M /sumOHa    sumOHv = omegatHv * T + omegabHv * B + (1-omegatHv-omegabHv) * M    OtHv = omegatHv*T /sumOHv    ObHv = omegabHv*B /sumOHv    OmHv = (1-omegatHv-omegabHv)*M /sumOHv#
+    PTB = (OtHa*Ha*Ia2*kappaba + OtHv*Hv*Iv2*kappabv)/(v*TT)    PTT = (OtHa*Ha*Ia2*kappata + OtHv*Hv*Iv2*kappatv)/(v*TT)    PBB = (ObHa*Ha*Ia2*kappaba + ObHv*Hv*Ia2*kappabv)/(w*B)     PBT = (ObHa*Ha*Ia2*kappata + ObHv*Hv*Ia2*kappatv)/(w*B)     PMB = (OmHa*Ha*Ia2*kappaba + OmHv*Hv*Iv2*kappabv)/(x*M)     PMT = (OmHa*Ha*Ia2*kappata + OmHv*Hv*Iv2*kappatv)/(x*M)     PTB[is.nan(PTB)] = 0    PTT[is.nan(PTT)] = 0    PBB[is.nan(PBB)] = 0    PMB[is.nan(PMB)] = 0    PBT[is.nan(PBT)] = 0    PMT[is.nan(PMT)] = 0#
+    PTB[is.infinite(PTB)] = 0    PTT[is.infinite(PTT)] = 0    PBB[is.infinite(PBB)] = 0    PMB[is.infinite(PMB)] = 0    PBT[is.infinite(PBT)] = 0    PMT[is.infinite(PMT)] = 0
+PTB
+PTT
+alphab_h = alphab*(1-PRB)
+alphat_h = alphat*(1-PRT)
+alphab_h
+thetab_h = thetab*(1-PMB)
+thetab_h
+thetat_h = thetat*(1-PMT)
+thetat_h
+betab_h = (1/2)*(1 + betab * cos(pi*PTB) + (1-betab)*cos(pi*(1+PTT)) )
+betab_h
+betat_h = (1/2)*(1 + betat * cos(pi*PBT) + (1-betat)*cos(pi*(1+PBB)) )
+betat_h
+(betat_h*(ET+EM))[t0 == "B" & t1 == "M"]
+eps[t0 == "B" & t1 == "R"]
+(1 - eps - betat_h*(ET+EM))[t0 == "B" & t1 == "B"]
+(1 - eps - betab_h*(EB+EM))[t0 == "TT" & t1 == "TT"]
+eps
+1 - eps
+betat_h*(ET+EM)
+1 - eps - betat_h*(ET+EM)
+t0 == "B" & t1 == "B"
+(1 - eps - betat_h*(ET+EM))[t0 == "B" & t1 == "B"]
+(1 - eps - betab_h*(EB+EM))[t0 == "TT" & t1 == "TT"]
+(1 - eps - betab_h*(EB+EM))
+[t0 == "TT" & t1 == "TT"]
+t0 == "TT" & t1 == "TT"
+(1 - eps - betab_h*(EB+EM))[t0 == "TT" & t1 == "TT"]
+lik[t0 == "TT" & t1 == "TT"]
+(betab_h*(ET+EM))[t0 == "TT" & t1 == "M"]
+(betab_h*(ET+EM))
+eps[t0 == "TT" & t1 == "R"]
+t0
+t1
+paste(t0,t1)
+tale(paste(t0,t1))
+table(paste(t0,t1))
+rm(list=ls())source("4-init_params.R")var = list(t0 = "t0", t1 = "t1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")#
+# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")#
+source("3-transition_model.R")source("fit_fonctions/anneal_ibou.R")test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 10000, initial_temp = 0.5, note = "", progress = TRUE, display=FALSE, support = FALSE)#par = test1$best_parssave(test1, file="../estimated_par/test1")write.table(test1$best_pars,"../estimated_par/par_herbivores.txt")
+rm(list=ls())source("4-init_params.R")var = list(t0 = "t0", t1 = "t1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")#
+# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")#
+source("3-transition_model.R")source("fit_fonctions/anneal_ibou.R")test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 10000, initial_temp = 0.5, note = "", progress = TRUE, display=FALSE, support = FALSE)#par = test1$best_parssave(test1, file="../estimated_par/test1")write.table(test1$best_pars,"../estimated_par/par_herbivores.txt")
+?with
+rm(list=ls())source("4-init_params.R")var = list(t0 = "t0", t1 = "t1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")#
+# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")#
+source("3-transition_model.R")source("fit_fonctions/anneal_ibou.R")test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 10000, initial_temp = 0.5, note = "", progress = TRUE, display=FALSE, support = FALSE)#par = test1$best_parssave(test1, file="../estimated_par/test1")write.table(test1$best_pars,"../estimated_par/par_herbivores.txt")
+rm(list=ls())source("4-init_params.R")var = list(t0 = "t0", t1 = "t1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")#
+# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")#
+source("3-transition_model.R")source("fit_fonctions/anneal_ibou.R")test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 10000, initial_temp = 0.5, note = "", progress = TRUE, display=FALSE, support = FALSE)#par = test1$best_parssave(test1, file="../estimated_par/test1")write.table(test1$best_pars,"../estimated_par/par_herbivores.txt")
+attach(par)
+attach(data)
+lik = numeric(length(t0))#
+    logit_alphab 	= ab0 + ab1*ENV1 + ab2*ENV1^2 + ab3*ENV2 + ab4*ENV2^2    logit_alphat 	= at0 + at1*ENV1 + at2*ENV1^2 + at3*ENV2 + at4*ENV2^2    logit_betab 	= bb0 + bb1*ENV1 + bb2*ENV1^2 + bb3*ENV2 + bb4*ENV2^2    logit_betat 	= bt0 + bt1*ENV1 + bt2*ENV1^2 + bt3*ENV2 + bt4*ENV2^2    logit_thetab	= tb0 + tb1*ENV1 + tb2*ENV1^2 + tb3*ENV2 + tb4*ENV2^2    logit_thetat	= tt0 + tt1*ENV1 + tt2*ENV1^2 + tt3*ENV2 + tt4*ENV2^2    logit_eps 	= e0  + e1*ENV1  + e2*ENV1^2 + e3*ENV2 + e4*ENV2^2    alphab = exp(logit_alphab)/(1+exp(logit_alphab))    alphat = exp(logit_alphat)/(1+exp(logit_alphat))    betab = exp(logit_betab)/(1+exp(logit_betab))    betat = exp(logit_betat)/(1+exp(logit_betat))    thetab = exp(logit_thetab)/(1+exp(logit_thetab))    thetat = exp(logit_thetat)/(1+exp(logit_thetat))    eps = exp(logit_eps)/(1+exp(logit_eps))    par_h = herbivory(alphat, alphab, betat, betab, thetat, thetab, ET, EB,EM, Hv, Ha)
+par_h
+alphab
+par_h$alphat
+alphab
+par_h$alphab
+with(par_h,{	# Compute the likelihood of observations	lik[t0 == "B" & t1 == "M"] = (betat_h*(ET+EM))[t0 == "B" & t1 == "M"] 	lik[t0 == "B" & t1 == "R"] = eps[t0 == "B" & t1 == "R"] 		lik[t0 == "B" & t1 == "B"] = (1 - eps - betat_h*(ET+EM))[t0 == "B" & t1 == "B"]	lik[t0 == "T" & t1 == "T"] = (1 - eps - betab_h*(EB+EM))[t0 == "T" & t1 == "T"] 		lik[t0 == "T" & t1 == "M"] = (betab_h*(ET+EM))[t0 == "T" & t1 == "M"] 				lik[t0 == "T" & t1 == "R"] = eps[t0 == "T" & t1 == "R"] 		#
+	lik[t0 == "M" & t1 == "B"] = thetab_h[t0 == "M" & t1 == "B"]		lik[t0 == "M" & t1 == "T"] = thetat_h[t0 == "M" & t1 == "T"] 		lik[t0 == "M" & t1 == "M"] = (1 - eps - thetab_h - thetat_h)[t0 == "M" & t1 == "M"] 				lik[t0 == "M" & t1 == "R"] = eps[t0 == "M" & t1 == "R"] #
+	phib = alphab_h*(EM + EB)*(1-alphat_h*(ET+EM))	phit = alphat_h*(EM + ET)*(1-alphab_h*(EB+EM))	phim = alphab_h*(EM + EB)*alphat_h*(EM + ET)	lik[t0 == "R" & t1 == "B"] = phib[t0 == "R" & t1 == "B"] 		lik[t0 == "R" & t1 == "T"] = phit[t0 == "R" & t1 == "T"]		lik[t0 == "R" & t1 == "M"] = phim[t0 == "R" & t1 == "M"] 				lik[t0 == "R" & t1 == "R"] = (1 - phib - phit - phim)[t0 == "R" & t1 == "R"] 	if(sum(lik==0)>0) cat("lik=0\n")    })
+lik
+lik[t0 == "B" & t1 == "M"] = (betat_h*(ET+EM))[t0 == "B" & t1 == "M"]
+(par_h$betat_h*(ET+EM))[t0 == "B" & t1 == "M"]
+rm(list=ls())source("4-init_params.R")var = list(t0 = "t0", t1 = "t1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", Ha = "Ha", Hv = "Hv")#
+# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")#
+source("3-transition_model.R")source("fit_fonctions/anneal_ibou.R")test1= anneal(model = model, par = par, var = var, source_data = data, dep_var = "t1", pdf = PDF, par_initStep = par_initStep, par_testFct = testBounds, max_iter = 10000, initial_temp = 0.5, note = "", progress = TRUE, display=FALSE, support = FALSE)#par = test1$best_parssave(test1, file="../estimated_par/test1")write.table(test1$best_pars,"../estimated_par/par_herbivores.txt")
+warnings()
+Warnings()
+warnings()
+getwd()
+setwd('/Users/isabelle/Documents/RESEARCH/ANALYSES/2014_veget_herbi_dyn/stateModel/fit_SteveModel/scripts')
+testBounds, max_iter = 10000, initial_temp = 0.5, note = "", progress = TRUE, display=FALSE, support = FALSE)#par = test1$best_parssave(test1, file="../estimated_par/test1")write.table(test1$best_pars,"../estimated_par/par_herbivores.txt")
+save(test1, file="../estimated_params/test1")
+write.table(test1$best_pars,"../estimated_params/par_herbivores.txt")
+test1$best+pars
+test1$best_pars
