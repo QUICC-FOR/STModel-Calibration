@@ -227,14 +227,23 @@ function(par, data)
     eps = exp(logit_eps)/(1+exp(logit_eps))
 
     
-    if(sum(alphab==0)>0 | sum(alphab==1)>0 ) res=FALSE
-    if(sum(alphat==0)>0 | sum(alphat==1)>0 ) res=FALSE
-    if(sum(betab==0)>0 | sum(betab==1)>0 ) res=FALSE
-    if(sum(betat==0)>0 | sum(betat==1)>0 ) res=FALSE
-    if(sum(thetab==0)>0 | sum(thetab==1)>0 ) res=FALSE
-    if(sum(thetat==0)>0 | sum(thetat==1)>0 ) res=FALSE
-    if(sum(eps==0)>0 | sum(eps==1)>0 ) res=FALSE    
+#    if(sum(alphab==0)>0 | sum(alphab==1)>0 ) res=FALSE
+#    if(sum(alphat==0)>0 | sum(alphat==1)>0 ) res=FALSE
+#    if(sum(betab==0)>0 | sum(betab==1)>0 ) res=FALSE
+#    if(sum(betat==0)>0 | sum(betat==1)>0 ) res=FALSE
+#    if(sum(thetab==0)>0 | sum(thetab==1)>0 ) res=FALSE
+#    if(sum(thetat==0)>0 | sum(thetat==1)>0 ) res=FALSE
+#    if(sum(eps==0)>0 | sum(eps==1)>0 ) res=FALSE   
+
+# conditions for positive probabilities of staying in one state 
+# (e.g. (1-eps-thetat)>1)
+    condition1 = (eps + betat*(ET+EM)) < 1
+    condition2 = (eps + betab*(EB+EM)) < 1
+    condition3 = (eps + thetat + thetab) < 1
+    condition4 = (alphab*(EB+EM) + alphat*(ET+EM) + alphab*(EB+EM)*alphat*(ET+EM)) < 1
     
+    if(sum(condition1, condition2, condition3, condition4)>0) res=FALSE
+     
 return(res)
 }
 
