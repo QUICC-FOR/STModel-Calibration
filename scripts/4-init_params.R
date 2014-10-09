@@ -237,10 +237,10 @@ function(par, data)
 
 # conditions for positive probabilities of staying in one state 
 # (e.g. (1-eps-thetat)>1)
-    condition1 = (eps + betat*(ET+EM)) < 1
-    condition2 = (eps + betab*(EB+EM)) < 1
-    condition3 = (eps + thetat + thetab) < 1
-    condition4 = (alphab*(EB+EM) + alphat*(ET+EM) + alphab*(EB+EM)*alphat*(ET+EM)) < 1
+    condition1 = (eps + betat*(ET+EM)) > 1
+    condition2 = (eps + betab*(EB+EM)) > 1
+    condition3 = (eps + thetat + thetab) > 1
+    condition4 = (alphab*(EB+EM) + alphat*(ET+EM) + alphab*(EB+EM)*alphat*(ET+EM)) > 1
     
     if(sum(condition1, condition2, condition3, condition4)>0) res=FALSE
      
