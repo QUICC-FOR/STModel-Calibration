@@ -49,7 +49,7 @@ table(dat$class_final)
 dat = dat[-which(dat$class_final=="Unclass"),]
 dim(dat)
 
-#write.table(dat,file="../data/data_allyears_RBTM.txt")
+write.table(dat,file="../data/data_allyears_RBTM.txt")
 
 
 ###################################################################
