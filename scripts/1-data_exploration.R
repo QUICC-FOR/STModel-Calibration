@@ -49,7 +49,6 @@ table(dat$class_final)
 dat = dat[-which(dat$class_final=="Unclass"),]
 dim(dat)
 
-write.table(dat,file="../data/data_allyears_RBTM.txt")
 
 
 ###################################################################
@@ -185,7 +184,8 @@ dim(pair_dat1)
 ##-----------
 
 ## Conserve all plots with drainage 20 to 40
-dat2 <- dat1[which(dat1$drainage>=20 & dat1$drainage<=40),]
+# !!! there are lots of NA, we keep them
+dat2 <- dat1[-which(dat1$drainage<20 | dat1$drainage>=40),]
 
 liste =split(dat2, dat2$id_plot)
 nreleves = unlist(lapply(liste, nrow))
@@ -204,7 +204,14 @@ dim(pair_dat2)
 
 
 #---------------
-#save(pair_dat, pair_dat0, pair_dat1, pair_dat2, file = "pair_dat.RData")
+
+write.table(dat0,file="../data/data_allyears.txt")
+write.table(pair_dat0,file="../data/data_pairs.txt")
+write.table(dat2,file="../data/data_allyears_filter.txt")
+write.table(pair_dat2,file="../data/data_pairs_filter.txt")
+
+
+save(pair_dat, pair_dat0, pair_dat1, pair_dat2, file = "pair_dat.RData")
 load("pair_dat.RData")
 ###################################################################
 #####    Analyses    GRAPHS                                      #######
@@ -376,32 +383,32 @@ return(list(mod = stepMod, vars = vars, effect = effect, pval = pval, R2 = R2, A
 
 
 #####    multimodal                            #######
-library(nnet)
-
-modelTransition <- function(st0 , pair.dat)
-{
-pair.dat = pair_dat0
-st0 = c("T")
-
-datst0 = pair.dat[pair.dat$st0%in%st0, ]
-
-mod = multinom(st1 ~ annual_mean_temp + I(scale(annual_mean_temp)^2) + I(scale(annual_mean_temp)^3) + annual_pp + I(scale(annual_pp)^2) + I(scale(annual_pp)^3) + annual_mean_temp:annual_pp, data =datst0)
-
-modNull = multinom(st1 ~ 1, data = datst0)
-stepMod  = stepAIC(mod)
-print(summary(stepMod))
-pred = predict(stepMod,new=datst0,"probs", OOB=TRUE)
-(score = HK(pred, datst0$st1)) 
-
-temp = seq(min(datst0$annual_mean_temp), max(datst0$annual_mean_temp), length.out = 50)
-pp = seq(min(datst0$annual_pp), max(datst0$annual_pp), length.out = 50)
-prob = predict(stepMod, newdata = data.frame(expand.grid(annual_mean_temp = temp, annual_pp = pp)), type = "response")
-
-#persp(x=temp, y=pp, z = matrix(prob, ncol = length(pp), nrow = length(temp)),xlab = "Temperature", ylab = "Precipitations", zlab = "Probability")
-image(x=temp, y=pp, z = matrix(prob, ncol = length(pp), nrow = length(temp)),xlab = "Temperature", ylab = "Precipitations", col = pal(12), main = paste(st0, "->", st1))
-contour(x=temp, y=pp, z = matrix(prob, ncol = length(pp), nrow = length(temp)), add=TRUE)
-return(stepMod)
-}
+#library(nnet)
+#
+#modelTransition <- function(st0 , pair.dat)
+#{
+#pair.dat = pair_dat0
+#st0 = c("T")
+#
+#datst0 = pair.dat[pair.dat$st0%in%st0, ]
+#
+#mod = multinom(st1 ~ annual_mean_temp + I(scale(annual_mean_temp)^2) + I(scale(annual_mean_temp)^3) + annual_pp + I(scale(annual_pp)^2) + I(scale(annual_pp)^3) + annual_mean_temp:annual_pp, data =datst0)
+#
+#modNull = multinom(st1 ~ 1, data = datst0)
+#stepMod  = stepAIC(mod)
+#print(summary(stepMod))
+#pred = predict(stepMod,new=datst0,"probs", OOB=TRUE)
+#(score = HK(pred, datst0$st1)) 
+#
+#temp = seq(min(datst0$annual_mean_temp), max(datst0$annual_mean_temp), length.out = 50)
+#pp = seq(min(datst0$annual_pp), max(datst0$annual_pp), length.out = 50)
+#prob = predict(stepMod, newdata = data.frame(expand.grid(annual_mean_temp = temp, annual_pp = pp)), type = "response")
+#
+##persp(x=temp, y=pp, z = matrix(prob, ncol = length(pp), nrow = length(temp)),xlab = "Temperature", ylab = "Precipitations", zlab = "Probability")
+#image(x=temp, y=pp, z = matrix(prob, ncol = length(pp), nrow = length(temp)),xlab = "Temperature", ylab = "Precipitations", col = pal(12), main = paste(st0, "->", st1))
+#contour(x=temp, y=pp, z = matrix(prob, ncol = length(pp), nrow = length(temp)), add=TRUE)
+#return(stepMod)
+#}
 
 
 ###################################################################
@@ -559,7 +566,6 @@ fig_all_glm(pair_dat2, "_filterHarvest+Drainage_H", modelTransition = modelTrans
 
 
 #-------------------------------------------------------------------------------#-------------------------------------------------------------------------------
-library(nnet)
 
 
 
@@ -610,6 +616,5 @@ function (Pred, Obs)
 
     return(HK)
 }
-
 
 

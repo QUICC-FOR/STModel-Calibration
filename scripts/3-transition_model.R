@@ -5,14 +5,14 @@
 
 model = function(st0,st1, # vegetation states
 ET,EB,EM,
-ENV1, ENV2,
+ENV1, ENV2, itime, 
 at0,at1,at2,at3,at4,at5,at6,
 ab0,ab1,ab2,ab3,ab4,ab5,ab6,
 bt0,bt1,bt2,bt3,bt4,bt5,bt6,
 bb0,bb1,bb2,bb3,bb4,bb5,bb6,
 tt0,tt1,tt2,tt3,tt4,tt5,tt6,
 tb0,tb1,tb2,tb3,tb4,tb5,tb6,
-e0,e1,e2,e3,e4,e5,e6) 
+e0,e1,e2,e3,e4,e5,e6, e7) 
 {
 	lik = numeric(length(st0))
 
@@ -22,15 +22,18 @@ e0,e1,e2,e3,e4,e5,e6)
     logit_betat 	= bt0 + bt1*ENV1 + bt2*ENV2 + bt3*ENV1^2 + bt4*ENV2^2 + bt5*ENV1^3 + bt6*ENV2^3
     logit_thetab	= tb0 + tb1*ENV1 + tb2*ENV2 + tb3*ENV1^2 + tb4*ENV2^2 + tb5*ENV1^3 + tb6*ENV2^3
     logit_thetat	= tt0 + tt1*ENV1 + tt2*ENV2 + tt3*ENV1^2 + tt4*ENV2^2 + tt5*ENV1^3 + tt6*ENV2^3
-    logit_eps 	= e0  + e1*ENV1 + e2*ENV2  + e3*ENV1^2 + e4*ENV2^2 + e5*ENV1^3 + e6*ENV2^3
+    logit_eps 	= e0  + e1*ENV1 + e2*ENV2  + e3*ENV1^2 + e4*ENV2^2 + e5*ENV1^3 + e6*ENV2^3 + e7*EB
 
-    alphab = exp(logit_alphab)/(1+exp(logit_alphab))
-    alphat = exp(logit_alphat)/(1+exp(logit_alphat))
-    betab = exp(logit_betab)/(1+exp(logit_betab))
-    betat = exp(logit_betat)/(1+exp(logit_betat))
-    thetab = exp(logit_thetab)/(1+exp(logit_thetab))
-    thetat = exp(logit_thetat)/(1+exp(logit_thetat))
-    eps = exp(logit_eps)/(1+exp(logit_eps))
+    # compute transitions accounting for interval time and logit transformation
+    alphab = 1 - (1 - exp(logit_alphab)/(1+exp(logit_alphab)))^itime
+    alphat = 1 - (1 - exp(logit_alphat)/(1+exp(logit_alphat)))^itime
+    betab = 1 - (1 - exp(logit_betab)/(1+exp(logit_betab)))^itime
+    betat = 1 - (1 - exp(logit_betat)/(1+exp(logit_betat)))^itime
+    thetab = 1 - (1 - exp(logit_thetab)/(1+exp(logit_thetab)))^itime
+    thetat = 1 - (1 - exp(logit_thetat)/(1+exp(logit_thetat)))^itime
+    eps = 1 - (1 - exp(logit_eps)/(1+exp(logit_eps)))^itime
+    
+
     
 	# Compute the likelihood of observations
 	lik[st0 == "B" & st1 == "M"] = (betat*(ET+EM))[st0 == "B" & st1 == "M"] 
