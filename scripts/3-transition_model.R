@@ -33,7 +33,6 @@ e0,e1,e2,e3,e4,e5,e6, e7)
     thetat = 1 - (1 - exp(logit_thetat)/(1+exp(logit_thetat)))^itime
     eps = 1 - (1 - exp(logit_eps)/(1+exp(logit_eps)))^itime
     
-
     
 	# Compute the likelihood of observations
 	lik[st0 == "B" & st1 == "M"] = (betat*(ET+EM))[st0 == "B" & st1 == "M"] 
@@ -56,10 +55,10 @@ e0,e1,e2,e3,e4,e5,e6, e7)
 	lik[st0 == "R" & st1 == "T"] = phit[st0 == "R" & st1 == "T"]	
 	lik[st0 == "R" & st1 == "M"] = phim[st0 == "R" & st1 == "M"] 			
 	lik[st0 == "R" & st1 == "R"] = (1 - phib - phit - phim)[st0 == "R" & st1 == "R"] 
-#    lik[lik==0]=NA
-#	if(sum(lik==0)>0) cat("lik=0\n")
-#	lik[lik==0] = 1/1e99
-    
+
+    # lik might be equal = 0!   
+    # for instance when neighbor (seeds) = 0
+    lik[lik == 0] = .Machine$double.xmin
 	return(lik)
 }
 
