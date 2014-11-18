@@ -3,17 +3,68 @@
 # use logits
 
 
-model = function(st0,st1, # vegetation states
-ET,EB,EM,
-ENV1, ENV2, itime, 
-at0,at1,at2,at3,at4,at5,at6,
-ab0,ab1,ab2,ab3,ab4,ab5,ab6,
-bt0,bt1,bt2,bt3,bt4,bt5,bt6,
-bb0,bb1,bb2,bb3,bb4,bb5,bb6,
-tt0,tt1,tt2,tt3,tt4,tt5,tt6,
-tb0,tb1,tb2,tb3,tb4,tb5,tb6,
-e0,e1,e2,e3,e4,e5,e6, e7) 
+model = function(params, dat) 
 {
+    st0 = dat$st0
+    st1 = dat$st1
+    ET = dat$ET
+    EB = dat$EB
+    EM = dat$EM
+    ENV1 = dat$ENV1
+    ENV2 = dat$ENV2
+    itime = dat$itime
+
+    ab0 = params[1]
+    ab1 = params[2]
+    ab2 = params[3]
+    ab3 = params[4]
+    ab4 = params[5]
+    ab5 = params[6]
+    ab6 = params[7]
+    at0 = params[8]
+    at1 = params[9]
+    at2 = params[10]
+    at3 = params[11]
+    at4 = params[12]
+    at5 = params[13]
+    at6 = params[14]
+    bb0 = params[15]
+    bb1 = params[16]
+    bb2 = params[17]
+    bb3 = params[18]
+    bb4 = params[19]
+    bb5 = params[20]
+    bb6 = params[21]
+    bt0 = params[22]
+    bt1 = params[23]
+    bt2 = params[24]
+    bt3 = params[25]
+    bt4 = params[26]
+    bt5 = params[27]
+    bt6 = params[28]
+    tt0 = params[29]
+    tt1 = params[30]
+    tt2 = params[31]
+    tt3 = params[32]
+    tt4 = params[33]
+    tt5 = params[34]
+    tt6 = params[35]
+    tb0 = params[36]
+    tb1 = params[37]
+    tb2 = params[38]
+    tb3 = params[39]
+    tb4 = params[40]
+    tb5 = params[41]
+    tb6 = params[42]
+    e0 = params[43]
+    e1 = params[44]
+    e2 = params[45]
+    e3 = params[46]
+    e4 = params[47]
+    e5 = params[48]
+    e6 = params[49]
+    e7 = params[50]
+    
 	lik = numeric(length(st0))
 
     logit_alphab 	= ab0 + ab1*ENV1 + ab2*ENV2 + ab3*ENV1^2 + ab4*ENV2^2 + ab5*ENV1^3 + ab6*ENV2^3
@@ -59,12 +110,9 @@ e0,e1,e2,e3,e4,e5,e6, e7)
     # lik might be equal = 0!   
     # for instance when neighbor (seeds) = 0
     lik[lik == 0] = .Machine$double.xmin
-	return(lik)
+	return(-sum(log(lik)))
 }
 
-#-----------------------------------------------------------------------------
-
-PDF = function(st1,lik) log(lik)
 
 #-----------------------------------------------------------------------------
 

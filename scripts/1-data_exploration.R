@@ -67,7 +67,11 @@ prwise  <- function(x){
     clim = c(which(colnames(x) == "annual_pp") ,which(colnames(x) == "annual_mean_temp"))
         
     x = x[order(x$yr_measured),]
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> adaptation to GenSA
     for (i in 1:(nrow(x)-1))
     {
     yr0 = x$yr_measured[i]
