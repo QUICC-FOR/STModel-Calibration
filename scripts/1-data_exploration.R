@@ -93,30 +93,6 @@ pair_dat = (do.call(rbind.data.frame, pair_dat))
 dim(pair_dat)
 head(pair_dat)
 
-# ------------------- herbivores
-
-
-moose = read.table("../data/densities_moose.txt", h=T, sep="\t")
-colnames(moose) = c("NO_ZONE"     ,  "id_plot", "moose")
-head(moose)
-dim(moose)
-
-deer = read.table("../data/densities_deer.txt", h=T, sep="\t")
-colnames(deer) = c("NO_ZONE"     ,  "id_plot", "deer")
-head(deer)
-dim(deer)
-
-herbivores = merge(moose[,-1], deer[,-1], by = 'id_plot')
-dim(herbivores)
-head(herbivores)
-herbivores[is.na(herbivores$moose),]
-herbivores[is.na(herbivores$deer),]
-
-pair_datH = merge(pair_dat, herbivores, by.x ="idplot", by.y = "id_plot")
-pair_datH = unique(pair_datH)
-head(pair_dat)
-dim(pair_datH)
-
 
 ###################################################################
 #####    filtres                            #######
@@ -137,11 +113,6 @@ pair_dat0 = (do.call(rbind.data.frame, pair_dat0))
 
 dim(pair_dat0)
 head(pair_dat0)
-
-pair_dat0 = merge(pair_dat0, herbivores, by.x ="idplot", by.y = "id_plot")
-head(pair_dat0)
-dim(pair_dat0)
-
 
 
 ## filtre 1
@@ -175,9 +146,6 @@ pair_dat1 = (do.call(rbind.data.frame, pair_dat1))
 head(pair_dat1)
 dim(pair_dat1)
 
-pair_dat1 = merge(pair_dat1, herbivores, by.x ="idplot", by.y = "id_plot")
-head(pair_dat1)
-dim(pair_dat1)
 
 
 ## filtre 2
@@ -198,11 +166,6 @@ pair_dat2 = (do.call(rbind.data.frame, pair_dat2))
 dim(pair_dat2)
 head(pair_dat2)
 
-pair_dat2 = merge(pair_dat2, herbivores, by.x ="idplot", by.y = "id_plot")
-head(pair_dat2)
-dim(pair_dat2)
-
-
 #---------------
 
 write.table(dat0,file="../data/data_allyears.txt")
@@ -211,8 +174,8 @@ write.table(dat2,file="../data/data_allyears_filter.txt")
 write.table(pair_dat2,file="../data/data_pairs_filter.txt")
 
 
-save(pair_dat, pair_dat0, pair_dat1, pair_dat2, file = "pair_dat.RData")
-load("pair_dat.RData")
+#save(pair_dat, pair_dat0, pair_dat1, pair_dat2, file = "pair_dat.RData")
+#load("pair_dat.RData")
 ###################################################################
 #####    Analyses    GRAPHS                                      #######
 ###################################################################
@@ -348,68 +311,6 @@ return(list(mod = stepMod, vars = vars,effect = effect, pval = pval , R2 = R2, A
 
 
 
-#####    glm climate + herbivores                            #######
-
-modelTransition_herbivores <- function(st0 , st1, pair.dat, name = NULL)
-{
-
-datst0 = pair.dat[pair.dat$st0%in%st0, ]
-datst0$transition = ifelse(datst0$st1 %in% st1, 1, 0)
-
-mod = glm(transition ~ annual_mean_temp + I(scale(annual_mean_temp)^2) + I(scale(annual_mean_temp)^3) + annual_pp + I(scale(annual_pp)^2) + I(scale(annual_pp)^3) + annual_mean_temp:annual_pp + deer + moose + deer:annual_pp + moose:annual_pp + moose:annual_mean_temp + deer:annual_mean_temp, family = "binomial", data =datst0)
-stepMod  = stepAIC(mod)
-
-
-pred = predict(stepMod,new=datst0,"response")
-# overall performance
-R2 = NagelkerkeR2(stepMod)$R2
-#discrimination
-perf = performance(prediction(pred, datst0$transition), "auc")
-AUC = perf@y.values[[1]]
-
-## selected vars
-coeff = summary(stepMod)$coefficients
-vars = rownames(coeff)[-1]
-effect = coeff[-1,1]
-pval = coeff[-1,4]
-
-if(is.null(name)) name = paste(st0, st1, sep = "->")
-
-return(list(mod = stepMod, vars = vars, effect = effect, pval = pval, R2 = R2, AUC = AUC, ranges = apply(datst0[unlist(lapply(1:ncol(datst0), function(x)is.numeric(datst0[,x])))], 2, range), name = name))
-}
-
-#test
-#mod = modelTransition_herbivores("M", c("T"), pair.dat = pair_dat0)
-
-
-#####    multimodal                            #######
-#library(nnet)
-#
-#modelTransition <- function(st0 , pair.dat)
-#{
-#pair.dat = pair_dat0
-#st0 = c("T")
-#
-#datst0 = pair.dat[pair.dat$st0%in%st0, ]
-#
-#mod = multinom(st1 ~ annual_mean_temp + I(scale(annual_mean_temp)^2) + I(scale(annual_mean_temp)^3) + annual_pp + I(scale(annual_pp)^2) + I(scale(annual_pp)^3) + annual_mean_temp:annual_pp, data =datst0)
-#
-#modNull = multinom(st1 ~ 1, data = datst0)
-#stepMod  = stepAIC(mod)
-#print(summary(stepMod))
-#pred = predict(stepMod,new=datst0,"probs", OOB=TRUE)
-#(score = HK(pred, datst0$st1)) 
-#
-#temp = seq(min(datst0$annual_mean_temp), max(datst0$annual_mean_temp), length.out = 50)
-#pp = seq(min(datst0$annual_pp), max(datst0$annual_pp), length.out = 50)
-#prob = predict(stepMod, newdata = data.frame(expand.grid(annual_mean_temp = temp, annual_pp = pp)), type = "response")
-#
-##persp(x=temp, y=pp, z = matrix(prob, ncol = length(pp), nrow = length(temp)),xlab = "Temperature", ylab = "Precipitations", zlab = "Probability")
-#image(x=temp, y=pp, z = matrix(prob, ncol = length(pp), nrow = length(temp)),xlab = "Temperature", ylab = "Precipitations", col = pal(12), main = paste(st0, "->", st1))
-#contour(x=temp, y=pp, z = matrix(prob, ncol = length(pp), nrow = length(temp)), add=TRUE)
-#return(stepMod)
-#}
-
 
 ###################################################################
 #####    figures                            #######
@@ -453,44 +354,12 @@ text(c(v+4, v+6), rep(n+1-i, 2), label = c(round(mod$R2,2), round(mod$AUC,2)))
 }
 
 
-
-stats.herbivores <- function(model.list)
-{
-
-
-vars = c("annual_mean_temp", "I(scale(annual_mean_temp)^2)", "I(scale(annual_mean_temp)^3)", "annual_pp" , "I(scale(annual_pp)^2)",  "I(scale(annual_pp)^3)" , "annual_mean_temp:annual_pp", "deer", "moose", "annual_mean_temp:deer", "annual_mean_temp:moose", "annual_pp:deer", "annual_pp:moose")
-
-n = length(model.list)
-v = length(vars)
-
-plot(x = c(0,v+8), y  = c(0,n+2)*1.5, type = "n", main = "Summary", xaxt = "n", yaxt = "n", xlab = "", ylab = "", bty = "n")
-text(1, (n+1)*1.5, label = "model")
-text(3:(2+v), 1.5*rep(n+1, v), label = c("T", "T2", "T3","P", "P2", "P3", "TP", "d", "m", "dT", "mT", "dP", "mP"))
-text(c(v+4, v+6), 1.5*rep(n+1, 2), label = c("R2", "AUC"))
-
-
-for (i in 1:n)
-{
-mod = model.list[[i]]
-mod.name = names(model.list)[i]
-text(1, 1.5*(n+1-i), label = mod.name)
-for (term in 1:v)
-{
-if(vars[term] %in% mod$vars) text(2+term, 1.5*(n+1-i), label = paste( "(",ifelse(mod$effect[vars[term]]>0, "+", "-"),")", pval.star(mod$pval[vars[term]]), sep=""), cex = .6)
-}
-
-text(c(v+4, v+6), 1.5*rep(n+1-i, 2), label = c(round(mod$R2,2), round(mod$AUC,2)))
-}
-
-}
-
-
 fig_glm <- function(mod)
 {
 
 temp = seq(as.numeric(mod$ranges[1, "annual_mean_temp"]), as.numeric(mod$ranges[2, "annual_mean_temp"]), length.out = 50)
 pp = seq(as.numeric(mod$ranges[1, "annual_pp"]), as.numeric(mod$ranges[2, "annual_pp"]), length.out = 50)
-prob = predict(mod$mod, newdata = data.frame(expand.grid(annual_mean_temp = temp, annual_pp = pp), deer = mean(as.numeric(mod$ranges[, "deer"])), moose = mean(as.numeric(mod$ranges[, "moose"])) ), type = "response")
+prob = predict(mod$mod, newdata = data.frame(expand.grid(annual_mean_temp = temp, annual_pp = pp) ), type = "response")
 
 image(x=temp, y=pp, z = matrix(prob, ncol = length(pp), nrow = length(temp)),xlab = "Temperature", ylab = "Precipitations", col = pal(12), main = mod$name)
 contour(x=temp, y=pp, z = matrix(prob, ncol = length(pp), nrow = length(temp)), add=TRUE)
@@ -555,66 +424,15 @@ dev.off()
 
 
 fig_all_glm(pair_dat0, "", modelTransition = modelTransition_climate)
-fig_all_glm(pair_dat0, "_H", modelTransition = modelTransition_herbivores, stats.fct = stats.herbivores)
+
 
 
 fig_all_glm(pair_dat1, "_filterHarvest", modelTransition = modelTransition_climate)
 fig_all_glm(pair_dat2, "_filterHarvest+Drainage", modelTransition = modelTransition_climate)
 
-fig_all_glm(pair_dat1, "_filterHarvest_H", modelTransition = modelTransition_herbivores, stats.fct = stats.herbivores)
-fig_all_glm(pair_dat2, "_filterHarvest+Drainage_H", modelTransition = modelTransition_herbivores, stats.fct = stats.herbivores)
 
 
 #-------------------------------------------------------------------------------#-------------------------------------------------------------------------------
 
-
-
-
-#------------------------------------------------------------------------------------------
-# evaluation functions
-#------------------------------------------------------------------------------------------
-#True Skill Statistic
-TSS <- 
-function (Pred, Obs)
-{ 
- 	Misc = unclass(table(Pred, Obs))
- 
-    if (dim(Misc)[1] == 1) {
-        if (row.names(Misc)[1] == "FALSE") 
-            Misc <- rbind(Misc, c(0, 0))
-        else {
-            a <- Misc
-            Misc <- c(0, 0)
-            Misc <- rbind(Misc, a)
-        }
-    }
-    n <- sum(Misc)
-    d <- Misc[1, 1]
-    c <- Misc[1, 2]
-    b <- Misc[2, 1]
-    a <- Misc[2, 2]
-    sens <- a/(a + c)
-    spec <- d/(b + d)
-    K <- (sens + spec) - 1
-    return(K)
-}
-
-#Hanssen-Kuipers score
-HK <- 
-function (Pred, Obs) 
-{
-	Misc = table(Pred, Obs)
-	
-    if (nrow(Misc)!=ncol(Misc)) stop("wrong misclassification table")
-    Misc <- unclass(Misc)
-    k  <- ncol(Misc)
-    Nobs <- apply(Misc, 2, sum)
-    Npred <- apply(Misc, 1, sum)
-    N <- sum(Nobs)
-  
-   HK <- (sum(diag(Misc))/N - sum(Nobs*Npred)/N/N ) / ( 1 - sum(Nobs*Nobs)/N/N )
-
-    return(HK)
-}
 
 
