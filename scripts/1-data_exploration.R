@@ -66,6 +66,7 @@ prwise  <- function(x){
     #climatic columns
     clim = c(which(colnames(x) == "annual_pp") ,which(colnames(x) == "annual_mean_temp"))
         
+    x = x[order(x$yr_measured),]
 
     for (i in 1:(nrow(x)-1))
     {
@@ -93,7 +94,8 @@ pair_dat = (do.call(rbind.data.frame, pair_dat))
 dim(pair_dat)
 head(pair_dat)
 
-
+#check order
+sum(pair_dat$yr0>pair_dat$yr1)
 ###################################################################
 #####    filtres                            #######
 ###################################################################
@@ -278,13 +280,16 @@ pal = colorRampPalette(c("lightblue", "yellow", "orange"), space = "rgb")
 
 modelTransition_climate <- function(st0 , st1, pair.dat, name = NULL)
 {
+print(st0)
+print("->")
+print(st1)
 
 datst0 = pair.dat[pair.dat$st0%in%st0, ]
 datst0$transition = ifelse(datst0$st1 %in% st1, 1, 0)
 
 mod = glm(transition ~ annual_mean_temp + I(scale(annual_mean_temp)^2) + I(scale(annual_mean_temp)^3) + annual_pp + I(scale(annual_pp)^2) + I(scale(annual_pp)^3) + annual_mean_temp:annual_pp, family = "binomial", data =datst0)
 stepMod  = stepAIC(mod)
-print(summary(stepMod))
+#print(summary(stepMod))
 
 
 pred = predict(stepMod,new=datst0,"response")
@@ -300,6 +305,7 @@ coeff = summary(stepMod)$coefficients
 vars = rownames(coeff)[-1]
 effect = coeff[-1,1]
 pval = coeff[-1,4]
+print(pval)
 
 if(is.null(name)) name = paste(st0, st1, sep = "->")
 
@@ -343,9 +349,21 @@ for (i in 1:n)
 mod = model.list[[i]]
 mod.name = names(model.list)[i]
 text(1, n+1-i, label = mod.name)
-for (term in 1:v)
+
+if(length(mod$vars)!=0)
 {
-if(vars[term] %in% mod$vars) text(2+term, (n+1-i), label = paste( "(",ifelse(mod$effect[vars[term]]>0, "+", "-"),")", pval.star(mod$pval[vars[term]]), sep=""), cex = .6)
+   if(length(mod$vars)==1)
+   {
+   term = which(vars %in% mod$vars)
+    text(2+term, (n+1-i), label = paste("(",ifelse(mod$effect>0, "+", "-"),")", pval.star(mod$pval), sep=""), cex = .6)
+   } else {
+   for (term in 1:v)
+     {
+
+   if(vars[term] %in% mod$vars) text(2+term, (n+1-i), label = paste("(",ifelse(mod$effect[vars[term]]>0, "+", "-"),")", pval.star(mod$pval[vars[term]]), sep=""), cex = .6)
+
+     }
+   }
 }
 
 text(c(v+4, v+6), rep(n+1-i, 2), label = c(round(mod$R2,2), round(mod$AUC,2)))
@@ -428,6 +446,8 @@ fig_all_glm(pair_dat0, "", modelTransition = modelTransition_climate)
 
 
 fig_all_glm(pair_dat1, "_filterHarvest", modelTransition = modelTransition_climate)
+
+
 fig_all_glm(pair_dat2, "_filterHarvest+Drainage", modelTransition = modelTransition_climate)
 
 
