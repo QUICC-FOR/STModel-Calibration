@@ -56,6 +56,10 @@ e0,e1,e2,e3,e4,e5,e6, e7)
 	lik[st0 == "R" & st1 == "M"] = phim[st0 == "R" & st1 == "M"] 			
 	lik[st0 == "R" & st1 == "R"] = (1 - phib - phit - phim)[st0 == "R" & st1 == "R"] 
 
+    # lik might be <0 !!!!
+    # for T->T, M->M, B->B and R->R transitions
+#    lik[lik<0] = .Machine$double.xmin
+    
     # lik might be equal = 0!   
     # for instance when neighbor (seeds) = 0
     lik[lik == 0] = .Machine$double.xmin
