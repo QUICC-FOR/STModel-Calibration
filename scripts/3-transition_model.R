@@ -76,14 +76,20 @@ model = function(params, dat)
     logit_eps 	= e0  + e1*ENV1 + e2*ENV2  + e3*ENV1^2 + e4*ENV2^2 + e5*ENV1^3 + e6*ENV2^3 + e7*EB
 
     # compute transitions accounting for interval time and logit transformation
-    alphab = 1 - (1 - exp(logit_alphab)/(1+exp(logit_alphab)))^itime
-    alphat = 1 - (1 - exp(logit_alphat)/(1+exp(logit_alphat)))^itime
-    betab = 1 - (1 - exp(logit_betab)/(1+exp(logit_betab)))^itime
-    betat = 1 - (1 - exp(logit_betat)/(1+exp(logit_betat)))^itime
-    thetab = 1 - (1 - exp(logit_thetab)/(1+exp(logit_thetab)))^itime
-    thetat = 1 - (1 - exp(logit_thetat)/(1+exp(logit_thetat)))^itime
-    eps = 1 - (1 - exp(logit_eps)/(1+exp(logit_eps)))^itime
-    
+    # ! might be NaN because exp(bigNumber) 
+    annualProba <- function(x, itime)
+    {
+    expx = ifelse(exp(x)==Inf, .Machine$double.xmax, exp(x))
+    1 - (1 - expx/(1+expx))^itime
+    }
+    alphab = annualProba(logit_alphab, itime)
+    alphat = annualProba(logit_alphat, itime)
+    betab = annualProba(logit_betab, itime)
+    betat = annualProba(logit_betat, itime)
+    thetab = annualProba(logit_thetab, itime)
+    thetat = annualProba(logit_thetat, itime)
+    eps = annualProba(logit_eps, itime)
+       
     
 	# Compute the likelihood of observations
 	lik[st0 == "B" & st1 == "M"] = (betat*(ET+EM))[st0 == "B" & st1 == "M"] 
@@ -106,11 +112,24 @@ model = function(params, dat)
 	lik[st0 == "R" & st1 == "T"] = phit[st0 == "R" & st1 == "T"]	
 	lik[st0 == "R" & st1 == "M"] = phim[st0 == "R" & st1 == "M"] 			
 	lik[st0 == "R" & st1 == "R"] = (1 - phib - phit - phim)[st0 == "R" & st1 == "R"] 
-
+	
+	
     # lik might be equal = 0!   
     # for instance when neighbor (seeds) = 0
     lik[lik == 0] = .Machine$double.xmin
-	return(-sum(log(lik)))
+    
+    # calculate sum log likelihood
+    # lik might be <0 (in the 1 - other proba)
+    if(sum(lik<0)>0)
+    {
+    sumLL = -1000000
+    }else{
+    sumLL = sum(log(lik))
+    }
+    
+
+    # return a value to minimiz e in GenSA
+	return(-sumLL)
 }
 
 
