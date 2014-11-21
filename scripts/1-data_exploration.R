@@ -1,180 +1,180 @@
-rm(list = ls())
-###################################################################
-#####                Clean data (temporary version)         #######
-###################################################################
-
-dat = read.table("../data/data_BA.txt",header = TRUE, sep = ";")
-#head(dat)
-dim(dat)
-
-###################################################################
-#####                  Classify plots                       #######
-###################################################################
-
-# List of interests species
-I_sp  <- c("bop","peb","peg","pet","prp","sal","soa")
-B_sp  <- c("epn","epb","epr", "mel","pig","sab") 
-T_sp  <- c("ers","fra","frn","heg","osv","til","cet")
-
-#retirer frn
-
-# Subset species BA and cover type observed
-BA_dat <- c(which(colnames(dat)=="ame"): which(colnames(dat)=="til"))
-
-### Get BA by hectares (the plot is 400m2)
-dat[,BA_dat] <- dat[,BA_dat]*10000/400
-
-dat$I_tot  <- rowSums(dat[,which(colnames(dat) %in% I_sp)],na.rm=T)
-dat$B_tot  <- rowSums(dat[,which(colnames(dat) %in% B_sp)],na.rm=T)
-dat$T_tot  <- rowSums(dat[,which(colnames(dat) %in% T_sp)],na.rm=T)
-dat$BA_tot <- rowSums(dat[,BA_dat],na.rm=T)
-
-# Class into state types
-
-class_fn = function(x) { 
-  Itot = x[1]; Btot =x[2]; Ttot=x[3]; BAtot=x[4]
-  classPlot = "Unclass"
-  if(BAtot < 10) classPlot = "R"
-  else if(Btot > 0 & Ttot == 0) classPlot = "B"
-  else if(Ttot > 0 & Btot == 0) classPlot = "T"
-  else if (Btot > 0 & Ttot > 0) classPlot = "M"
-return(classPlot)
-}
-
-dat$class_final  <- as.vector(apply(dat[,c("I_tot", "B_tot", "T_tot", "BA_tot")],1,class_fn))
-
-table(dat$class_final)
-#dat[dat$class_final=="Unclass",]
-
-dat = dat[-which(dat$class_final=="Unclass"),]
-dim(dat)
-
-
-
-###################################################################
-#####    Reshape (pairwise) and export data                 #######
-###################################################################
-
-liste =split(dat[,c("id_plot", "yr_measured", "lat","lon", "annual_pp", "annual_mean_temp", "class_final")], dat$id_plot)
-nreleves = unlist(lapply(liste, nrow))
-
-# remove only one releve in time
-liste = liste[-which(nreleves==1)]
-
-## Function to match remeasurements on the same line 
-prwise  <- function(x){
-    #climatic columns
-    clim = c(which(colnames(x) == "annual_pp") ,which(colnames(x) == "annual_mean_temp"))
-        
-    x = x[order(x$yr_measured),]
-
-    for (i in 1:(nrow(x)-1))
-    {
-    yr0 = x$yr_measured[i]
-    st0 = x$class_final[i]
-    clim0 = x[i, clim ]
-    yr1 = x$yr_measured[i+1]
-    st1 = x$class_final[i+1]
-    clim1 = x[i+1, clim ]
-    if(i ==1) {
-    res = data.frame(idplot = x$id_plot[i], st0, st1, yr0, yr1, lat = x$lat[i], lon = x$lon[i],  t(apply(rbind(clim0, clim1), 2, mean)))
-#    res = data.frame(st0, st1, yr0, yr1, lat = x$lat, lon = x$lon,  clim0, clim1)
-    }else{
-    res = rbind(res, data.frame(idplot = x$id_plot[i], st0, st1, yr0, yr1,lat = x$lat[i], lon = x$lon[i], t(apply(rbind(clim0, clim1), 2, mean))))
-#    res = data.frame(st0, st1, yr0, yr1, lat = x$lat, lon = x$lon,  clim0, clim1)
-    }
-    }
-
-  return(res)
-}
-
-library(parallel)
-pair_dat = mclapply(liste, prwise)
-pair_dat = (do.call(rbind.data.frame, pair_dat))
-dim(pair_dat)
-head(pair_dat)
-
-#check order
-sum(pair_dat$yr0>pair_dat$yr1)
-###################################################################
-#####    filtres                            #######
-###################################################################
-
-## filtre 0
-##-----------
-## Rm all plots with no climatic data associated
-
-dat0 = dat[which(!is.na(dat$annual_pp)),]
-liste =split(dat0, dat0$id_plot)
-nreleves = unlist(lapply(liste, nrow))
-# remove only one releve in time
-liste = liste[-which(nreleves==1)]
-
-pair_dat0 = mclapply(liste, prwise)
-pair_dat0 = (do.call(rbind.data.frame, pair_dat0))
-
-dim(pair_dat0)
-head(pair_dat0)
-
-
-## filtre 1
-##-----------
-
-## Rm all harvested plots 
-dat1  <- dat0[-which(dat0$disturbance%in%c("BRP", "CAM", "CB", "CD", "CDL", "CE", "CJ", "CP", "DLD", "EPC")),]
-# BRP = brulis partiel ## ne pas enlever
-# CAM = coupe d'amélioration
-# CB = coupe par bandes
-# CD = coupes en damier
-# CDL = coupe à diamètre limité
-# CE = coupe partielle et épidémie légère
-# CHP = chablis partiel
-# CJ = coupe de jardinage
-# CP = coupe partielle
-# DLD = Coupe à diamètre limite avec dégagement des arbres d'avenir
-# DP  = Dépérissement partiel du feuillu
-# EL = Épidémie légère
-# EPC = Éclaircie précommerciale
-# VEP = Verglas partiel
-
-liste =split(dat1, dat1$id_plot)
-nreleves = unlist(lapply(liste, nrow))
-# remove only one releve in time
-liste = liste[-which(nreleves==1)]
-
-pair_dat1 = mclapply(liste, prwise)
-pair_dat1 = (do.call(rbind.data.frame, pair_dat1))
-
-head(pair_dat1)
-dim(pair_dat1)
-
-
-
-## filtre 2
-##-----------
-
-## Conserve all plots with drainage 20 to 40
-# !!! there are lots of NA, we keep them
-dat2 <- dat1[-which(dat1$drainage<20 | dat1$drainage>=40),]
-
-liste =split(dat2, dat2$id_plot)
-nreleves = unlist(lapply(liste, nrow))
-# remove only one releve in time
-liste = liste[-which(nreleves==1)]
-
-pair_dat2 = lapply(liste, prwise)
-pair_dat2 = (do.call(rbind.data.frame, pair_dat2))
-
-dim(pair_dat2)
-head(pair_dat2)
-
-#---------------
-
-write.table(dat0,file="../data/data_allyears.txt")
-write.table(pair_dat0,file="../data/data_pairs.txt")
-write.table(dat2,file="../data/data_allyears_filter.txt")
-write.table(pair_dat2,file="../data/data_pairs_filter.txt")
-
+#rm(list = ls())
+####################################################################
+######                Clean data (temporary version)         #######
+####################################################################
+#
+#dat = read.table("../data/data_BA.txt",header = TRUE, sep = ";")
+##head(dat)
+#dim(dat)
+#
+####################################################################
+######                  Classify plots                       #######
+####################################################################
+#
+## List of interests species
+#I_sp  <- c("bop","peb","peg","pet","prp","sal","soa")
+#B_sp  <- c("epn","epb","epr", "mel","pig","sab") 
+#T_sp  <- c("ers","fra","frn","heg","osv","til","cet")
+#
+##retirer frn
+#
+## Subset species BA and cover type observed
+#BA_dat <- c(which(colnames(dat)=="ame"): which(colnames(dat)=="til"))
+#
+#### Get BA by hectares (the plot is 400m2)
+#dat[,BA_dat] <- dat[,BA_dat]*10000/400
+#
+#dat$I_tot  <- rowSums(dat[,which(colnames(dat) %in% I_sp)],na.rm=T)
+#dat$B_tot  <- rowSums(dat[,which(colnames(dat) %in% B_sp)],na.rm=T)
+#dat$T_tot  <- rowSums(dat[,which(colnames(dat) %in% T_sp)],na.rm=T)
+#dat$BA_tot <- rowSums(dat[,BA_dat],na.rm=T)
+#
+## Class into state types
+#
+#class_fn = function(x) { 
+#  Itot = x[1]; Btot =x[2]; Ttot=x[3]; BAtot=x[4]
+#  classPlot = "Unclass"
+#  if(BAtot < 10) classPlot = "R"
+#  else if(Btot > 0 & Ttot == 0) classPlot = "B"
+#  else if(Ttot > 0 & Btot == 0) classPlot = "T"
+#  else if (Btot > 0 & Ttot > 0) classPlot = "M"
+#return(classPlot)
+#}
+#
+#dat$class_final  <- as.vector(apply(dat[,c("I_tot", "B_tot", "T_tot", "BA_tot")],1,class_fn))
+#
+#table(dat$class_final)
+##dat[dat$class_final=="Unclass",]
+#
+#dat = dat[-which(dat$class_final=="Unclass"),]
+#dim(dat)
+#
+#
+#
+####################################################################
+######    Reshape (pairwise) and export data                 #######
+####################################################################
+#
+#liste =split(dat[,c("id_plot", "yr_measured", "lat","lon", "annual_pp", "annual_mean_temp", "class_final")], dat$id_plot)
+#nreleves = unlist(lapply(liste, nrow))
+#
+## remove only one releve in time
+#liste = liste[-which(nreleves==1)]
+#
+### Function to match remeasurements on the same line 
+#prwise  <- function(x){
+#    #climatic columns
+#    clim = c(which(colnames(x) == "annual_pp") ,which(colnames(x) == "annual_mean_temp"))
+#        
+#    x = x[order(x$yr_measured),]
+#
+#    for (i in 1:(nrow(x)-1))
+#    {
+#    yr0 = x$yr_measured[i]
+#    st0 = x$class_final[i]
+#    clim0 = x[i, clim ]
+#    yr1 = x$yr_measured[i+1]
+#    st1 = x$class_final[i+1]
+#    clim1 = x[i+1, clim ]
+#    if(i ==1) {
+#    res = data.frame(idplot = x$id_plot[i], st0, st1, yr0, yr1, lat = x$lat[i], lon = x$lon[i],  t(apply(rbind(clim0, clim1), 2, mean)))
+##    res = data.frame(st0, st1, yr0, yr1, lat = x$lat, lon = x$lon,  clim0, clim1)
+#    }else{
+#    res = rbind(res, data.frame(idplot = x$id_plot[i], st0, st1, yr0, yr1,lat = x$lat[i], lon = x$lon[i], t(apply(rbind(clim0, clim1), 2, mean))))
+##    res = data.frame(st0, st1, yr0, yr1, lat = x$lat, lon = x$lon,  clim0, clim1)
+#    }
+#    }
+#
+#  return(res)
+#}
+#
+#library(parallel)
+#pair_dat = mclapply(liste, prwise)
+#pair_dat = (do.call(rbind.data.frame, pair_dat))
+#dim(pair_dat)
+#head(pair_dat)
+#
+##check order
+#sum(pair_dat$yr0>pair_dat$yr1)
+####################################################################
+######    filtres                            #######
+####################################################################
+#
+### filtre 0
+###-----------
+### Rm all plots with no climatic data associated
+#
+#dat0 = dat[which(!is.na(dat$annual_pp)),]
+#liste =split(dat0, dat0$id_plot)
+#nreleves = unlist(lapply(liste, nrow))
+## remove only one releve in time
+#liste = liste[-which(nreleves==1)]
+#
+#pair_dat0 = mclapply(liste, prwise)
+#pair_dat0 = (do.call(rbind.data.frame, pair_dat0))
+#
+#dim(pair_dat0)
+#head(pair_dat0)
+#
+#
+### filtre 1
+###-----------
+#
+### Rm all harvested plots 
+#dat1  <- dat0[-which(dat0$disturbance%in%c("BRP", "CAM", "CB", "CD", "CDL", "CE", "CJ", "CP", "DLD", "EPC")),]
+## BRP = brulis partiel ## ne pas enlever
+## CAM = coupe d'amélioration
+## CB = coupe par bandes
+## CD = coupes en damier
+## CDL = coupe à diamètre limité
+## CE = coupe partielle et épidémie légère
+## CHP = chablis partiel
+## CJ = coupe de jardinage
+## CP = coupe partielle
+## DLD = Coupe à diamètre limite avec dégagement des arbres d'avenir
+## DP  = Dépérissement partiel du feuillu
+## EL = Épidémie légère
+## EPC = Éclaircie précommerciale
+## VEP = Verglas partiel
+#
+#liste =split(dat1, dat1$id_plot)
+#nreleves = unlist(lapply(liste, nrow))
+## remove only one releve in time
+#liste = liste[-which(nreleves==1)]
+#
+#pair_dat1 = mclapply(liste, prwise)
+#pair_dat1 = (do.call(rbind.data.frame, pair_dat1))
+#
+#head(pair_dat1)
+#dim(pair_dat1)
+#
+#
+#
+### filtre 2
+###-----------
+#
+### Conserve all plots with drainage 20 to 40
+## !!! there are lots of NA, we keep them
+#dat2 <- dat1[-which(dat1$drainage<20 | dat1$drainage>=40),]
+#
+#liste =split(dat2, dat2$id_plot)
+#nreleves = unlist(lapply(liste, nrow))
+## remove only one releve in time
+#liste = liste[-which(nreleves==1)]
+#
+#pair_dat2 = lapply(liste, prwise)
+#pair_dat2 = (do.call(rbind.data.frame, pair_dat2))
+#
+#dim(pair_dat2)
+#head(pair_dat2)
+#
+##---------------
+#
+#write.table(dat0,file="../data/data_allyears.txt")
+#write.table(pair_dat0,file="../data/data_pairs.txt")
+#write.table(dat2,file="../data/data_allyears_filter.txt")
+#write.table(pair_dat2,file="../data/data_pairs_filter.txt")
+#
 
 #save(pair_dat, pair_dat0, pair_dat1, pair_dat2, file = "pair_dat.RData")
 #load("pair_dat.RData")
