@@ -49,13 +49,13 @@ model = function(params, dat)
     tt4 = params[33]
     tt5 = params[34]
     tt6 = params[35]
-    tb0 = params[36]
-    tb1 = params[37]
-    tb2 = params[38]
-    tb3 = params[39]
-    tb4 = params[40]
-    tb5 = params[41]
-    tb6 = params[42]
+    t0 = params[36]
+    t1 = params[37]
+    t2 = params[38]
+    t3 = params[39]
+    t4 = params[40]
+    t5 = params[41]
+    t6 = params[42]
     e0 = params[43]
     e1 = params[44]
     e2 = params[45]
@@ -71,7 +71,7 @@ model = function(params, dat)
     logit_alphat 	= at0 + at1*ENV1 + at2*ENV2 + at3*ENV1^2 + at4*ENV2^2 + at5*ENV1^3 + at6*ENV2^3
     logit_betab 	= bb0 + bb1*ENV1 + bb2*ENV2 + bb3*ENV1^2 + bb4*ENV2^2 + bb5*ENV1^3 + bb6*ENV2^3
     logit_betat 	= bt0 + bt1*ENV1 + bt2*ENV2 + bt3*ENV1^2 + bt4*ENV2^2 + bt5*ENV1^3 + bt6*ENV2^3
-    logit_thetab	= tb0 + tb1*ENV1 + tb2*ENV2 + tb3*ENV1^2 + tb4*ENV2^2 + tb5*ENV1^3 + tb6*ENV2^3
+    logit_theta	= t0 + t1*ENV1 + t2*ENV2 + t3*ENV1^2 + t4*ENV2^2 + t5*ENV1^3 + t6*ENV2^3
     logit_thetat	= tt0 + tt1*ENV1 + tt2*ENV2 + tt3*ENV1^2 + tt4*ENV2^2 + tt5*ENV1^3 + tt6*ENV2^3
     logit_eps 	= e0  + e1*ENV1 + e2*ENV2  + e3*ENV1^2 + e4*ENV2^2 + e5*ENV1^3 + e6*ENV2^3 + e7*EB
 
@@ -86,7 +86,7 @@ model = function(params, dat)
     alphat = annualProba(logit_alphat, itime)
     betab = annualProba(logit_betab, itime)
     betat = annualProba(logit_betat, itime)
-    thetab = annualProba(logit_thetab, itime)
+    thetam = annualProba(logit_thetab, itime)
     thetat = annualProba(logit_thetat, itime)
     eps = annualProba(logit_eps, itime)
        
@@ -100,9 +100,9 @@ model = function(params, dat)
 	lik[st0 == "T" & st1 == "M"] = (betab*(EB+EM)*(1-eps))[st0 == "T" & st1 == "M"] 			
 	lik[st0 == "T" & st1 == "R"] = eps[st0 == "T" & st1 == "R"] 		
 	
-	lik[st0 == "M" & st1 == "B"] = thetab*(1-eps)[st0 == "M" & st1 == "B"]	
-	lik[st0 == "M" & st1 == "T"] = thetat*(1-eps)[st0 == "M" & st1 == "T"] 	
-	lik[st0 == "M" & st1 == "M"] = (1 - eps - thetab*(1-eps) - thetat*(1-eps))[st0 == "M" & st1 == "M"] 			
+	lik[st0 == "M" & st1 == "B"] = (theta*(1-thetat)*(1-eps))[st0 == "M" & st1 == "B"]	
+	lik[st0 == "M" & st1 == "T"] = (theta*thetat*(1-eps))[st0 == "M" & st1 == "T"] 	
+	lik[st0 == "M" & st1 == "M"] = ((1 - eps)*(1 - theta)) - thetat*(1-eps))[st0 == "M" & st1 == "M"] 			
 	lik[st0 == "M" & st1 == "R"] = eps[st0 == "M" & st1 == "R"] 
 	
 	phib = alphab*(EM + EB)*(1-alphat*(ET+EM))
@@ -112,7 +112,6 @@ model = function(params, dat)
 	lik[st0 == "R" & st1 == "T"] = phit[st0 == "R" & st1 == "T"]	
 	lik[st0 == "R" & st1 == "M"] = phim[st0 == "R" & st1 == "M"] 			
 	lik[st0 == "R" & st1 == "R"] = (1 - phib - phit - phim)[st0 == "R" & st1 == "R"] 
-	
 	
     # lik might be equal = 0 -> give -Inf at log   
     # for instance when neighbor (seeds) = 0

@@ -71,7 +71,7 @@ at0 = logit_alphat_mn, at1 = 0, at2 = 0, at3=0, at4=0, at5=0, at6=0,
 bb0 = logit_betab_mn, bb1 = 0, bb2 = 0, bb3=0, bb4=0, bb5=0, bb6=0,
 bt0 = logit_betat_mn, bt1 = 0, bt2 = 0, bt3=0, bt4=0, bt5=0, bt6=0,
 tt0 = logit_thetat_mn, tt1 = 0, tt2 = 0, tt3 =0, tt4=0, tt5=0, tt6=0,
-tb0 = logit_thetab_mn, tb1 = 0, tb2 = 0, tb3=0, tb4=0, tb5=0, tb6=0,
+t0 = logit_thetab_mn, t1 = 0, tb2 = 0, tb3=0, tb4=0, tb5=0, tb6=0,
 e0 = logit_eps_mn, e1 = 0, e2 = 0, e3=0, e4=0, e5=0, e6=0, e7 =0
 )
 
