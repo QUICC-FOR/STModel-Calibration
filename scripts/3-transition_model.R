@@ -11,7 +11,7 @@ ab0,ab1,ab2,ab3,ab4,ab5,ab6,
 bt0,bt1,bt2,bt3,bt4,bt5,bt6,
 bb0,bb1,bb2,bb3,bb4,bb5,bb6,
 tt0,tt1,tt2,tt3,tt4,tt5,tt6,
-tb0,tb1,tb2,tb3,tb4,tb5,tb6,
+t0,t1,t2,t3,t4,t5,t6,
 e0,e1,e2,e3,e4,e5,e6, e7) 
 {
 	lik = numeric(length(st0))
@@ -20,32 +20,38 @@ e0,e1,e2,e3,e4,e5,e6, e7)
     logit_alphat 	= at0 + at1*ENV1 + at2*ENV2 + at3*ENV1^2 + at4*ENV2^2 + at5*ENV1^3 + at6*ENV2^3
     logit_betab 	= bb0 + bb1*ENV1 + bb2*ENV2 + bb3*ENV1^2 + bb4*ENV2^2 + bb5*ENV1^3 + bb6*ENV2^3
     logit_betat 	= bt0 + bt1*ENV1 + bt2*ENV2 + bt3*ENV1^2 + bt4*ENV2^2 + bt5*ENV1^3 + bt6*ENV2^3
-    logit_thetab	= tb0 + tb1*ENV1 + tb2*ENV2 + tb3*ENV1^2 + tb4*ENV2^2 + tb5*ENV1^3 + tb6*ENV2^3
+    logit_theta	= t0 + t1*ENV1 + t2*ENV2 + t3*ENV1^2 + t4*ENV2^2 + t5*ENV1^3 + t6*ENV2^3
     logit_thetat	= tt0 + tt1*ENV1 + tt2*ENV2 + tt3*ENV1^2 + tt4*ENV2^2 + tt5*ENV1^3 + tt6*ENV2^3
     logit_eps 	= e0  + e1*ENV1 + e2*ENV2  + e3*ENV1^2 + e4*ENV2^2 + e5*ENV1^3 + e6*ENV2^3 + e7*EB
 
     # compute transitions accounting for interval time and logit transformation
-    alphab = 1 - (1 - exp(logit_alphab)/(1+exp(logit_alphab)))^itime
-    alphat = 1 - (1 - exp(logit_alphat)/(1+exp(logit_alphat)))^itime
-    betab = 1 - (1 - exp(logit_betab)/(1+exp(logit_betab)))^itime
-    betat = 1 - (1 - exp(logit_betat)/(1+exp(logit_betat)))^itime
-    thetab = 1 - (1 - exp(logit_thetab)/(1+exp(logit_thetab)))^itime
-    thetat = 1 - (1 - exp(logit_thetat)/(1+exp(logit_thetat)))^itime
-    eps = 1 - (1 - exp(logit_eps)/(1+exp(logit_eps)))^itime
-    
+    # ! might be NaN because exp(bigNumber) 
+    annualProba <- function(x, itime)
+    {
+    expx = ifelse(exp(x)==Inf, .Machine$double.xmax, exp(x))
+    1 - (1 - expx/(1+expx))^itime
+    }
+    alphab = annualProba(logit_alphab, itime)
+    alphat = annualProba(logit_alphat, itime)
+    betab = annualProba(logit_betab, itime)
+    betat = annualProba(logit_betat, itime)
+    thetam = annualProba(logit_thetab, itime)
+    thetat = annualProba(logit_thetat, itime)
+    eps = annualProba(logit_eps, itime)
+       
     
 	# Compute the likelihood of observations
-	lik[st0 == "B" & st1 == "M"] = (betat*(ET+EM))[st0 == "B" & st1 == "M"] 
+	lik[st0 == "B" & st1 == "M"] = (betat*(ET+EM)*(1-eps))[st0 == "B" & st1 == "M"] 
 	lik[st0 == "B" & st1 == "R"] = eps[st0 == "B" & st1 == "R"] 	
-	lik[st0 == "B" & st1 == "B"] = (1 - eps - betat*(ET+EM))[st0 == "B" & st1 == "B"]
+	lik[st0 == "B" & st1 == "B"] = (1 - eps - betat*(ET+EM)*(1-eps))[st0 == "B" & st1 == "B"]
 
-	lik[st0 == "T" & st1 == "T"] = (1 - eps - betab*(EB+EM))[st0 == "T" & st1 == "T"] 	
-	lik[st0 == "T" & st1 == "M"] = (betab*(EB+EM))[st0 == "T" & st1 == "M"] 			
+	lik[st0 == "T" & st1 == "T"] = (1 - eps - betab*(EB+EM)*(1-eps))[st0 == "T" & st1 == "T"] 	
+	lik[st0 == "T" & st1 == "M"] = (betab*(EB+EM)*(1-eps))[st0 == "T" & st1 == "M"] 			
 	lik[st0 == "T" & st1 == "R"] = eps[st0 == "T" & st1 == "R"] 		
 	
-	lik[st0 == "M" & st1 == "B"] = thetab[st0 == "M" & st1 == "B"]	
-	lik[st0 == "M" & st1 == "T"] = thetat[st0 == "M" & st1 == "T"] 	
-	lik[st0 == "M" & st1 == "M"] = (1 - eps - thetab - thetat)[st0 == "M" & st1 == "M"] 			
+	lik[st0 == "M" & st1 == "B"] = (theta*(1-thetat)*(1-eps))[st0 == "M" & st1 == "B"]	
+	lik[st0 == "M" & st1 == "T"] = (theta*thetat*(1-eps))[st0 == "M" & st1 == "T"] 	
+	lik[st0 == "M" & st1 == "M"] = ((1 - eps)*(1 - theta)) - thetat*(1-eps))[st0 == "M" & st1 == "M"] 			
 	lik[st0 == "M" & st1 == "R"] = eps[st0 == "M" & st1 == "R"] 
 	
 	phib = alphab*(EM + EB)*(1-alphat*(ET+EM))
@@ -58,7 +64,7 @@ e0,e1,e2,e3,e4,e5,e6, e7)
 
     # lik might be <0 !!!!
     # for T->T, M->M, B->B and R->R transitions
-#    lik[lik<0] = .Machine$double.xmin
+    # it will give NaN when log
     
     # lik might be equal = 0!   
     # for instance when neighbor (seeds) = 0
