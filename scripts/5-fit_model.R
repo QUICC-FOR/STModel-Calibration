@@ -9,7 +9,7 @@ library(GenSA)
 #test
 model(params, data)
 
-estim.pars = GenSA(par = params, fn = model, lower = rep(-30, length(params)), upper= rep(30, length(params)), control = list(verbose =TRUE, max.time = 100, smooth=FALSE), dat = data)
+estim.pars = GenSA(par = params, fn = model, lower = par_lo, upper= par_hi, control = list(verbose =TRUE, max.time = 2000, smooth=FALSE), dat = data)
 
 
 #estim.pars = GenSA(par = params, fn = model, lower = par_lo, upper= par_hi, control = list(verbose =TRUE, max.time = 100, smooth=FALSE), dat = data)

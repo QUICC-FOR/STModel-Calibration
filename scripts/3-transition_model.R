@@ -92,17 +92,17 @@ model = function(params, dat)
        
     
 	# Compute the likelihood of observations
-	lik[st0 == "B" & st1 == "M"] = (betat*(ET+EM))[st0 == "B" & st1 == "M"] 
+	lik[st0 == "B" & st1 == "M"] = (betat*(ET+EM)*(1-eps))[st0 == "B" & st1 == "M"] 
 	lik[st0 == "B" & st1 == "R"] = eps[st0 == "B" & st1 == "R"] 	
-	lik[st0 == "B" & st1 == "B"] = (1 - eps - betat*(ET+EM))[st0 == "B" & st1 == "B"]
+	lik[st0 == "B" & st1 == "B"] = (1 - eps - betat*(ET+EM)*(1-eps))[st0 == "B" & st1 == "B"]
 
-	lik[st0 == "T" & st1 == "T"] = (1 - eps - betab*(EB+EM))[st0 == "T" & st1 == "T"] 	
-	lik[st0 == "T" & st1 == "M"] = (betab*(EB+EM))[st0 == "T" & st1 == "M"] 			
+	lik[st0 == "T" & st1 == "T"] = (1 - eps - betab*(EB+EM)*(1-eps))[st0 == "T" & st1 == "T"] 	
+	lik[st0 == "T" & st1 == "M"] = (betab*(EB+EM)*(1-eps))[st0 == "T" & st1 == "M"] 			
 	lik[st0 == "T" & st1 == "R"] = eps[st0 == "T" & st1 == "R"] 		
 	
-	lik[st0 == "M" & st1 == "B"] = thetab[st0 == "M" & st1 == "B"]	
-	lik[st0 == "M" & st1 == "T"] = thetat[st0 == "M" & st1 == "T"] 	
-	lik[st0 == "M" & st1 == "M"] = (1 - eps - thetab - thetat)[st0 == "M" & st1 == "M"] 			
+	lik[st0 == "M" & st1 == "B"] = thetab*(1-eps)[st0 == "M" & st1 == "B"]	
+	lik[st0 == "M" & st1 == "T"] = thetat*(1-eps)[st0 == "M" & st1 == "T"] 	
+	lik[st0 == "M" & st1 == "M"] = (1 - eps - thetab*(1-eps) - thetat*(1-eps))[st0 == "M" & st1 == "M"] 			
 	lik[st0 == "M" & st1 == "R"] = eps[st0 == "M" & st1 == "R"] 
 	
 	phib = alphab*(EM + EB)*(1-alphat*(ET+EM))
@@ -114,7 +114,7 @@ model = function(params, dat)
 	lik[st0 == "R" & st1 == "R"] = (1 - phib - phit - phim)[st0 == "R" & st1 == "R"] 
 	
 	
-    # lik might be equal = 0!   
+    # lik might be equal = 0 -> give -Inf at log   
     # for instance when neighbor (seeds) = 0
     lik[lik == 0] = .Machine$double.xmin
     
