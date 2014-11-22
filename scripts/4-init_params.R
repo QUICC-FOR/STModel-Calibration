@@ -134,7 +134,7 @@ e3 = logit_eps_mn/max(abs(data$ENV1^2)) - abs(cvar*logit_eps_mn/max(abs(data$ENV
 e4 = logit_eps_mn/max(abs(data$ENV2^2)) - abs(cvar*logit_eps_mn/max(abs(data$ENV2^2))), 
 e5= logit_eps_mn/max(abs(data$ENV1^3)) - abs(cvar*logit_eps_mn/max(abs(data$ENV1^3))),
 e6= logit_eps_mn/max(abs(data$ENV2^3)) - abs(cvar*logit_eps_mn/max(abs(data$ENV2^3))),
-e7=0
+e7=-1e15
 )
 
 par_hi = c(ab0 = logit_alphab_mn + abs(logit_alphab_mn*cvar),
