@@ -86,7 +86,7 @@ model = function(params, dat)
     alphat = annualProba(logit_alphat, itime)
     betab = annualProba(logit_betab, itime)
     betat = annualProba(logit_betat, itime)
-    thetam = annualProba(logit_thetab, itime)
+    theta = annualProba(logit_theta, itime)
     thetat = annualProba(logit_thetat, itime)
     eps = annualProba(logit_eps, itime)
        
@@ -102,7 +102,7 @@ model = function(params, dat)
 	
 	lik[st0 == "M" & st1 == "B"] = (theta*(1-thetat)*(1-eps))[st0 == "M" & st1 == "B"]	
 	lik[st0 == "M" & st1 == "T"] = (theta*thetat*(1-eps))[st0 == "M" & st1 == "T"] 	
-	lik[st0 == "M" & st1 == "M"] = ((1 - eps)*(1 - theta)) - thetat*(1-eps))[st0 == "M" & st1 == "M"] 			
+	lik[st0 == "M" & st1 == "M"] = ((1 - eps)*(1 - theta))[st0 == "M" & st1 == "M"] 			
 	lik[st0 == "M" & st1 == "R"] = eps[st0 == "M" & st1 == "R"] 
 	
 	phib = alphab*(EM + EB)*(1-alphat*(ET+EM))

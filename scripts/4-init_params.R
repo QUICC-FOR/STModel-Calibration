@@ -26,35 +26,42 @@ data$itime = data$yr1 - data$yr0
 # Evaluate initial parameter values
 transitions = paste(data$st0,data$st1,sep = "")
 sum_transitions = table(transitions)
-tot_transitions = table(data$st0)
+initState = table(data$st0)
 
 # estimates for initial parameters
 eps_mn = # proba x->R given x is T B or M
-(sum_transitions["BR"]+sum_transitions["MR"]+sum_transitions["TR"])/(tot_transitions["M"] + tot_transitions["B"] + tot_transitions["T"])
+(sum_transitions["BR"]/initState["B"]+sum_transitions["MR"]/initState["M"]+sum_transitions["TR"]/initState["T"])/3
 
-thetab_mn = # proba M-> B 
-sum_transitions["MB"]/tot_transitions["M"]
+theta_mn = # proba M-> B 
+(sum_transitions["MB"] + sum_transitions["MT"])/initState["M"]
 
 thetat_mn = # proba M->T
-sum_transitions["MT"]/tot_transitions["M"]
+sum_transitions["MT"]/(sum_transitions["MB"] + sum_transitions["MT"])
 
 betab_mn = # proba T->M
-sum_transitions["TM"]*(tot_transitions["B"]+tot_transitions["M"])/tot_transitions["M"]/sum(tot_transitions)
+(sum_transitions["TM"]/initState["T"]) * (sum(initState)/(initState["M"] + initState["B"]))
 
 betat_mn = # proba B->M
-sum_transitions["BM"]*(tot_transitions["T"]+tot_transitions["M"])/tot_transitions["M"]/sum(tot_transitions)
+(sum_transitions["BM"]/initState["B"]) * (sum(initState)/(initState["M"] + initState["T"]))
 
-trRT = sum_transitions["RT"]/tot_transitions["R"]
-trRB = sum_transitions["RB"]/tot_transitions["R"]
-trRM = sum_transitions["RB"]/tot_transitions["R"]
+trRT = sum_transitions["RT"]/initState["R"]
+trRB = sum_transitions["RB"]/initState["R"]
+trRM = sum_transitions["RB"]/initState["R"]
 
-alphat_mn = trRM/((tot_transitions["M"]+tot_transitions["T"])*(trRB+trRM))
-alphab_mn = (trRB+trRM)/(tot_transitions["M"] + tot_transitions["B"])
+alphat_mn = trRM/((initState["M"]+initState["T"])*(trRB+trRM))
+alphab_mn = (trRB+trRM)/(initState["M"] + initState["B"])
+
+# cf in python:
+#alphat, alphab, M, T, B, trRT, trRB, trRM = symbols('alphat alphab M T B trRT trRB trRM')
+#eq1 = alphat*(M+T)*alphab*(M+B)
+#eq2 = alphab*(M+B)*(1-alphat*(M+T))
+#res = solve([Eq(eq1, trRM), Eq(eq2, trRB)], [alphat, alphab])
+#simplify(res)
 
 # transform into logits
 logit_eps_mn = log(eps_mn/(1-eps_mn))
 
-logit_thetab_mn = log(thetab_mn/(1-thetab_mn))
+logit_theta_mn = log(theta_mn/(1-theta_mn))
 logit_thetat_mn = log(thetat_mn/(1-thetat_mn))
  
 logit_betab_mn = log(betab_mn/(1-betab_mn))
@@ -71,7 +78,7 @@ at0 = logit_alphat_mn, at1 = 0, at2 = 0, at3=0, at4=0, at5=0, at6=0,
 bb0 = logit_betab_mn, bb1 = 0, bb2 = 0, bb3=0, bb4=0, bb5=0, bb6=0,
 bt0 = logit_betat_mn, bt1 = 0, bt2 = 0, bt3=0, bt4=0, bt5=0, bt6=0,
 tt0 = logit_thetat_mn, tt1 = 0, tt2 = 0, tt3 =0, tt4=0, tt5=0, tt6=0,
-t0 = logit_thetab_mn, t1 = 0, tb2 = 0, tb3=0, tb4=0, tb5=0, tb6=0,
+t0 = logit_theta_mn, t1 = 0, t2 = 0, t3=0, t4=0, t5=0, t6=0,
 e0 = logit_eps_mn, e1 = 0, e2 = 0, e3=0, e4=0, e5=0, e6=0, e7 =0
 )
 
@@ -113,13 +120,13 @@ tt3 = logit_thetat_mn/max(abs(data$ENV1^2)) - abs(cvar*logit_thetat_mn/max(abs(d
 tt4 = logit_thetat_mn/max(abs(data$ENV2^2)) - abs(cvar*logit_thetat_mn/max(abs(data$ENV2^2))),
 tt5= logit_thetat_mn/max(abs(data$ENV1^3)) - abs(cvar*logit_thetat_mn/max(abs(data$ENV1^3))),
 tt6= logit_thetat_mn/max(abs(data$ENV2^3)) - abs(cvar*logit_thetat_mn/max(abs(data$ENV2^3))),
-tb0 = logit_thetab_mn - abs(logit_thetab_mn*cvar),
-tb1 = logit_thetab_mn/max(abs(data$ENV1)) - abs(cvar*logit_thetab_mn/max(abs(data$ENV1))),
-tb2 = logit_thetab_mn/max(abs(data$ENV2)) - abs(cvar*logit_thetab_mn/max(abs(data$ENV2))),
-tb3 = logit_thetab_mn/max(abs(data$ENV1^2)) - abs(cvar*logit_thetab_mn/max(abs(data$ENV1^2))),
-tb4 = logit_thetab_mn/max(abs(data$ENV2^2)) - abs(cvar*logit_thetab_mn/max(abs(data$ENV2^2))),
-tb5= logit_thetab_mn/max(abs(data$ENV1^3)) - abs(cvar*logit_thetab_mn/max(abs(data$ENV1^3))),
-tb6= logit_thetab_mn/max(abs(data$ENV2^3)) - abs(cvar*logit_thetab_mn/max(abs(data$ENV2^3))),
+t0 = logit_theta_mn - abs(logit_theta_mn*cvar),
+t1 = logit_theta_mn/max(abs(data$ENV1)) - abs(cvar*logit_theta_mn/max(abs(data$ENV1))),
+t2 = logit_theta_mn/max(abs(data$ENV2)) - abs(cvar*logit_theta_mn/max(abs(data$ENV2))),
+t3 = logit_theta_mn/max(abs(data$ENV1^2)) - abs(cvar*logit_theta_mn/max(abs(data$ENV1^2))),
+t4 = logit_theta_mn/max(abs(data$ENV2^2)) - abs(cvar*logit_theta_mn/max(abs(data$ENV2^2))),
+t5= logit_theta_mn/max(abs(data$ENV1^3)) - abs(cvar*logit_theta_mn/max(abs(data$ENV1^3))),
+t6= logit_theta_mn/max(abs(data$ENV2^3)) - abs(cvar*logit_theta_mn/max(abs(data$ENV2^3))),
 e0 = logit_eps_mn - abs(logit_eps_mn*cvar),
 e1 = logit_eps_mn/max(abs(data$ENV1)) - abs(cvar*logit_eps_mn/max(abs(data$ENV1))),
 e2 = logit_eps_mn/max(abs(data$ENV2)) - abs(cvar*logit_eps_mn/max(abs(data$ENV2))), 
@@ -165,13 +172,13 @@ tt3 = logit_thetat_mn/max(abs(data$ENV1^2)) + abs(cvar*logit_thetat_mn/max(abs(d
 tt4 = logit_thetat_mn/max(abs(data$ENV2^2)) + abs(cvar*logit_thetat_mn/max(abs(data$ENV2^2))),
 tt5= logit_thetat_mn/max(abs(data$ENV1^3)) + abs(cvar*logit_thetat_mn/max(abs(data$ENV1^3))),
 tt6= logit_thetat_mn/max(abs(data$ENV2^3)) + abs(cvar*logit_thetat_mn/max(abs(data$ENV2^3))),
-tb0 = logit_thetab_mn + abs(logit_thetab_mn*cvar),
-tb1 = logit_thetab_mn/max(abs(data$ENV1)) + abs(cvar*logit_thetab_mn/max(abs(data$ENV1))),
-tb2 = logit_thetab_mn/max(abs(data$ENV2)) + abs(cvar*logit_thetab_mn/max(abs(data$ENV2))),
-tb3 = logit_thetab_mn/max(abs(data$ENV1^2)) + abs(cvar*logit_thetab_mn/max(abs(data$ENV1^2))),
-tb4 = logit_thetab_mn/max(abs(data$ENV2^2)) + abs(cvar*logit_thetab_mn/max(abs(data$ENV2^2))),
-tb5= logit_thetab_mn/max(abs(data$ENV1^3)) + abs(cvar*logit_thetab_mn/max(abs(data$ENV1^3))),
-tb6= logit_thetab_mn/max(abs(data$ENV2^3)) + abs(cvar*logit_thetab_mn/max(abs(data$ENV2^3))),
+t0 = logit_theta_mn + abs(logit_theta_mn*cvar),
+t1 = logit_theta_mn/max(abs(data$ENV1)) + abs(cvar*logit_theta_mn/max(abs(data$ENV1))),
+t2 = logit_theta_mn/max(abs(data$ENV2)) + abs(cvar*logit_theta_mn/max(abs(data$ENV2))),
+t3 = logit_theta_mn/max(abs(data$ENV1^2)) + abs(cvar*logit_theta_mn/max(abs(data$ENV1^2))),
+t4 = logit_theta_mn/max(abs(data$ENV2^2)) + abs(cvar*logit_theta_mn/max(abs(data$ENV2^2))),
+t5= logit_theta_mn/max(abs(data$ENV1^3)) + abs(cvar*logit_theta_mn/max(abs(data$ENV1^3))),
+t6= logit_theta_mn/max(abs(data$ENV2^3)) + abs(cvar*logit_theta_mn/max(abs(data$ENV2^3))),
 e0 = logit_eps_mn + abs(logit_eps_mn*cvar),
 e1 = logit_eps_mn/max(abs(data$ENV1)) + abs(cvar*logit_eps_mn/max(abs(data$ENV1))),
 e2 = logit_eps_mn/max(abs(data$ENV2)) + abs(cvar*logit_eps_mn/max(abs(data$ENV2))), 
