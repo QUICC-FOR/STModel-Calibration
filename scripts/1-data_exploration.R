@@ -179,8 +179,40 @@
 
 #save(pair_dat, pair_dat0, pair_dat1, pair_dat2, file = "pair_dat.RData")
 #load("pair_dat.RData")
+
 ###################################################################
-#####    Analyses    GRAPHS                                      #######
+#####    Reshaping data from STM-Data repo                  #######
+###################################################################
+
+# Set wd to STModel-Data folder
+setwd("~/Documents/GitHub/STModel-Data")
+
+# Open data
+pair.dat <- read.csv("./out_files/transitionsFourState.csv")
+
+# average on climatic data
+pair.dat$annual_mean_temp <- rowMeans(subset(pair.dat, select = c(annual_mean_temp1, annual_mean_temp2)), na.rm = TRUE)
+pair.dat$annual_pp <- rowMeans(subset(pair.dat, select = c(annual_pp1, annual_pp2)), na.rm = TRUE)
+
+# Rename and clean columns
+names(pair.dat)[7:8] <- c("st0","st1")
+pair.dat <- pair.dat[,-c(9:12)]
+
+# Create transition column
+pair.dat$transition <- paste(pair.dat$st0,pair.dat$st1,sep="")
+
+# Datset without filters
+pair_dat0 <- pair.dat 
+
+# Graph lim
+rg_pp <- range(pair.dat$annual_pp)
+rg_tp <- range(pair.dat$annual_mean_temp)
+
+# change wd
+setwd("~/Documents/GitHub/STModel-Calibration/scripts")
+
+###################################################################
+#####    Analyses    GRAPHS                                 #######
 ###################################################################
 
 colo = c(rgb(1,165/255,0,0.5), rgb(154/255,205/255,50/255,0.5), rgb(34/255,139/255,34/255,0.5), rgb(148/255,0,211/255,0.5) )
@@ -195,53 +227,53 @@ print(table(transitions))
 pdf(file = filename, width = 15 , height=8)
 
 par(mfrow = c(2, 4))
-hist(pair.dat$annual_mean_temp[pair.dat$st0=="R"], xlab = "average annual temperature", col = colo["R"], main = "R", freq = TRUE, xlim = c(-5, 7))
-hist(pair.dat$annual_mean_temp[pair.dat$st0=="T"], xlab = "average annual temperature", col = colo["T"], main = "T", freq = TRUE, xlim = c(-5, 7))
-hist(pair.dat$annual_mean_temp[pair.dat$st0=="B"], xlab = "average annual temperature", col = colo["B"], main = "B", freq = TRUE, xlim = c(-5, 7))
-hist(pair.dat$annual_mean_temp[pair.dat$st0=="M"], xlab = "average annual temperature", col = colo["M"], main = "M", freq = TRUE, xlim = c(-5, 7))
-hist(pair.dat$annual_pp[pair.dat$st0=="R"], xlab = "annual precipitations", col = colo["R"], main = "R", freq = TRUE, xlim = c(600, 1800))
-hist(pair.dat$annual_pp[pair.dat$st0=="T"], xlab = "annual precipitations", col = colo["T"], main = "T", freq = TRUE, xlim = c(600, 1800))
-hist(pair.dat$annual_pp[pair.dat$st0=="B"], xlab = "annual precipitations", col = colo["B"], main = "B", freq = TRUE, xlim = c(600, 1800))
-hist(pair.dat$annual_pp[pair.dat$st0=="M"], xlab = "annual precipitations", col = colo["M"], main = "M", freq = TRUE, xlim = c(600, 1800))
+hist(pair.dat$annual_mean_temp[pair.dat$st0=="R"], xlab = "average annual temperature", col = colo["R"], main = "R", freq = TRUE, xlim = c(rg_tp[1],rg_tp[2]))
+hist(pair.dat$annual_mean_temp[pair.dat$st0=="T"], xlab = "average annual temperature", col = colo["T"], main = "T", freq = TRUE, xlim = c(rg_tp[1],rg_tp[2]))
+hist(pair.dat$annual_mean_temp[pair.dat$st0=="B"], xlab = "average annual temperature", col = colo["B"], main = "B", freq = TRUE, xlim = c(rg_tp[1],rg_tp[2]))
+hist(pair.dat$annual_mean_temp[pair.dat$st0=="M"], xlab = "average annual temperature", col = colo["M"], main = "M", freq = TRUE, xlim = c(rg_tp[1],rg_tp[2]))
+hist(pair.dat$annual_pp[pair.dat$st0=="R"], xlab = "annual precipitations", col = colo["R"], main = "R", freq = TRUE, xlim = c(rg_pp[1],rg_pp[2]))
+hist(pair.dat$annual_pp[pair.dat$st0=="T"], xlab = "annual precipitations", col = colo["T"], main = "T", freq = TRUE, xlim = c(rg_pp[1],rg_pp[2]))
+hist(pair.dat$annual_pp[pair.dat$st0=="B"], xlab = "annual precipitations", col = colo["B"], main = "B", freq = TRUE, xlim = c(rg_pp[1],rg_pp[2]))
+hist(pair.dat$annual_pp[pair.dat$st0=="M"], xlab = "annual precipitations", col = colo["M"], main = "M", freq = TRUE, xlim = c(rg_pp[1],rg_pp[2]))
 
 
 par(mfrow = c(2, 3))
-hist(pair.dat$annual_mean_temp[transitions=="RT"], xlab = "average annual temperature", col = colo["T"], main = "R->T", freq = TRUE, xlim = c(-5, 7))
+hist(pair.dat$annual_mean_temp[transitions=="RT"], xlab = "average annual temperature", col = colo["T"], main = "R->T", freq = TRUE, xlim = c(rg_tp[1],rg_tp[2]))
 #lines(density(pair_dat$annual_mean_temp[transitions=="RT"]), col = colo["T"], lwd = 2)
-hist(pair.dat$annual_mean_temp[transitions=="RB"], xlab = "average annual temperature", col = colo["B"],  main = "R->B", freq = TRUE, xlim = c(-5, 7))
-hist(pair.dat$annual_mean_temp[transitions=="RM"], xlab = "average annual temperature", col = colo["M"],  main = "R->M", freq = TRUE, xlim = c(-5, 7))
+hist(pair.dat$annual_mean_temp[transitions=="RB"], xlab = "average annual temperature", col = colo["B"],  main = "R->B", freq = TRUE, xlim = c(rg_tp[1],rg_tp[2]))
+hist(pair.dat$annual_mean_temp[transitions=="RM"], xlab = "average annual temperature", col = colo["M"],  main = "R->M", freq = TRUE, xlim = c(rg_tp[1],rg_tp[2]))
 
-hist(pair.dat$annual_pp[transitions=="RT"], xlab = "annual precipitation", col = colo["T"], main = "R->T", freq = TRUE, xlim = c(600, 1800))
-hist(pair.dat$annual_pp[transitions=="RB"], xlab = "annual precipitation", col = colo["B"],  main = "R->B", freq = TRUE, xlim = c(600, 1800))
-hist(pair.dat$annual_pp[transitions=="RM"], xlab = "annual precipitation", col = colo["M"],  main = "R->M", freq = TRUE, xlim =c(600, 1800))
+hist(pair.dat$annual_pp[transitions=="RT"], xlab = "annual precipitation", col = colo["T"], main = "R->T", freq = TRUE, xlim = c(rg_pp[1],rg_pp[2]))
+hist(pair.dat$annual_pp[transitions=="RB"], xlab = "annual precipitation", col = colo["B"],  main = "R->B", freq = TRUE, xlim = c(rg_pp[1],rg_pp[2]))
+hist(pair.dat$annual_pp[transitions=="RM"], xlab = "annual precipitation", col = colo["M"],  main = "R->M", freq = TRUE, xlim =c(rg_pp[1],rg_pp[2]))
 
 #dev.off()
 #
 #pdf(file = "../figures/data_explo_exclusion.pdf", width = 15 , height=8)
 
 par(mfrow = c(2, 3))
-hist(pair.dat$annual_mean_temp[transitions=="MT"], xlab = "average annual temperature", col = colo["T"], main = "M->T", freq = TRUE, xlim = c(-5, 7))
-hist(pair.dat$annual_mean_temp[transitions=="MB"], xlab = "average annual temperature", col = colo["B"],  main = "M->B", freq = TRUE, xlim = c(-5, 7))
-hist(pair.dat$annual_mean_temp[transitions=="MM"], xlab = "average annual temperature", col = colo["M"],  main = "M->M", freq = TRUE, xlim = c(-5, 7))
+hist(pair.dat$annual_mean_temp[transitions=="MT"], xlab = "average annual temperature", col = colo["T"], main = "M->T", freq = TRUE, xlim = c(rg_tp[1],rg_tp[2]))
+hist(pair.dat$annual_mean_temp[transitions=="MB"], xlab = "average annual temperature", col = colo["B"],  main = "M->B", freq = TRUE, xlim = c(rg_tp[1],rg_tp[2]))
+hist(pair.dat$annual_mean_temp[transitions=="MM"], xlab = "average annual temperature", col = colo["M"],  main = "M->M", freq = TRUE, xlim = c(rg_tp[1],rg_tp[2]))
 
-hist(pair.dat$annual_pp[transitions=="MT"], xlab = "annual precipitation", col = colo["T"], main = "M->T", freq = TRUE, xlim = c(600, 1800))
-hist(pair.dat$annual_pp[transitions=="MB"], xlab = "annual precipitation", col = colo["B"],  main = "M->B", freq = TRUE, xlim = c(600, 1800))
-hist(pair.dat$annual_pp[transitions=="MM"], xlab = "annual precipitation", col = colo["M"],  main = "M->M", freq = TRUE, xlim =c(600, 1800))
+hist(pair.dat$annual_pp[transitions=="MT"], xlab = "annual precipitation", col = colo["T"], main = "M->T", freq = TRUE, xlim = c(rg_pp[1],rg_pp[2]))
+hist(pair.dat$annual_pp[transitions=="MB"], xlab = "annual precipitation", col = colo["B"],  main = "M->B", freq = TRUE, xlim = c(rg_pp[1],rg_pp[2]))
+hist(pair.dat$annual_pp[transitions=="MM"], xlab = "annual precipitation", col = colo["M"],  main = "M->M", freq = TRUE, xlim =c(rg_pp[1],rg_pp[2]))
 
 #dev.off()
 #
 #pdf(file = "../figures/data_explo_colonisation.pdf", width = 15 , height=8)
 
 par(mfrow = c(2, 4))
-hist(pair.dat$annual_mean_temp[transitions=="TT"], xlab = "average annual temperature", col = colo["T"],  main = "T->T", freq = TRUE, xlim = c(-5, 7))
-hist(pair.dat$annual_mean_temp[transitions=="TM"], xlab = "average annual temperature", col = colo["B"], main = "T->M", freq = TRUE, xlim = c(-5, 7))
-hist(pair.dat$annual_mean_temp[transitions=="BB"], xlab = "average annual temperature", col = colo["B"],  main = "B->B", freq = TRUE, xlim = c(-5, 7))
-hist(pair.dat$annual_mean_temp[transitions=="BM"], xlab = "average annual temperature", col = colo["T"],  main = "B->M", freq = TRUE, xlim = c(-5, 7))
+hist(pair.dat$annual_mean_temp[transitions=="TT"], xlab = "average annual temperature", col = colo["T"],  main = "T->T", freq = TRUE, xlim = c(rg_tp[1],rg_tp[2]))
+hist(pair.dat$annual_mean_temp[transitions=="TM"], xlab = "average annual temperature", col = colo["B"], main = "T->M", freq = TRUE, xlim = c(rg_tp[1],rg_tp[2]))
+hist(pair.dat$annual_mean_temp[transitions=="BB"], xlab = "average annual temperature", col = colo["B"],  main = "B->B", freq = TRUE, xlim = c(rg_tp[1],rg_tp[2]))
+hist(pair.dat$annual_mean_temp[transitions=="BM"], xlab = "average annual temperature", col = colo["T"],  main = "B->M", freq = TRUE, xlim = c(rg_tp[1],rg_tp[2]))
 
-hist(pair.dat$annual_pp[transitions=="TT"], xlab = "annual precipitation", col = colo["T"], main = "T->T", freq = TRUE, xlim = c(600, 1800))
-hist(pair.dat$annual_pp[transitions=="TM"], xlab = "annual precipitation", col = colo["B"],  main = "T->M", freq = TRUE, xlim = c(600, 1800))
-hist(pair.dat$annual_pp[transitions=="BB"], xlab = "annual precipitation", col = colo["B"],  main = "B->B", freq = TRUE, xlim =c(600, 1800))
-hist(pair.dat$annual_pp[transitions=="BM"], xlab = "annual precipitation", col = colo["T"],  main = "B->M", freq = TRUE, xlim =c(600, 1800))
+hist(pair.dat$annual_pp[transitions=="TT"], xlab = "annual precipitation", col = colo["T"], main = "T->T", freq = TRUE, xlim = c(rg_pp[1],rg_pp[2]))
+hist(pair.dat$annual_pp[transitions=="TM"], xlab = "annual precipitation", col = colo["B"],  main = "T->M", freq = TRUE, xlim = c(rg_pp[1],rg_pp[2]))
+hist(pair.dat$annual_pp[transitions=="BB"], xlab = "annual precipitation", col = colo["B"],  main = "B->B", freq = TRUE, xlim =c(rg_pp[1],rg_pp[2]))
+hist(pair.dat$annual_pp[transitions=="BM"], xlab = "annual precipitation", col = colo["T"],  main = "B->M", freq = TRUE, xlim =c(rg_pp[1],rg_pp[2]))
 
 #dev.off()
 #
@@ -249,15 +281,15 @@ hist(pair.dat$annual_pp[transitions=="BM"], xlab = "annual precipitation", col =
 #pdf(file = "../figures/data_explo_disturbance.pdf", width = 15 , height=8)
 
 par(mfrow = c(2, 4))
-hist(pair.dat$annual_mean_temp[transitions=="RR"], xlab = "average annual temperature", col = colo["R"], main = "R->R", freq = TRUE, xlim = c(-5, 7))
-hist(pair.dat$annual_mean_temp[transitions=="TR"], xlab = "average annual temperature", col = colo["R"],  main = "T->R", freq = TRUE, xlim = c(-5, 7))
-hist(pair.dat$annual_mean_temp[transitions=="BR"], xlab = "average annual temperature", col = colo["R"],  main = "B->R", freq = TRUE, xlim = c(-5, 7))
-hist(pair.dat$annual_mean_temp[transitions=="MR"], xlab = "average annual temperature", col = colo["R"],  main = "M->R", freq = TRUE, xlim = c(-5, 7))
+hist(pair.dat$annual_mean_temp[transitions=="RR"], xlab = "average annual temperature", col = colo["R"], main = "R->R", freq = TRUE, xlim = c(rg_tp[1],rg_tp[2]))
+hist(pair.dat$annual_mean_temp[transitions=="TR"], xlab = "average annual temperature", col = colo["R"],  main = "T->R", freq = TRUE, xlim = c(rg_tp[1],rg_tp[2]))
+hist(pair.dat$annual_mean_temp[transitions=="BR"], xlab = "average annual temperature", col = colo["R"],  main = "B->R", freq = TRUE, xlim = c(rg_tp[1],rg_tp[2]))
+hist(pair.dat$annual_mean_temp[transitions=="MR"], xlab = "average annual temperature", col = colo["R"],  main = "M->R", freq = TRUE, xlim = c(rg_tp[1],rg_tp[2]))
 
-hist(pair.dat$annual_pp[transitions=="RR"], xlab = "annual precipitation", col = colo["R"], main = "R->R", freq = TRUE, xlim = c(600, 1800))
-hist(pair.dat$annual_pp[transitions=="TR"], xlab = "annual precipitation", col = colo["R"],  main = "T->R", freq = TRUE, xlim = c(600, 1800))
-hist(pair.dat$annual_pp[transitions=="BR"], xlab = "annual precipitation", col = colo["R"],  main = "B->R", freq = TRUE, xlim =c(600, 1800))
-hist(pair.dat$annual_pp[transitions=="MR"], xlab = "annual precipitation", col = colo["R"],  main = "M->R", freq = TRUE, xlim =c(600, 1800))
+hist(pair.dat$annual_pp[transitions=="RR"], xlab = "annual precipitation", col = colo["R"], main = "R->R", freq = TRUE, xlim = c(rg_pp[1],rg_pp[2]))
+hist(pair.dat$annual_pp[transitions=="TR"], xlab = "annual precipitation", col = colo["R"],  main = "T->R", freq = TRUE, xlim = c(rg_pp[1],rg_pp[2]))
+hist(pair.dat$annual_pp[transitions=="BR"], xlab = "annual precipitation", col = colo["R"],  main = "B->R", freq = TRUE, xlim =c(rg_pp[1],rg_pp[2]))
+hist(pair.dat$annual_pp[transitions=="MR"], xlab = "annual precipitation", col = colo["R"],  main = "M->R", freq = TRUE, xlim =c(rg_pp[1],rg_pp[2]))
 
 dev.off()
 
