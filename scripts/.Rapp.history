@@ -1,638 +1,293 @@
-times     <-seq(0,300,0.5)
-out <-as.data.frame(ode(state,times,model,parameters))
-model<-function(t,state,parameters){#
-  with(as.list(c(state,parameters)),{  #
-  	f1 <- 1/(1 + b1*X1)#
-  	f2 <- 1/(1 + b2*X2)#
-  	f3 <- 1/(1 + c2*b3*(X1 + X2))#
-  	dX1 <- X1*(1-X1-c1*alpha*X3) - a*X1*(P1*f1 + c2*P3*f3)#
-  	dX2 <- X2*(1-X2-c1*alpha*X3) - a*X2*(P2*f2 + c2*P3*f3)#
-  	dX3 <- X3*(1-X3-c1*alpha*(X1+X2))#
-  	dP1 <- a*P1*f1*X1 - m*P1#
-  	dP2 <- a*P2*f2*X2 - m*P2#
-  	dP3 <- c2*a*P3*f3*(X1 + X2) - m*P3#
-#
-     list(c(dX1,dX2,dX3,dP1,dP2, dP3))          #
-     })#
- }#
-#
- #----------------------##
- # RUNNING the model:   ##
- #----------------------##
- times     <-seq(0,300,0.5)         #
-#
- out <-as.data.frame(ode(state,times,model,parameters))
-plot (times,out$D,type="l",main="[D]",xlab="time",ylab="density")
-plot (times,out$P1,type="l",main="[D]",xlab="time, hours",ylab="mol/m3")
-par(ask=FALSE)
-plot (times,out$P1,type="l",main="[D]",xlab="time, hours",ylab="mol/m3")
-mtext(outer=TRUE,side=3,"mtext",cex=1.5)
-plot (times,out$P1,type="l",main="",xlab="time",ylab="density")
-mtext(outer=TRUE,side=3,"mtext",cex=1.5)
-lines (times, out$P2, col="red")
-lines (times, out$P3, col="blue")
------------------------##
- # the model parameters: ##
- #-----------------------##
- parameters<-c(c1=0,#
- 			   c2 =0.45,#
- 			   alpha=1.5,#
-               a=8,#
-               m = 0.8,#
-               b1=2,#
-               b2=2,#
-               b3=2)#
-#
- #-------------------------##
- # the initial conditions: ##
- #-------------------------##
- state     <-c(X1=0.8,               #
-               X2=0.5,#
-               X3=1,#
-               P1=0.3,#
-               P2=0.01,#
-               P3=0.1)#
-#
- #----------------------##
- # the model equations: ##
- #----------------------##
- model<-function(t,state,parameters){#
-  with(as.list(c(state,parameters)),{  #
-  	f1 <- 1/(1 + b1*X1)#
-  	f2 <- 1/(1 + b2*X2)#
-  	f3 <- 1/(1 + c2*b3*(X1 + X2))#
-  	dX1 <- X1*(1-X1-c1*alpha*X3) - a*X1*(P1*f1 + c2*P3*f3)#
-  	dX2 <- X2*(1-X2-c1*alpha*X3) - a*X2*(P2*f2 + c2*P3*f3)#
-  	dX3 <- X3*(1-X3-c1*alpha*(X1+X2))#
-  	dP1 <- a*P1*f1*X1 - m*P1#
-  	dP2 <- a*P2*f2*X2 - m*P2#
-  	dP3 <- ifelse(t>18, c2*a*P3*f3*(X1 + X2) - m*P3, 0.1)#
-    list(c(dX1,dX2,dX3,dP1,dP2, dP3))          #
-     })#
- }#
-#
- #----------------------##
- # RUNNING the model:   ##
- #----------------------##
- times     <-seq(0,300,0.5)         #
-#
- out <-as.data.frame(ode(state,times,model,parameters))#
-#
- par(mfrow=c(2,2), oma=c(0,0,3,0))   # set number of plots (mfrow) and margin size (oma)#
-#
- plot (times,out$P1,type="l",main="",xlab="time",ylab="density")#
- lines (times, out$P2, col="red")#
- lines (times, out$P3, col="blue")
------------------------##
- # the model parameters: ##
- #-----------------------##
- parameters<-c(c1=0,#
- 			   c2 =0.45,#
- 			   alpha=1.5,#
-               a=8,#
-               m = 0.8,#
-               b1=2,#
-               b2=2,#
-               b3=2)#
-#
- #-------------------------##
- # the initial conditions: ##
- #-------------------------##
- state     <-c(X1=0.8,               #
-               X2=0.5,#
-               X3=1,#
-               P1=0.3,#
-               P2=0.01,#
-               P3=0.1)#
-#
- #----------------------##
- # the model equations: ##
- #----------------------##
- model<-function(t,state,parameters){#
-  with(as.list(c(state,parameters)),{  #
-  	f1 <- 1/(1 + b1*X1)#
-  	f2 <- 1/(1 + b2*X2)#
-  	f3 <- 1/(1 + c2*b3*(X1 + X2))#
-  	dX1 <- X1*(1-X1-c1*alpha*X3) - a*X1*(P1*f1 + c2*P3*f3)#
-  	dX2 <- X2*(1-X2-c1*alpha*X3) - a*X2*(P2*f2 + c2*P3*f3)#
-  	dX3 <- X3*(1-X3-c1*alpha*(X1+X2))#
-  	dP1 <- a*P1*f1*X1 - m*P1#
-  	dP2 <- a*P2*f2*X2 - m*P2#
-  	if (t>18) dP3 <- c2*a*P3*f3*(X1 + X2) - m*P3#
-    list(c(dX1,dX2,dX3,dP1,dP2, dP3))          #
-     })#
- }#
-#
- #----------------------##
- # RUNNING the model:   ##
- #----------------------##
- times     <-seq(0,300,0.5)         #
-#
- out <-as.data.frame(ode(state,times,model,parameters))#
-#
- par(mfrow=c(2,2), oma=c(0,0,3,0))   # set number of plots (mfrow) and margin size (oma)#
-#
- plot (times,out$P1,type="l",main="",xlab="time",ylab="density")#
- lines (times, out$P2, col="red")#
- lines (times, out$P3, col="blue")
------------------------##
- # the model parameters: ##
- #-----------------------##
- parameters<-c(c1=0,#
- 			   c2 =0.45,#
- 			   alpha=1.5,#
-               a=8,#
-               m = 0.8,#
-               b1=2,#
-               b2=2,#
-               b3=2)#
-#
- #-------------------------##
- # the initial conditions: ##
- #-------------------------##
- state     <-c(X1=0.8,               #
-               X2=0.5,#
-               X3=1,#
-               P1=0.3,#
-               P2=0.01,#
-               P3=0)#
-#
- #----------------------##
- # the model equations: ##
- #----------------------##
- model<-function(t,state,parameters){#
-  with(as.list(c(state,parameters)),{#
-  	if(t=18) P3 = 0.1  #
-  	f1 <- 1/(1 + b1*X1)#
-  	f2 <- 1/(1 + b2*X2)#
-  	f3 <- 1/(1 + c2*b3*(X1 + X2))#
-  	dX1 <- X1*(1-X1-c1*alpha*X3) - a*X1*(P1*f1 + c2*P3*f3)#
-  	dX2 <- X2*(1-X2-c1*alpha*X3) - a*X2*(P2*f2 + c2*P3*f3)#
-  	dX3 <- X3*(1-X3-c1*alpha*(X1+X2))#
-  	dP1 <- a*P1*f1*X1 - m*P1#
-  	dP2 <- a*P2*f2*X2 - m*P2#
-  	dP3 <- c2*a*P3*f3*(X1 + X2) - m*P3#
-    list(c(dX1,dX2,dX3,dP1,dP2, dP3))          #
-     })#
- }#
-#
- #----------------------##
- # RUNNING the model:   ##
- #----------------------##
- times     <-seq(0,300,0.5)         #
-#
- out <-as.data.frame(ode(state,times,model,parameters))#
-#
- par(mfrow=c(2,2), oma=c(0,0,3,0))   # set number of plots (mfrow) and margin size (oma)#
-#
- plot (times,out$P1,type="l",main="",xlab="time",ylab="density")#
- lines (times, out$P2, col="red")#
- lines (times, out$P3, col="blue")
------------------------##
- # the model parameters: ##
- #-----------------------##
- parameters<-c(c1=0,#
- 			   c2 =0.45,#
- 			   alpha=1.5,#
-               a=8,#
-               m = 0.8,#
-               b1=2,#
-               b2=2,#
-               b3=2)#
-#
- #-------------------------##
- # the initial conditions: ##
- #-------------------------##
- state     <-c(X1=0.8,               #
-               X2=0.5,#
-               X3=1,#
-               P1=0.3,#
-               P2=0.01,#
-               P3=0)#
-#
- #----------------------##
- # the model equations: ##
- #----------------------##
- model<-function(t,state,parameters){#
-  with(as.list(c(state,parameters)),{#
-  	if(t==18) P3 = 0.1  #
-  	f1 <- 1/(1 + b1*X1)#
-  	f2 <- 1/(1 + b2*X2)#
-  	f3 <- 1/(1 + c2*b3*(X1 + X2))#
-  	dX1 <- X1*(1-X1-c1*alpha*X3) - a*X1*(P1*f1 + c2*P3*f3)#
-  	dX2 <- X2*(1-X2-c1*alpha*X3) - a*X2*(P2*f2 + c2*P3*f3)#
-  	dX3 <- X3*(1-X3-c1*alpha*(X1+X2))#
-  	dP1 <- a*P1*f1*X1 - m*P1#
-  	dP2 <- a*P2*f2*X2 - m*P2#
-  	dP3 <- c2*a*P3*f3*(X1 + X2) - m*P3#
-    list(c(dX1,dX2,dX3,dP1,dP2, dP3))          #
-     })#
- }#
-#
- #----------------------##
- # RUNNING the model:   ##
- #----------------------##
- times     <-seq(0,300,0.5)         #
-#
- out <-as.data.frame(ode(state,times,model,parameters))#
-#
- par(mfrow=c(2,2), oma=c(0,0,3,0))   # set number of plots (mfrow) and margin size (oma)#
-#
- plot (times,out$P1,type="l",main="",xlab="time",ylab="density")#
- lines (times, out$P2, col="red")#
- lines (times, out$P3, col="blue")
------------------------##
- # the model parameters: ##
- #-----------------------##
- parameters<-c(c1=0,#
- 			   c2 =0.45,#
- 			   alpha=1.5,#
-               a=8,#
-               m = 0.8,#
-               b1=2,#
-               b2=2,#
-               b3=2)#
-#
- #-------------------------##
- # the initial conditions: ##
- #-------------------------##
- state     <-c(X1=0.8,               #
-               X2=0.5,#
-               X3=1,#
-               P1=0.3,#
-               P2=0.01,#
-               P3=0)#
-#
- #----------------------##
- # the model equations: ##
- #----------------------##
- model<-function(t,state,parameters){#
-  with(as.list(c(state,parameters)),{#
-  	if(t==18) P3 = 0.1  #
-  	f1 <- 1/(1 + b1*X1)#
-  	f2 <- 1/(1 + b2*X2)#
-  	f3 <- 1/(1 + c2*b3*(X1 + X2))#
-  	dX1 <- X1*(1-X1-c1*alpha*X3) - a*X1*(P1*f1 + c2*P3*f3)#
-  	dX2 <- X2*(1-X2-c1*alpha*X3) - a*X2*(P2*f2 + c2*P3*f3)#
-  	dX3 <- X3*(1-X3-c1*alpha*(X1+X2))#
-  	dP1 <- a*P1*f1*X1 - m*P1#
-  	dP2 <- a*P2*f2*X2 - m*P2#
-  	dP3 <- c2*a*P3*f3*(X1 + X2) - m*P3#
-    list(c(dX1,dX2,dX3,dP1,dP2, dP3))          #
-     })#
- }#
-#
- #----------------------##
- # RUNNING the model:   ##
- #----------------------##
- times     <-seq(0,300,0.5)         #
-#
- out <-as.data.frame(ode(state,times,model,parameters))#
- plot (times,out$P1,type="l",main="",xlab="time",ylab="density")#
- lines (times, out$P2, col="red")#
- lines (times, out$P3, col="blue")
------------------------##
- # the model parameters: ##
- #-----------------------##
- parameters<-c(c1=0,#
- 			   c2 =0.45,#
- 			   alpha=1.5,#
-               a=8,#
-               m = 0.8,#
-               b1=2,#
-               b2=2,#
-               b3=2)#
-#
- #-------------------------##
- # the initial conditions: ##
- #-------------------------##
- state     <-c(X1=0.8,               #
-               X2=0.5,#
-               X3=1,#
-               P1=0.3,#
-               P2=0.01,#
-               P3=0)#
-#
- #----------------------##
- # the model equations: ##
- #----------------------##
- model<-function(t,state,parameters){#
-  with(as.list(c(state,parameters)),{#
-  	if(t==18) dP3 = 0.1  #
-  	f1 <- 1/(1 + b1*X1)#
-  	f2 <- 1/(1 + b2*X2)#
-  	f3 <- 1/(1 + c2*b3*(X1 + X2))#
-  	dX1 <- X1*(1-X1-c1*alpha*X3) - a*X1*(P1*f1 + c2*P3*f3)#
-  	dX2 <- X2*(1-X2-c1*alpha*X3) - a*X2*(P2*f2 + c2*P3*f3)#
-  	dX3 <- X3*(1-X3-c1*alpha*(X1+X2))#
-  	dP1 <- a*P1*f1*X1 - m*P1#
-  	dP2 <- a*P2*f2*X2 - m*P2#
-  	dP3 <- c2*a*P3*f3*(X1 + X2) - m*P3#
-    list(c(dX1,dX2,dX3,dP1,dP2, dP3))          #
-     })#
- }#
-#
- #----------------------##
- # RUNNING the model:   ##
- #----------------------##
- times     <-seq(0,300,0.5)         #
-#
- out <-as.data.frame(ode(state,times,model,parameters))#
- plot (times,out$P1,type="l",main="",xlab="time",ylab="density")#
- lines (times, out$P2, col="red")#
- lines (times, out$P3, col="blue")
-p00 = function(colo, extinc) (1-extinc)^2p01 = function(colo, extinc) 2*extinc*(1-colo)p02 = function(colo, extinc) colo^2p11 = function(colo, extinc) (1-colo)*(1-extinc) + extinc*colop12 = function(colo, extinc) colo*(1-extinc)p10 = function(colo, extinc) extinc*(1-colo)p22 = function(colo, extinc) (1-extinc)^2p21 = function(colo, extinc) 2*extinc*(1-extinc)p20 = function(colo, extinc) extinc^2MC.trans = function(cc, ee){PP = matrix(c(p00(cc,ee), p01(cc,ee), p02(cc,ee), p10(cc,ee), p11(cc,ee), p12(cc,ee), p20(cc,ee), p21(cc,ee), p22(cc,ee)), nrow=3, by.row=T)return(PP)}
-MC.trans(0.2, 0.1)
-MC.trans = function(cc, ee){PP = matrix(c(p00(cc,ee), p01(cc,ee), p02(cc,ee), p10(cc,ee), p11(cc,ee), p12(cc,ee), p20(cc,ee), p21(cc,ee), p22(cc,ee)), nrow=3, byrow=T)return(PP)}MC.trans(0.2, 0.1)
-markov = MC.trans(0.2, 0.1)
-apply(markov, 1, sum)
-p00 = function(colo, extinc) (1-colo)^2p01 = function(colo, extinc) 2*extinc*(1-colo)p02 = function(colo, extinc) colo^2p11 = function(colo, extinc) (1-colo)*(1-extinc) + extinc*colop12 = function(colo, extinc) colo*(1-extinc)p10 = function(colo, extinc) extinc*(1-colo)p22 = function(colo, extinc) (1-extinc)^2p21 = function(colo, extinc) 2*extinc*(1-extinc)p20 = function(colo, extinc) extinc^2MC.trans = function(cc, ee){PP = matrix(c(p00(cc,ee), p01(cc,ee), p02(cc,ee), p10(cc,ee), p11(cc,ee), p12(cc,ee), p20(cc,ee), p21(cc,ee), p22(cc,ee)), nrow=3, byrow=T)return(PP)}markov = MC.trans(0.2, 0.1)apply(markov, 1, sum)
-p00 = function(colo, extinc) (1-colo)^2p01 = function(colo, extinc) 2*extinc*(1-colo)p02 = function(colo, extinc) colo^2p11 = function(colo, extinc) (1-colo)*(1-extinc) + extinc*colop12 = function(colo, extinc) colo*(1-extinc)p10 = function(colo, extinc) extinc*(1-colo)p22 = function(colo, extinc) (1-extinc)^2p21 = function(colo, extinc) 2*colo*(1-extinc)p20 = function(colo, extinc) extinc^2MC.trans = function(cc, ee){PP = matrix(c(p00(cc,ee), p01(cc,ee), p02(cc,ee), p10(cc,ee), p11(cc,ee), p12(cc,ee), p20(cc,ee), p21(cc,ee), p22(cc,ee)), nrow=3, byrow=T)return(PP)}markov = MC.trans(0.2, 0.1)
-apply(markov, 1, sum)
-eigen(t(markov))
-p00 = function(colo, extinc) (1-colo)^2p01 = function(colo, extinc) 2*extinc*(1-extinc)p02 = function(colo, extinc) colo^2p11 = function(colo, extinc) (1-colo)*(1-extinc) + extinc*colop12 = function(colo, extinc) colo*(1-extinc)p10 = function(colo, extinc) extinc*(1-colo)p22 = function(colo, extinc) (1-extinc)^2p21 = function(colo, extinc) 2*colo*(1-colo)p20 = function(colo, extinc) extinc^2MC.trans = function(cc, ee){PP = matrix(c(p00(cc,ee), p01(cc,ee), p02(cc,ee), p10(cc,ee), p11(cc,ee), p12(cc,ee), p20(cc,ee), p21(cc,ee), p22(cc,ee)), nrow=3, byrow=T)return(PP)}markov = MC.trans(0.2, 0.1)apply(markov, 1, sum)
-p00 = function(colo, extinc) (1-colo)^2p01 = function(colo, extinc) 2*colo*(1-colo)p02 = function(colo, extinc) colo^2p11 = function(colo, extinc) (1-colo)*(1-extinc) + extinc*colop12 = function(colo, extinc) colo*(1-extinc)p10 = function(colo, extinc) extinc*(1-colo)p22 = function(colo, extinc) (1-extinc)^2p21 = function(colo, extinc) 2*extinc*(1-extinc)p20 = function(colo, extinc) extinc^2MC.trans = function(cc, ee){PP = matrix(c(p00(cc,ee), p01(cc,ee), p02(cc,ee), p10(cc,ee), p11(cc,ee), p12(cc,ee), p20(cc,ee), p21(cc,ee), p22(cc,ee)), nrow=3, byrow=T)return(PP)}markov = MC.trans(0.2, 0.1)apply(markov, 1, sum)
-eigen(t(markov))$vectors
-eigen(t(markov))
-eigen(t(markov))[,1]/sum(eigen(t(markov))[,1])
-eigen(t(markov))[,1]
-eigen(t(markov))[[1]][,1]
-eigen(t(markov))$vectors[,1]/sum(eigen(t(markov))[,1])
-eigen(t(markov))$vectors[,1]
-eigen(t(markov))$vectors[,1]/sum(eigen(t(markov))$vectors[,1])
-markov = MC.trans(0.3, 0.1)#testapply(markov, 1, sum)#valeurs a equilibre TRANSPOSER POUR VALP A GAUCHEeigen(t(markov))#2eme valp -> vitesse de convergence #1er vectp -> valeur a equilibre IL FAUT NORMALISER !!eigen(t(markov))$vectors[,1]/sum(eigen(t(markov))$vectors[,1])
-5/6
-15/60
-10/25
-cd /Library/Frameworks/R.framework/Resources/share/texmf/tex32/136
-32/136
-q()
-sfInit(parallel=TRUE,cpus=2)
-install.packages("snowfall")
-library(rjaps)
-library(rjags)
-q()
-k=1; u = 6000; v= 3000; w= 3000; x= 3000; taub = 6; thetab =5mub = nub = 30rb=20; pb = mb = 0.05; qb=0.8; zb=10R = seq(0,1,0.01)TBM = seq(0,1,.01)plan = expand.grid(R, TBM)Ikb = mb + pb + lambertWp(qb*zb*exp(-zb*(mb+pb)))/zb
-library(pracma) #lambertWp
-------------------------------------------k=1; u = 6000; v= 3000; w= 3000; x= 3000; taub = 6; thetab =5mub = nub = 30rb=20; pb = mb = 0.05; qb=0.8; zb=10R = seq(0,1,0.01)TBM = seq(0,1,.01)plan = expand.grid(R, TBM)Ikb = mb + pb + lambertWp(qb*zb*exp(-zb*(mb+pb)))/zb
-------------------------------------------# conditions existence Herbivores#------------------------------------------library(pracma) #lambertWp# moose#------------------------------------------k=1; ua = 6000; va= 3000; wa= 3000; xa= 3000; taua = 6; thetaa =5mua = nua = 30ra=20; pa = ma = 0.05; qa=0.8; za=10R = seq(0,1,0.01)TBM = seq(0,1,.01)plan = expand.grid(R, TBM)Ika = ma + pa + lambertWp(qa*za*exp(-za*(ma+pa)))/za#
-intakeHa <- function(Veget, Ikb, Hv=1000){R = Veget[1]TBM = Veget[2]Ia = taua*k*ua*(R/Ha)/(mua + k*ua*(R/Ha))Ja = (thetaa*k*(TBM*(va*wa+xa)/3)/Ha)/(nua + k* (TBM*(va*wa+xa)/3)/Ha) * 1/( 1+exp( ra*( taua*k*ua*(R/Ha)/(mua + k*ua*(R/Ha)) -pa-ma ) ) )return(Ia+Ja)}Intake_a = apply(plan, 1, intakeHa)
-------------------------------------------# conditions existence Herbivores#------------------------------------------library(pracma) #lambertWp# moose#------------------------------------------k=1; ua = 6000; va= 3000; wa= 3000; xa= 3000; taua = 6; thetaa =5mua = nua = 30ra=20; pa = ma = 0.05; qa=0.8; za=10R = seq(0,1,0.01)TBM = seq(0,1,.01)plan = expand.grid(R, TBM)Ika = ma + pa + lambertWp(qa*za*exp(-za*(ma+pa)))/za#
-intakeHa <- function(Veget, Ikb, Hv=1000){R = Veget[1]TBM = Veget[2]Ia = taua*k*ua*(R/Ha)/(mua + k*ua*(R/Ha))Ja = (thetaa*k*(TBM*(va+wa+xa)/3)/Ha)/(nua + k* (TBM*(va+wa+xa)/3)/Ha) * 1/( 1+exp( ra*( taua*k*ua*(R/Ha)/(mua + k*ua*(R/Ha)) -pa-ma ) ) )return(Ia+Ja)}Intake_a = apply(plan, 1, intakeHa)
-library(pracma) #lambertWp# moose#------------------------------------------k=1; ua = 6000; va= 3000; wa= 3000; xa= 3000; taua = 6; thetaa =5mua = nua = 30ra=20; pa = ma = 0.05; qa=0.8; za=10R = seq(0,1,0.01)TBM = seq(0,1,.01)plan = expand.grid(R, TBM)Ika = ma + pa + lambertWp(qa*za*exp(-za*(ma+pa)))/za#
-intakeHa <- function(Veget, Ikb, Hv=1000){R = Veget[1]TBM = Veget[2]Ia = taua*k*ua*(R/Ha)/(mua + k*ua*(R/Ha))Ja = (thetaa*k*(TBM*(va+wa+xa)/3)/Ha)/(nua + k* (TBM*(va+wa+xa)/3)/Ha) * 1/( 1+exp( ra*( taua*k*ua*(R/Ha)/(mua + k*ua*(R/Ha)) -pa-ma ) ) )return(Ia+Ja)}Intake_a = apply(plan, 1, intakeHa)
-------------------------------------------# conditions existence Herbivores#------------------------------------------library(pracma) #lambertWp# moose#------------------------------------------k=1; ua = 6000; va= 3000; wa= 3000; xa= 3000; taua = 6; thetaa =5mua = nua = 30ra=20; pa = ma = 0.05; qa=0.8; za=10R = seq(0,1,0.01)TBM = seq(0,1,.01)plan = expand.grid(R, TBM)Ika = ma + pa + lambertWp(qa*za*exp(-za*(ma+pa)))/za#
-intakeHa <- function(Veget, Ikb, Ha=1000){R = Veget[1]TBM = Veget[2]Ia = taua*k*ua*(R/Ha)/(mua + k*ua*(R/Ha))Ja = (thetaa*k*(TBM*(va+wa+xa)/3)/Ha)/(nua + k* (TBM*(va+wa+xa)/3)/Ha) * 1/( 1+exp( ra*( taua*k*ua*(R/Ha)/(mua + k*ua*(R/Ha)) -pa-ma ) ) )return(Ia+Ja)}Intake_a = apply(plan, 1, intakeHa)
-Intake_a
-TBMiso = function(Riso, Ha=1000){A = (1+exp( ra*( taua*k*ua*(Riso/Ha)/(mua + k*ua*(Riso/Ha)) -pa-ma ))) *(Ika - (taua*k*ua*(Riso/Ha))/(mua+k*ua*(Riso/Ha)))T = - Ha *A*nua/((va+wa+xa)/3)*(A-thetaa))return(T)}
-TBMiso = function(Riso, Ha=1000){A = (1+exp( ra*( taua*k*ua*(Riso/Ha)/(mua + k*ua*(Riso/Ha)) -pa-ma ))) *(Ika - (taua*k*ua*(Riso/Ha))/(mua+k*ua*(Riso/Ha)))T = - Ha *A*nua/(((va+wa+xa)/3)*(A-thetaa))return(T)}
-image(TBM, R , matrix(Intake_a, ncol=length(T)), col=rev(heat.colors(10)))
-image(TBM, R , matrix(Intake_a, ncol=length(TBM)), col=rev(heat.colors(10)))
-image(TBM, R, matrix(ifelse(apply(plan, 1, sum)<1, 1, 0), ncol=length(TBM)), col=c(rgb(0,0,0, 1),rgb(1,1,1,0)), add=TRUE)
-lines(TBMiso(Riso), R)
-lines(TBMiso(R), R)
-image(R, TBM , matrix(Intake_a, ncol=length(R)), col=rev(heat.colors(10)))
-lines( R,TBMiso(R))
-F1 = seq(0,200,1)tau = 5; mu = 20; I1 = tau*F1/(mu + F1)
-par(mfrow = c(1,2))plot(I1~F1, type ="l", ylim = c(0,tau*1.1), xaxt="n", yaxt="n", ylab = "Intake rate", xlab="Available resource", bty="n")abline(v=mu, lty=2)axis(1, at = mu, labels="mu", las = 1, cex.axis =0.7)abline(h=tau/2, lty=2)axis(2, at = tau/2, labels="tau/2 \n(theta/2)", las = 1, cex.axis =0.7)abline(h=tau, lty=2)axis(2, at = tau, labels="tau \n(theta)", las = 1, cex.axis =0.7)abline(h=0)abline(v=0)axis(1, at = 0, labels="0", cex.axis =0.7, tick=F)axis(2, at = 0, labels="0",las = 1,  cex.axis =0.7, tick=F)
-par(mfrow = c(1,2))plot(I1~F1, type ="l", ylim = c(0,tau*1.1), xaxt="n", yaxt="n", ylab = "Intake rate", xlab="Available resource", bty="n")abline(v=mu, lty=2)axis(1, at = mu, labels="mu", las = 1, cex.axis =0.7)abline(h=tau/2, lty=2)axis(2, at = tau/2, labels="tau/2)", las = 1, cex.axis =0.7)abline(h=tau, lty=2)axis(2, at = tau, labels="tau", las = 1, cex.axis =0.7)abline(h=0)abline(v=0)axis(1, at = 0, labels="0", cex.axis =0.7, tick=F)axis(2, at = 0, labels="0",las = 1,  cex.axis =0.7, tick=F)
-par(mfrow = c(1,2))plot(I1~F1, type ="l", ylim = c(0,tau*1.1), xaxt="n", yaxt="n", ylab = "Intake rate", xlab="Available resource", bty="n")abline(v=mu, lty=2)axis(1, at = mu, labels="mu \n(or nu)", las = 1, cex.axis =0.7)abline(h=tau/2, lty=2)axis(2, at = tau/2, labels="tau/2)", las = 1, cex.axis =0.7)abline(h=tau, lty=2)axis(2, at = tau, labels="tau", las = 1, cex.axis =0.7)abline(h=0)abline(v=0)axis(1, at = 0, labels="0", cex.axis =0.7, tick=F)axis(2, at = 0, labels="0",las = 1,  cex.axis =0.7, tick=F)
-r=20; I1 = seq(0,1,0.01)I2 = 1/(1+exp(r*(I1-p-m)))
-Intake = seq(0,100,0.01)p = 0.1; q = 0.7; z = .2; m=0.1;M = p+q*exp(-z*Intake)+m
-r=20; I1 = seq(0,1,0.01)I2 = 1/(1+exp(r*(I1-p-m)))
-plot(I2~I1, type ="l", xlim = c(0,1), xaxt="n", yaxt="n", ylab = "Coefficient for non-preferred resource", xlab="Intake of preferred resource", bty="n")abline(v=p+m, lty=2)axis(2, at = 1, labels="1", las = 1, cex.axis =0.7)axis(1, at = p+m, labels="p+m", cex.axis =0.7)abline(h=0)abline(v=0)axis(1, at = 0, labels="0", cex.axis =0.7, tick=F)axis(2, at = 0, labels="0", las = 1, cex.axis =0.7, tick=F)
-r=20; I1 = seq(0,1,0.01)phi = 0.8I2 = phi/(phi+exp(r*(I1-p-m)))plot(I2~I1, type ="l", xlim = c(0,1), xaxt="n", yaxt="n", ylab = "Coefficient for non-preferred resource", xlab="Intake of preferred resource", bty="n")abline(v=p+m, lty=2)axis(2, at = 1, labels="1", las = 1, cex.axis =0.7)axis(1, at = p+m, labels="p+m", cex.axis =0.7)abline(h=0)abline(h=phi, lty=2)abline(v=0)axis(1, at = 0, labels="0", cex.axis =0.7, tick=F)axis(2, at = 0, labels="0", las = 1, cex.axis =0.7, tick=F)
-r=20; I1 = seq(0,1,0.01)phi = 0.8I2 = 1/(phi+exp(r*(I1-p-m)))plot(I2~I1, type ="l", xlim = c(0,1), xaxt="n", yaxt="n", ylab = "Coefficient for non-preferred resource", xlab="Intake of preferred resource", bty="n")abline(v=p+m, lty=2)axis(2, at = 1, labels="1", las = 1, cex.axis =0.7)axis(1, at = p+m, labels="p+m", cex.axis =0.7)abline(h=0)abline(h=phi, lty=2)abline(v=0)axis(1, at = 0, labels="0", cex.axis =0.7, tick=F)axis(2, at = 0, labels="0", las = 1, cex.axis =0.7, tick=F)
-r=20; I1 = seq(0,1,0.01)phi = 0.8I2 = phi/(1+exp(r*(I1-p-m)))plot(I2~I1, type ="l", xlim = c(0,1), xaxt="n", yaxt="n", ylab = "Coefficient for non-preferred resource", xlab="Intake of preferred resource", bty="n")abline(v=p+m, lty=2)axis(2, at = 1, labels="1", las = 1, cex.axis =0.7)axis(1, at = p+m, labels="p+m", cex.axis =0.7)abline(h=0)abline(h=phi, lty=2)abline(v=0)axis(1, at = 0, labels="0", cex.axis =0.7, tick=F)axis(2, at = 0, labels="0", las = 1, cex.axis =0.7, tick=F)
-r=20; I1 = seq(0,1,0.01)phi = 0.8I2 = phi/(1+exp(r*(I1-p-m)))plot(I2~I1, type ="l", xlim = c(0,1), ylim = c(0,1), xaxt="n", yaxt="n", ylab = "Coefficient for non-preferred resource", xlab="Intake of preferred resource", bty="n")abline(v=p+m, lty=2)axis(2, at = 1, labels="1", las = 1, cex.axis =0.7)axis(1, at = p+m, labels="p+m", cex.axis =0.7)abline(h=0)abline(h=phi, lty=2)abline(v=0)axis(1, at = 0, labels="0", cex.axis =0.7, tick=F)axis(2, at = 0, labels="0", las = 1, cex.axis =0.7, tick=F)
-r=20; I1 = seq(0,1,0.01)phi = 0.8I2 = phi/(1+exp(r*(I1-p-m)))plot(I2~I1, type ="l", xlim = c(0,1), ylim = c(0,1), xaxt="n", yaxt="n", ylab = "Coefficient for non-preferred resource", xlab="Intake of preferred resource", bty="n")abline(v=p+m, lty=2)axis(2, at = 1, labels="1", las = 1, cex.axis =0.7)axis(2, at = phi, labels="phi", las = 1, cex.axis =0.7)axis(1, at = p+m, labels="p+m", cex.axis =0.7)abline(h=0)abline(h=phi, lty=2)abline(v=0)axis(1, at = 0, labels="0", cex.axis =0.7, tick=F)axis(2, at = 0, labels="0", las = 1, cex.axis =0.7, tick=F)
-Intake = seq(0,100,0.01)p = 0.1; q = 0.7; z = .2; m=0.1;M = p+q*exp(-z*Intake)+m
-F1 = seq(0,200,1)tau = 5; mu = 20; I1 = tau*F1/(mu + F1)pdf("../graphs/intakes.pdf", height=4, width=7)par(mfrow = c(1,2))plot(I1~F1, type ="l", ylim = c(0,tau*1.1), xaxt="n", yaxt="n", ylab = "Intake rate", xlab="Available resource", bty="n")abline(v=mu, lty=2)axis(1, at = mu, labels="mu \n(or nu)", las = 1, cex.axis =0.7)abline(h=tau/2, lty=2)axis(2, at = tau/2, labels="tau/2)", las = 1, cex.axis =0.7)abline(h=tau, lty=2)axis(2, at = tau, labels="tau", las = 1, cex.axis =0.7)abline(h=0)abline(v=0)axis(1, at = 0, labels="0", cex.axis =0.7, tick=F)axis(2, at = 0, labels="0",las = 1,  cex.axis =0.7, tick=F)#------------------------------------------r=20; I1 = seq(0,1,0.01)phi = 0.8I2 = phi/(1+exp(r*(I1-p-m)))plot(I2~I1, type ="l", xlim = c(0,1), ylim = c(0,1), xaxt="n", yaxt="n", ylab = "Coefficient for non-preferred resource", xlab="Intake of preferred resource", bty="n")abline(v=p+m, lty=2)axis(2, at = 1, labels="1", las = 1, cex.axis =0.7)axis(2, at = phi, labels="phi", las =
-1, cex.axis =0.7)axis(1, at = p+m, labels="p+m", cex.axis =0.7)abline(h=0)abline(h=phi, lty=2)abline(v=0)axis(1, at = 0, labels="0", cex.axis =0.7, tick=F)axis(2, at = 0, labels="0", las = 1, cex.axis =0.7, tick=F)#
-dev.off()
-Ha = Hv = seq(0,1,0.1)
-expand.grid(Ha, Hv)
-Htable = expand.grid(Ha, Hv)
-kk = data.frame(apply(Htable, 1, function(x){exp(-0.5*x[2]/x[1])}))
-kk
-image(kk)
-image(Ha, Hv, matrix(kk, ncol=length(Ha)), col=rev(heat.colors(10)))
-kk
-kk = unlist(apply(Htable, 1, function(x){exp(-0.5*x[2]/x[1])}))
-image(Ha, Hv, matrix(kk, ncol=length(Ha)), col=rev(heat.colors(10)))
-matrix(kk, ncol=length(Ha))
-exp(0.5)
-exp(-0.5)
-exp(-ln(0.5))
-exp(-log(0.5))
-exp(-log(1/0.5))
-kk = unlist(apply(Htable, 1, function(x){exp(-log(1/0.5)*x[2]/x[1])}))
-matrix(kk, ncol=length(Ha))
-image(Ha, Hv, matrix(kk, ncol=length(Ha)), col=rev(heat.colors(10)))
-summary(kk)
-hist(kk)
-Ptable = expand.grid(Ha, Hv, PT)
-PT = seq(0,1,0.1)
-Ptable = expand.grid(Ha, Hv, PT)
-kk = unlist(apply(Htable, 1, function(x){x[3]*exp(-log(1/0.5)*x[2]/x[1])}))
-split(kk, Ptable$Ha)
-head(kk)
-kk
-Ptable
-kk = unlist(apply(Ptable, 1, function(x){x[3]*exp(-log(1/0.5)*x[2]/x[1])}))
-kk
-head(PTable)
-head(Ptable)
-kk[Ptable[,1]==1]
-sel = kk[Ptable[,1]==1]
-sel = Ptable[,1]==1
-plot(Ptable[sel,3], kk[sel])
-kk = unlist(apply(Ptable, 1, function(x){x[3]*(exp(-log(1/0.5)*x[2]/x[1])-0.5) + 0.5}))
-plot(Ptable[sel,3], kk[sel])
-sel = Ptable[,2]==1
-plot(Ptable[sel,3], kk[sel])
-sel = Ptable[,2]==0
-plot(Ptable[sel,3], kk[sel])
-sel = Ptable[,1]==0
-plot(Ptable[sel,3], kk[sel])
-PT = seq(0,1,0.1)Ptable = expand.grid(Ha, Hv, PT)kk = unlist(apply(Ptable, 1, function(x){x[3]*(exp(-log(1/0.5)*(1-x[1])/(1-x[2])-0.5) + 0.5}))
-kk = unlist(apply(Ptable, 1, function(x){x[3]*(exp(-log(1/0.5)*((1-x[1])/(1-x[2]))-0.5) + 0.5}))
-kk = unlist(apply(Ptable, 1, function(x){x[3]*(exp(-log(1/0.5)*((1-x[1])/(1-x[2])))-0.5) + 0.5}))
-sel = Ptable[,1]==1
-plot(Ptable[sel,3], kk[sel])
-sel = Ptable[,1]==0
-plot(Ptable[sel,3], kk[sel])
-x <- c("A and B", "A, B and C", "A, B, C and D", "foobar")#
-pattern <- "[[:space:]]*(,|and)[[:space:]]"#
-## Match data from regexpr()#
-m <- regexpr(pattern, x)#
-regmatches(x, m)#
-regmatches(x, m, invert = TRUE)
-x = "je suis; certaine que ;Temperature; peut marcher"
-pattern = "([:alpha:])+;"
-m = regexpr(pattern, x)
-m
-regmachtes(x,m)
-regmatches(x,m)
-pattern = "([:alpha:])+;"
-x
-pattern = "[:alpha:]+;"
-m = regexpr(pattern, x)
-m
-regmatches(x,m, invert=T)
-pattern = "[[:alpha:]]+;"
-m = regexpr(pattern, x)
-m
-regmatches(x,m, invert=T)
-regmatches(x,m, invert=F)
-pattern = "[[:a-zA-z:]]+;"
-m = regexpr(pattern, x)
-pattern = "[[:a-zA-Z:]]+;"
-m = regexpr(pattern, x)
-pattern = "[[:alpha:]]+;"
-m = regexpr(pattern, x)
-m
-regmatches(x,m, invert=T)
-regmatches(x,m, invert=F)
-pattern = "[[:alpha:]]+;"x = "je suis; certaine que ;Temperature; peut marcher"#
-pattern = "([:alpha:])+;"#
-m = regexpr(pattern, x)#
-regmatches(x,m)
-x = "je suis; certaine que ;Temperature; peut marcher"#
-pattern = "([:alpha:])+;"#
-m = regexpr(pattern, x)#
-regmatches(x,m)
-x = "je suis; certaine que ;Temperature; peut marcher"#
-pattern = "([:alpha:])+;"#
-m = regexpr(pattern, x)#
-regmatches(x,m)x = "je suis; certaine que ;Temperature; peut marcher"#
-pattern = "[[:alpha:]]+;"#
-m = regexpr(pattern, x)#
-regmatches(x,m)
-x = "je suis; certaine que ;Temperature; peut marcher"#
-pattern = "[[:alpha:]]+;"#
-m = regexpr(pattern, x)#
-regmatches(x,m)
-x = "je suis; certaine que ; Temperature; peut marcher"#
-pattern = "[[:alpha:]]+;"#
-m = regexpr(pattern, x)#
-regmatches(x,m)
-x = "je suis; certaine que ;temperature; peut marcher"#
-pattern = "[[:alpha:]]+;"#
-m = regexpr(pattern, x)#
-regmatches(x,m)
-?regmatches
-x = "je suis; certaine que ;temperature; peut marcher"#
-pattern = "[[:alpha:]]+;"#
-m = regexec(pattern, x)#
-regmatches(x,m)
-x = "je suis certaine que ;Temperature; peut marcher"#
-pattern = "[[:alpha:]]+;"#
-m = regexpr(pattern, x)#
-regmatches(x,m)
-m
-x = "je suis; certaine que ;Temperature; peut marcher"#
-pattern = "[[:alpha:]]+;"#
-m = grep(pattern, x)#
-regmatches(x,m)
-m
-m = gregexpr(pattern, x)
-m
-regmatches(x,m)
-x = "je suis; certaine que ;Temperature; peut marcher"#
-pattern = "[[:alpha:]]+;"#
-m = grep(pattern, x)#
-regmatches(x,m)x = "je suis; certaine; depuis 0 que ;Temperature; peut marcher"#
-pattern = "[[:alpha:]]+;"#
-m = gregexpr(pattern, x)#
-regmatches(x,m)x = "je suis; certaine; depuis 0 que ;Temperature; peut marcher"#
-pattern = "[[:alpha:]]+;"#
-m = gregexpr(pattern, x)#
-regmatches(x,m)
-x = "je suis; certaine; depuis 0 que ;Temperature; peut marcher"#
-pattern = "[[:alpha:]]+;"#
-m = gregexpr(pattern, x)#
-regmatches(x,m)
-m
-regexec([[0-9]], x)
-regexec("[0-9]", x)
-x = "je suis; certaine; depuis 0 que ;Temperature; peut marcher 45°"#
-pattern = "[[:alpha:]]+;"#
-m = gregexpr(pattern, x)#
-regmatches(x,m)
-regexec("[0-9]", x)
-regexpr("[0-9]", x)
-regexpr("[0-9]", x)+1
-x = "je suis; certaine; depuis 0 que ;Temperature; peut marcher 45°"#
-pattern = "[[:alpha:]]+;"#
-m = gregexpr(pattern, x)#
-regmatches(x,m[m<regexpr("[0-9]", x)])
-m
-m[which(m<regexpr("[0-9]", x)])
-m<regexpr("[0-9]", x)
-regexpr("[0-9]", x)
-m
-m[[1]]<regexpr("[0-9]", x)
-m[which(m[[1]]<regexpr("[0-9]", x)])
-m[which(m[[1]]<regexpr("[0-9]", x))]
-which(m[[1]]<regexpr("[0-9]", x))
-m[which(m[[1]]<regexpr("[0-9]", x))]
-m[[1]][which(m[[1]]<regexpr("[0-9]", x))]
-regmatches(x,m[[1]][which(m[[1]]<regexpr("[0-9]", x)]))
-regmatches(x,m[[1]][which(m[[1]]<regexpr("[0-9]", x))])
-x
-m
-x = strplit(x, regexpr("[0-9]", x))[[1]]
-x = strsplit(x, regexpr("[0-9]", x))[[1]]
-x
-x = "je suis; certaine; depuis 0 que ;Temperature; peut marcher 45°"#
-x = strsplit(x, "[0-9]")[[1]]
-x
-x = "je suis; certaine; depuis 0 que ;Temperature; peut marcher 45°"#
-x = strsplit(x, "[0-9]")[[1]][1]#
-pattern = "[[:alpha:]]+;"#
-m = gregexpr(pattern, x)#
-regmatches(x,m)
-setwd('/Users/isabelle/Documents/RESEARCH/ANALYSES/2014_FATEHD_Bay_Glacier/Analyses')
-library(coda)
-install.packages("coda")
-install.pacakges("rjags")
-install.packages("rjags")
-library(c0da)
-library(coda)
-library(rjags)
-library(rjags, type = "source")
-install.packages("rjags", type = "source")
-library(rjags)
-install.packages("rjags")
-library(rjags)
-load("~/Documents/RESEARCH/RECHERCHE/2008-2013 LECA/GroupesFct/V3_Groupes Ecrins Périph/B-Groupement/tr2")
+thetat[which(lik<0),]
+thetat[which(lik<0)]
+eps[which(lik<0)]
+thetat[which(lik<0)]
+0.7*0.1
+lik[which(lik<0)]
+thetat[which(lik<0)][1]->tt
+thetab[which(lik<0)][1]->tb
+ep[which(lik<0)][1]->ep
+eps[which(lik<0)][1]->ep
+eps + tb*(1-eps)
+ep + tb*(1-ep) + tt*(1-ep)
+Q
+ls
 ls()
-head(tr2)
-load("~/Documents/RESEARCH/RECHERCHE/2008-2013 LECA/GroupesFct/V3_Groupes Ecrins Périph/B-Groupement/Analyses groupes/tab_traits_gpes")
-ls()
-tab2
-rm(list=ls())source("4-init_params.R")source("3-transition_model.R")# Maximum likelihood estimationlibrary(GenSA)
-setwd('/Users/isabelle/Documents/RESEARCH/RECHERCHE/2013-2015 UQAR/QUICCFOR/STModel-Calibration/scripts')
-rm(list=ls())source("4-init_params.R")source("3-transition_model.R")# Maximum likelihood estimationlibrary(GenSA)
-?GenSA
-1000/6
-100/6
-estim.pars = GenSA(par = params, fn = model, lower = par_lo, upper= par_hi, control = list(maxit = 1000, verbose =TRUE), dat = data, max.time = 100)
-estim.pars = GenSA(par = params, fn = model, lower = par_lo, upper= par_hi, control = list(maxit = 1000, verbose =TRUE, max.time = 100), dat = data)
-warnings()
-log(1)
-log(0)
-log(.Machine$double.xmin)
-log(lik)
-lik
-rm(list=ls())source("4-init_params.R")source("3-transition_model.R")# Maximum likelihood estimationlibrary(GenSA)estim.pars = GenSA(par = params, fn = model, lower = par_lo, upper= par_hi, control = list(verbose =TRUE, max.time = 100, smooth=FALSE), dat = data)
-warnings()
-model_transition(params, data)
-model
+# state transitionsdata = as.data.frame(read.table("../data/data_pairs_filter.txt"))# neighborhoodpred = read.table("../data/pred_states_multinom.txt")#pred = read.table("../data/data_pred_states_randomForest.txt")#
+# remove transitions D->C and C->Dtest = numeric(nrow(data))test[data$st0 == "T" & data$st1 == "B"] = 1test[data$st0 == "B" & data$st1 == "T"] = 1data = subset(data, test!=1)pred = subset(pred, test!=1)#check variablesdata$ENV1 = scale(data$annual_mean_temp)data$ENV2 = scale(data$annual_pp)data$EB = pred$Bdata$ET = pred$Tdata$EM = pred$M data$st0data$st1data$itime = data$yr1 - data$yr0#
+# Evaluate initial parameter valuestransitions = paste(data$st0,data$st1,sep = "")sum_transitions = table(transitions)
+transitions
+sum_transitions
+tot_transitions
+transitions
+initState = table(data$st0)
+sum_transitions["BR"]/initState["B"]
+(sum_transitions["BR"]/initState["B"]+sum_transitions["MR"]/initState["M"]+sum_transitions["TR"]/initState["T"])/3
+sum_transitions["BR"]/initState["B"]+sum_transitions["MR"]/initState["M"]+sum_transitions["TR"]/initState["T"]
+sum_transitions["BR"]/initState["B"]
+sum_transitions["MR"]/initState["M"]
+sum_transitions["TR"]/initState["T"]
+eps_mn
+(sum_transitions["MB"] + sum_transitions["MT"])/initState["M"]
+sum_transitions["MB"]
+sum_transitions["MT"]
+initState["M"]
+sum_transitions["MT"]/(sum_transitions["MB"] + sum_transitions["MT"])
+sum_transitions["BM"]/initState["B"]
+initState
+sum(initState)
+(sum_transitions["BM"]/initState["B"]) * (sum(initState)/(initState["M"] + initState["T"]))
+(sum_transitions["TM"]/initState["T"]) * (sum(initState)/(initState["M"] + initState["B"]))
+rm(list=ls())source("4-init_params.R")source("3-transition_model.R")# Maximum likelihood estimationlibrary(GenSA)#testmodel(params, data)
+rm(list=ls())source("4-init_params.R")source("3-transition_model.R")# Maximum likelihood estimationlibrary(GenSA)#testmodel(params, data)
+rm(list=ls())source("4-init_params.R")source("3-transition_model.R")# Maximum likelihood estimationlibrary(GenSA)#testmodel(params, data)
+rm(list=ls())source("4-init_params.R")source("3-transition_model.R")# Maximum likelihood estimationlibrary(GenSA)#testmodel(params, data)
 model(params, data)
-debug(mode)
-Q
-Q
-Q
-Q
+GenSA
+par_lo<par_hi
+params
+par_lo
+par_hi
+rm(list=ls())source("4-init_params.R")source("3-transition_model.R")# Maximum likelihood estimationlibrary(GenSA)#testmodel(params, data)
+?GenSA
+2000/60
+rm(list=ls())source("4-init_params.R")source("3-transition_model.R")# Maximum likelihood estimationlibrary(GenSA)#testmodel(params, data)estim.pars = GenSA(par = params, fn = model, lower = par_lo, upper= par_hi, control = list(verbose =TRUE, max.time = 2000, smooth=FALSE), dat = data)
+?GenSA
+?strsplit
+lapply(estim.pars2, strsplit, split = ".")
+setwd('/Users/isabelle/Documents/RESEARCH/RECHERCHE/2013-2015 UQAR/STM-herbivore/Theorique-STM-Herbivores/scripts')
+rm(list=ls())library(deSolve)#------------------------------------------# resource intake#------------------------------------------R1 = seq(0,1, length.out = 100)/100alpha = 1u = 500h = 1/7r = 5phi = 0.2I1 = (alpha*u*R1)/(1 + alpha*h*u*R1)
+R1 = seq(0,1, length.out = 100)/100alpha = 1u1 = 500u2 = 200h1 = 1/7h2 = 1/5r = 5phi = 0.2I1 = (alpha*u1*R1)/(1 + alpha*h1*u1*R1)
+#------------------------------------------R1 = seq(0,1, length.out = 100)/100alpha = 1u1 = 500u2 = 200h1 = 1/7h2 = 1/5r = 5phi = 0.2p = 0.2I1 = (alpha*u1*R1)/(1 + alpha*h1*u1*R1)I2 = (alpha*u2*R2)/(1 + alpha*h2*u2*R2) * (phi+ (1-phi)/(1+exp(r*(I1-p))))
+R2 = seq(0,1, length.out = 100)/100
+plot(R1~I1, type = "l")
+plot(R1~I1, type = "l")
+plot(I1~R1, type = "l")
+R1 = seq(0,1, length.out = 100)/10
+I1 = (alpha*u1*R1)/(1 + alpha*h1*u1*R1)I2 = (alpha*u2*R2)/(1 + alpha*h2*u2*R2) * (phi+ (1-phi)/(1+exp(r*(I1-p))))#
+plot(I1~R1, type = "l")abline(h=tau)
+plot(I2~R2, type = "l")
+R2 = seq(0,1, length.out = 100)/10
+plot(I2~R2, type = "l")
+I2 = (alpha*u2*R2)/(1 + alpha*h2*u2*R2) * (phi+ (1-phi)/(1+exp(r*(I1-p))))
+plot(I2~R2, type = "l")
+plot(I2~R1, type = "l")
+plot(I1~R1, type = "l")
+plot(I2~R1, type = "l")
+plot(I2~I1, type = "l")
+abline(v=p)
+R1 = seq(0,1, length.out = 100)/10R2 = seq(0,1, length.out = 100)/10alpha = 1u1 = 500u2 = 200h1 = 1/7h2 = 1/5r = 5phi = 0.2p = 4I1 = (alpha*u1*R1)/(1 + alpha*h1*u1*R1)I2 = (alpha*u2*R2)/(1 + alpha*h2*u2*R2) * (phi+ (1-phi)/(1+exp(r*(I1-p))))#
+plot(I1~R1, type = "l")plot(I2~I1, type = "l")abline(v=p)
+I1 = (alpha*u1*R1)/(1 + alpha*h1*u1*R1)I2coeff = (phi+ (1-phi)/(1+exp(r*(I1-p))))#
+plot(I1~R1, type = "l")plot(I2coeff~I1, type = "l")abline(v=p)
+par(mfrow = c(1,2))plot(I1~R1, type = "l")
+plot(I1~R1, type = "l", xlab = "available resource per H unit", ylab = "intake per H unit")
+plot(I2coeff~I1, type = "l")
+plot(I2coeff~I1, type = "l", xlab = "intake preferred resource", "coefficient use of secondary resource")
+plot(I2coeff~I1, type = "l", xlab = "intake preferred resource", ylab = "coefficient use of secondary resource")
+abline(v=p)
+axis(1, at = p, labels = "p")
+plot(I2coeff~I1, type = "l", xlab = "intake preferred resource", ylab = "coefficient use of secondary resource", xaxt = "n")
+axis(1, at = p, labels = "p")
+par(mfrow = c(1,2))plot(I1~R1, type = "l", xlab = "available resource per H unit", ylab = "intake per H unit")plot(I2coeff~I1, type = "l", xlab = "intake preferred resource", ylab = "coefficient use of secondary resource", xaxt = "n")abline(v=p, lty = 2)axis(1, at = p, labels = "p")
+pdf(file = "../graphs/model_intakes.pdf", width = 9, height = 6)par(mfrow = c(1,2))plot(I1~R1, type = "l", xlab = "available resource per H unit", ylab = "intake per H unit")plot(I2coeff~I1, type = "l", xlab = "intake preferred resource", ylab = "coefficient use of secondary resource", xaxt = "n")abline(v=p, lty = 2)axis(1, at = p, labels = "p")dev.off()
+pdf(file = "../graphs/model_intakes.pdf", width = 9, height = 5)par(mfrow = c(1,2))plot(I1~R1, type = "l", xlab = "available resource per H unit", ylab = "intake per H unit")plot(I2coeff~I1, type = "l", xlab = "intake preferred resource", ylab = "coefficient use of secondary resource", xaxt = "n")abline(v=p, lty = 2)axis(1, at = p, labels = "p")dev.off()
+H = 10S = seq(0,1, length.out = 100)G = seq(0,1, length.out = 100)R1 = S/HR2 = G/Halpha = 1u1 = 500u2 = 200h1 = 1/7h2 = 1/5r = 5phi = 0.2p = 4I1 = (alpha*u1*R1)/(1 + alpha*h1*u1*R1)I2coeff = (phi+ (1-phi)/(1+exp(r*(I1-p))))
+a0=0.07 # succession rate (1 / age maturity)#
+aH = a0* (1- (I1*H)/(u1*S))
+a0=0.07 # succession rate (1 / age maturity)#
+S = 0.5G = 0.5H = 1:100aH = a0* (1- (I1*H)/(u1*S))plot(aH~H)
+a0=0.07 # succession rate (1 / age maturity)#
+S = 0.5G = 0.5H = 1:100aH = a0* (1- (I1*H)/(u1*S))plot(aH~H)
+a0=0.07 # succession rate (1 / age maturity)#
+S = 0.5G = 0.5H = 1:100aH = a0* (1- (I1*H)/(u1*S))plot(aH~H)
+plot(aH~H, type = "l")
+a0=0.07 # succession rate (1 / age maturity)#
+S = 0.5G = 0.5H = 1:100R1 = S/HI1 = (alpha*u1*R1)/(1 + alpha*h1*u1*R1)aH = a0* (1- (I1*H)/(u1*S))
+plot(aH~H, type = "l")
+axis(2, at = a0, labels = "a0")
+axis(2, at = a0, labels = "a0", las = 3)
+axis(2, at = a0, labels = "a0", las = 4)
+axis(2, at = a0, labels = "a0", las = 2)
+a0=0.07 # succession rate (1 / age maturity)#
+S = 0.5G = 0.5H = 0:100R1 = S/HI1 = (alpha*u1*R1)/(1 + alpha*h1*u1*R1)aH = a0* (1- (I1*H)/(u1*S))##--#
+plot(aH~H, type = "l", xlab = "Herbivore biomass", ylab = "a")axis(2, at = a0, labels = "a0", las = 2)
+aH
+a0=0.07 # succession rate (1 / age maturity)#
+S = 0.5G = 0.5H = 1:100R1 = S/HI1 = (alpha*u1*R1)/(1 + alpha*h1*u1*R1)aH = a0* (1- (I1*H)/(u1*S))##--#
+plot(aH~H, type = "l", xlab = "Herbivore biomass", ylab = "a")axis(2, at = a0, labels = "a0", las = 2)
+a0=0.07 # succession rate (1 / age maturity)#
+S = 0.5G = 0.5H = 1:100R1 = S/HI1 = (alpha*u1*R1)/(1 + alpha*h1*u1*R1) aH = a0* (1- (I1*H)/(u1*S))##--c0 = 0.5R2 = G/HI2 = (alpha*u2*R2)/(1 + alpha*h2*u2*R2) * (phi+ (1-phi)/(1+exp(r*(I1-p))))
+cH = c0* (1-I1*H/(u1*S))* (1-I2*H/(u2*G)) + I2*H/(u2*G)
+plot(cH~H, type = "l", xlab = "Herbivore biomass", ylab = "a")
+plot(aH~((I1*H)/(u1*S)))
+(I1*H)/(u1*S)
+plot(aH~(I1*H)/(u1*S))
+u1
+plot(x=(I1*H)/(u1*S), y = aH)
+plot(x=(I1*H)/(u1*S), y = aH, type = "l")
+par(mfrow = c(1,2))plot(x=(I1*H)/(u1*S), y = aH, type = "l", xlab = "herbivore pressure (consumed on available)", ylab = "a")plot(aH~H, type = "l", xlab = "Herbivore biomass", ylab = "a")axis(2, at = a0, labels = "a0", las = 2)
+par(mfrow = c(1,2))plot(x=(I1*H)/(u1*S), y = aH, type = "l", xlab = "herbivore pressure (consumed on available)", ylab = "a")axis(2, at = a0, labels = "a0", las = 2)plot(aH~H, type = "l", xlab = "Herbivore biomass", ylab = "a")axis(2, at = a0, labels = "a0", las = 2)
+par(mfrow = c(1,2))plot(x=(I1*H)/(u1*S), y = aH, type = "l", xlab = "Herbivore pressure", ylab = "a")axis(2, at = a0, labels = "a0", las = 2)plot(aH~H, type = "l", xlab = "Herbivore biomass", ylab = "a")axis(2, at = a0, labels = "a0", las = 2)
+pdf(file = "../graphs/model_impact_a.pdf", width = 9, height = 5)par(mfrow = c(1,2))plot(x=(I1*H)/(u1*S), y = aH, type = "l", xlab = "Herbivore pressure", ylab = "a")axis(2, at = a0, labels = "a0", las = 2)plot(aH~H, type = "l", xlab = "Herbivore biomass", ylab = "a")axis(2, at = a0, labels = "a0", las = 2)dev.off()
+pdf(file = "../graphs/model_impact_a.pdf", width = 9, height = 5)par(mfrow = c(1,2))plot(x=(I1*H)/(u1*S), y = aH, type = "l", xlab = "Herbivore pressure on S", ylab = "a")axis(2, at = a0, labels = "a0", las = 2)plot(aH~H, type = "l", xlab = "Herbivore biomass", ylab = "a")axis(2, at = a0, labels = "a0", las = 2)dev.off()
+par(mfrow = c(1,2))plot(x=(I1*H)/(u1*S), y = aH, type = "l", xlab = "Herbivore pressure on S", ylab = "a")plot(cH~H, type = "l", xlab = "Herbivore biomass", ylab = "c")axis(2, at = a0, labels = "a0", las = 2)
+plot(x=(I1*H)/(u1*S), y = cH, type = "l", xlab = "Herbivore pressure on S", ylab = "a")
+par(mfrow = c(1,2))plot(x=(I1*H)/(u1*S), y = cH, type = "l", xlab = "Herbivore pressure on S", ylab = "a")
+plot(x=(I2*H)/(u2*G), y = cH, type = "l", xlab = "Herbivore pressure on G", ylab = "a")
+plot(x=(I1*H)/(u1*S), y = (I2*H)/(u2*G), type = "l", xlab = "Herbivore pressure on S", ylab = "a")
+plot(x=(I1*H)/(u1*S), y = (I2*H)/(u2*G), type = "l", xlab = "Herbivore pressure on S", ylab = "Herbivore pressure on G")
+plot(x=(I1*H)/(u1*S), y = cH, type = "l", xlab = "Herbivore pressure on S", ylab = "c")
+plot(x=(I1*H)/(u1*S), y = (I2*H)/(u2*G), type = "l", xlab = "Herbivore pressure on S", ylab = "Herbivore pressure on G")
+plot(x=(I1*H)/(u1*S), y = cH, type = "l", xlab = "Herbivore pressure on S", ylab = "c")
+plot(x=(I1*H)/(u1*S), y = (I2*H)/(u2*G), type = "l", xlab = "Herbivore pressure on S", ylab = "Herbivore pressure on G")
+plot(cH~H, type = "l", xlab = "Herbivore biomass", ylab = "c")
+plot(x=(I1*H)/(u1*S), y = (I2*H)/(u2*G), type = "l", xlab = "Herbivore pressure on S", ylab = "Herbivore pressure on G")
+plot(x=(I1*H)/(u1*S), y = cH, type = "l", xlab = "Herbivore pressure on S", ylab = "c")
+plot(x=(I1*H)/(u1*S), y = (I2*H)/(u2*G), type = "l", xlab = "Herbivore pressure on S", ylab = "Herbivore pressure on G")
+plot(x=(I1*H)/(u1*S), y = (I2*H)/(u2*G), type = "l", xlab = "Herbivore pressure on S", ylab = "Herbivore pressure on G")
+plot(x=(I1*H)/(u1*S), y = cH, type = "l", xlab = "Herbivore pressure on S", ylab = "c")
+plot(x=(I1*H)/(u1*S), y = (I2*H)/(u2*G), type = "l", xlab = "Herbivore pressure on S", ylab = "Herbivore pressure on G")plot(x=(I1*H)/(u1*S), y = cH, type = "l", xlab = "Herbivore pressure on S", ylab = "c")plot(x=(I2*H)/(u2*G), y = cH, type = "l", xlab = "Herbivore pressure on G", ylab = "c")plot(cH~H, type = "l", xlab = "Herbivore biomass", ylab = "c")axis(2, at = a0, labels = "a0", las = 2)
+par(mfrow = c(2,2))plot(x=(I1*H)/(u1*S), y = (I2*H)/(u2*G), type = "l", xlab = "Herbivore pressure on S", ylab = "Herbivore pressure on G")plot(x=(I1*H)/(u1*S), y = cH, type = "l", xlab = "Herbivore pressure on S", ylab = "c")plot(x=(I2*H)/(u2*G), y = cH, type = "l", xlab = "Herbivore pressure on G", ylab = "c")plot(cH~H, type = "l", xlab = "Herbivore biomass", ylab = "c")axis(2, at = a0, labels = "a0", las = 2)
+par(mfrow = c(2,2))plot(x=(I1*H)/(u1*S), y = cH, type = "l", xlab = "Herbivore pressure on S", ylab = "c")plot(x=(I2*H)/(u2*G), y = cH, type = "l", xlab = "Herbivore pressure on G", ylab = "c")axis(2, at = c0, labels = "c0", las = 2)abline(h = c0, lty=2)plot(x=(I1*H)/(u1*S), y = (I2*H)/(u2*G), type = "l", xlab = "Herbivore pressure on S", ylab = "Herbivore pressure on G")axis(2, at = c0, labels = "c0", las = 2)abline(h = c0, lty=2)plot(cH~H, type = "l", xlab = "Herbivore biomass", ylab = "c")axis(2, at = c0, labels = "c0", las = 2)abline(h = c0, lty=2)
+par(mfrow = c(2,2))plot(x=(I1*H)/(u1*S), y = cH, type = "l", xlab = "Herbivore pressure on S", ylab = "c")plot(x=(I2*H)/(u2*G), y = cH, type = "l", xlab = "Herbivore pressure on G", ylab = "c")axis(2, at = c0, labels = "c0", las = 2)abline(h = c0, lty=2)axis(2, at = c0, labels = "c0", las = 2)abline(h = c0, lty=2)plot(x=(I1*H)/(u1*S), y = (I2*H)/(u2*G), type = "l", xlab = "Herbivore pressure on S", ylab = "Herbivore pressure on G")plot(cH~H, type = "l", xlab = "Herbivore biomass", ylab = "c")axis(2, at = c0, labels = "c0", las = 2)abline(h = c0, lty=2)
+par(mfrow = c(2,2))plot(x=(I1*H)/(u1*S), y = cH, type = "l", xlab = "Herbivore pressure on S", ylab = "c")axis(2, at = c0, labels = "c0", las = 2)abline(h = c0, lty=2)plot(x=(I2*H)/(u2*G), y = cH, type = "l", xlab = "Herbivore pressure on G", ylab = "c")axis(2, at = c0, labels = "c0", las = 2)abline(h = c0, lty=2)plot(x=(I1*H)/(u1*S), y = (I2*H)/(u2*G), type = "l", xlab = "Herbivore pressure on S", ylab = "Herbivore pressure on G")plot(cH~H, type = "l", xlab = "Herbivore biomass", ylab = "c")axis(2, at = c0, labels = "c0", las = 2)abline(h = c0, lty=2)
+par(mfrow = c(2,2))plot(x=(I1*H)/(u1*S), y = cH, type = "l", xlab = "Herbivore pressure on S", ylab = "c")axis(2, at = c0, labels = "c0", las = 2)abline(h = c0, lty=2)plot(x=(I2*H)/(u2*G), y = cH, type = "l", xlab = "Herbivore pressure on G", ylab = "c")axis(2, at = c0, labels = "c0", las = 2)abline(h = c0, lty=2)plot(x=(I1*H)/(u1*S), y = (I2*H)/(u2*G), type = "l", xlab = "Herbivore pressure on S", ylab = "Herbivore pressure on G")plot(cH~H, type = "l", xlab = "Herbivore biomass", ylab = "c")axis(2, at = c0, labels = "c0", las = 2)abline(h = c0, lty=2)
+H = 10S = seq(0,1, length.out = 100)G = seq(0,1, length.out = 100)R1 = S/HR2 = G/Halpha = 1u1 = 200u2 = 500h1 = 1/7h2 = 1/5r = 5phi = 0.2p = 4I1 = (alpha*u1*R1)/(1 + alpha*h1*u1*R1)I2coeff = (phi+ (1-phi)/(1+exp(r*(I1-p))))
+#------------------------------------------a0=0.07 # succession rate (1 / age maturity)#
+S = 0.5G = 0.5H = 1:100R1 = S/HI1 = (alpha*u1*R1)/(1 + alpha*h1*u1*R1) aH = a0* (1- (I1*H)/(u1*S))
+c0 = 0.5R2 = G/HI2 = (alpha*u2*R2)/(1 + alpha*h2*u2*R2) * (phi+ (1-phi)/(1+exp(r*(I1-p))))cH = c0* (1-I1*H/(u1*S))* (1-I2*H/(u2*G)) + I2*H/(u2*G) par(mfrow = c(2,2))plot(x=(I1*H)/(u1*S), y = cH, type = "l", xlab = "Herbivore pressure on S", ylab = "c")axis(2, at = c0, labels = "c0", las = 2)abline(h = c0, lty=2)plot(x=(I2*H)/(u2*G), y = cH, type = "l", xlab = "Herbivore pressure on G", ylab = "c")axis(2, at = c0, labels = "c0", las = 2)abline(h = c0, lty=2)plot(x=(I1*H)/(u1*S), y = (I2*H)/(u2*G), type = "l", xlab = "Herbivore pressure on S", ylab = "Herbivore pressure on G")plot(cH~H, type = "l", xlab = "Herbivore biomass", ylab = "c")axis(2, at = c0, labels = "c0", las = 2)abline(h = c0, lty=2)
+par(mfrow = c(1,2))plot(x=(I1*H)/(u1*S), y = aH, type = "l", xlab = "Herbivore pressure on S", ylab = "a")axis(2, at = a0, labels = "a0", las = 2)plot(aH~H, type = "l", xlab = "Herbivore biomass", ylab = "a")axis(2, at = a0, labels = "a0", las = 2)
+pdf(file = "../graphs/model_impact_c.pdf", width = 9, height = 9)par(mfrow = c(2,2))plot(x=(I1*H)/(u1*S), y = cH, type = "l", xlab = "Herbivore pressure on S", ylab = "c")axis(2, at = c0, labels = "c0", las = 2)abline(h = c0, lty=2)plot(x=(I2*H)/(u2*G), y = cH, type = "l", xlab = "Herbivore pressure on G", ylab = "c")axis(2, at = c0, labels = "c0", las = 2)abline(h = c0, lty=2)plot(x=(I1*H)/(u1*S), y = (I2*H)/(u2*G), type = "l", xlab = "Herbivore pressure on S", ylab = "Herbivore pressure on G")plot(cH~H, type = "l", xlab = "Herbivore biomass", ylab = "c")axis(2, at = c0, labels = "c0", las = 2)abline(h = c0, lty=2)dev.off()
+setwd('/Users/isabelle/Documents/RESEARCH/ENSEIGNEMENT/2014_Dynamique des Pop/modele_reseaux')
+rm(list = ls())source("geograph.R")source("niche_model.R")source("metaweb_model.R")N = 50S = 25L = niche_model(S=S,C=0.3)[[1]]diag(L) = 0 # Prevent cannibalismc = 0.1ei = 0.3ed = 0.1Patches = geograph(N,0.3)XY = Patches[[1]]ConMat = Patches[[2]]Dest = numeric(N)Env = numeric(N) + 0.5#Env = runif(N,0,1)Optimum = runif(S,0,1) Breadth = numeric(S) + Infp0 = matrix(1,N,S)nsteps = 100FractUpdate = 1results = metaweb_model(L,Optimum,Breadth,c,ei,ed,ConMat,Dest,Env,pO,nsteps,FractUpdate)# Illustrate regional dynamics over timequartz(height = 5, width = 6)par(mar=c(5,6,2,1))plot(results[[2]][,1],results[[2]][,2],type = "l", xlab = "Time", ylab = "Occupancy", cex.lab = 1.5, cex.axis = 1.25,ylim=c(0,1))for(i in 2:S) lines(results[[2]][,1],results[[2]][,i])# Illustrate spatial distribution of biodiversityquartz(height = 5, width = 6)par(mar=c(5,6,2,1))s = apply(results[[1]],1,sum)/Scol.vec = numeric(length(s))RK = rank(s)for(i in 1:N) col.vec[i] = rainbow(N,start = 0, end = 0.7)[RK[i]]plot(XY[,1],XY[,2],xlab = "East - West", ylab = "South - North",cex.lab = 1.5, cex.axis = 1.25)ConVec = stack(as.data.frame(ConMat))[,1]XX = expand.grid(XY[,1],XY[,1])YY = expand.grid(XY[,2],XY[,2])XX = subset(XX,ConVec==1)YY = subset(YY,ConVec==1)arrows(x0 = XX[,1],x1=XX[,2],y0 = YY[,1], y1 = YY[,2], length = 0,lwd = 0.1)points(XY[,1],XY[,2],pch=21,bg=col.vec)
+params = c(alpha = 1,u1 = 200, h1 = 1/7, u2 = 500, h2 = 1/5, phi = 0.2,r = 5,p  = 5 ,a0 = 0.07, # succession rate (1 / age maturity)c0 = 0.7 ,d=0.05,  # disturbance rate (intensity * frequency = 0.75 * 1/25)f=1, # trees fecundityeG = 0.7,eS = 0.8, m = .20,)#------------------------------------------# intit#------------------------------------------T0 = c(T=0.1, S=0.5, H=10)#------------------------------------------# run simulation#------------------------------------------out = stode(func=model, y=T0, parms = pars, positive = TRUE)#summary(out)
+params = c(alpha = 1,u1 = 200, h1 = 1/7, u2 = 500, h2 = 1/5, phi = 0.2,r = 5,p  = 5 ,a0 = 0.07, # succession rate (1 / age maturity)c0 = 0.7 ,d=0.05,  # disturbance rate (intensity * frequency = 0.75 * 1/25)f=1, # trees fecundityeG = 0.7,eS = 0.8, m = .20)#------------------------------------------# intit#------------------------------------------T0 = c(T=0.1, S=0.5, H=10)
+out = stode(func=model, y=T0, parms = pars, positive = TRUE)
+library(deSolve)
+install.packages("deSolve")
+library(deSolve)out = stode(func=model, y=T0, parms = pars, positive = TRUE)
+library(rootSolve)
+install.packages("rootSolve")
+library(rootSolve)
+out = stode(func=model, y=T0, parms = pars, positive = TRUE)
+model <- function(params, states){with(as.list(c(states, params)), {#
+	    G=1-T-S                # intakes        if(H>0) {        R1 = S/H        R2 = G/H        I1 = (alpha*u1*R1)/(1 + alpha*h1*u1*R1)        I2 = (alpha*u2*R2)/(1 + alpha*h2*u2*R2) * (phi+ (1-phi)/(1+exp(r*(I1-p))))#
+        PS = (I1*H)/(u1*S)        PG = (I2*H)/(u2*S)#
+        aH = a0* (1- PS)        cH = c0* (1-PS)* (1-PG) + PG        }else{        aH = a0        cH = c0        }#
+	    # vegetation model	    dT= aH*S - d*T		dS=f*T*cH*G - aH*S#
+		#herbivore model		dH = H*(eG*I1 + eS*I2 -m -p)#
+		return(list(c(dT, dS, dH)))	})}
+out = stode(func=model, y=T0, parms = params, positive = TRUE)
+out = stode(func=model, y=T0, params = params, positive = TRUE)
+?stode
+model <- function(ti, states, parms){with(as.list(c(states, parms)), {#
+	    G=1-T-S                # intakes        if(H>0) {        R1 = S/H        R2 = G/H        I1 = (alpha*u1*R1)/(1 + alpha*h1*u1*R1)        I2 = (alpha*u2*R2)/(1 + alpha*h2*u2*R2) * (phi+ (1-phi)/(1+exp(r*(I1-p))))#
+        PS = (I1*H)/(u1*S)        PG = (I2*H)/(u2*S)#
+        aH = a0* (1- PS)        cH = c0* (1-PS)* (1-PG) + PG        }else{        aH = a0        cH = c0        }#
+	    # vegetation model	    dT= aH*S - d*T		dS=f*T*cH*G - aH*S#
+		#herbivore model		dH = H*(eG*I1 + eS*I2 -m -p)#
+		return(list(c(dT, dS, dH)))	})}#-----------------------------------------#params#------------------------------------------params = c(alpha = 1,u1 = 200, h1 = 1/7, u2 = 500, h2 = 1/5, phi = 0.2,r = 5,p  = 5 ,a0 = 0.07, # succession rate (1 / age maturity)c0 = 0.7 ,d=0.05,  # disturbance rate (intensity * frequency = 0.75 * 1/25)f=1, # trees fecundityeG = 0.7,eS = 0.8, m = .20)#------------------------------------------# intit#------------------------------------------T0 = c(T=0.1, S=0.5, H=10)#------------------------------------------# run simulation#------------------------------------------library(rootSolve)out = stode(func=model, y=T0, parms = params, positive = TRUE)#summary(out)
+out
+eq = out$y
+eq["G"] = 1-eq["T"] -eq["S"]
+eq
+params = c(alpha = 1,u1 = 2000, h1 = 1/7, u2 = 5000, h2 = 1/5, phi = 0.2,r = 5,p  = 5 ,a0 = 0.07, # succession rate (1 / age maturity)c0 = 0.8 ,d=0.05,  # disturbance rate (intensity * frequency = 0.75 * 1/25)f=1, # trees fecundityeG = 0.7,eS = 0.8, m = .20)#------------------------------------------# intit#------------------------------------------T0 = c(T=0.1, S=0.5, H=10)#------------------------------------------# run simulation#------------------------------------------library(rootSolve)out = stode(func=model, y=T0, parms = params, positive = TRUE)#summary(out)eq = out$yeq["G"] = 1-eq["T"] -eq["S"]
+model <- function(ti, states, parms){with(as.list(c(states, parms)), {#
+	    G=1-T-S                # intakes        if(H>0) {        R1 = S/H        R2 = G/H        I1 = (alpha*u1*R1)/(1 + alpha*h1*u1*R1)        I2 = (alpha*u2*R2)/(1 + alpha*h2*u2*R2) * (phi+ (1-phi)/(1+exp(r*(I1-p))))#
+        PS = (I1*H)/(u1*S)        PG = (I2*H)/(u2*S)#
+        aH = a0* (1- PS)        cH = c0* (1-PS)* (1-PG) + PG        }else{        I1 = 0        I2 = 0        H =0        aH = a0        cH = c0        }#
+	    # vegetation model	    dT= aH*S - d*T		dS=f*T*cH*G - aH*S#
+		#herbivore model		dH = H*(eG*I1 + eS*I2 -m -p)#
+		return(list(c(dT, dS, dH)))	})}#-----------------------------------------#params#------------------------------------------params = c(alpha = 1,u1 = 2000, h1 = 1/7, u2 = 5000, h2 = 1/5, phi = 0.2,r = 5,p  = 5 ,a0 = 0.07, # succession rate (1 / age maturity)c0 = 0.8 ,d=0.05,  # disturbance rate (intensity * frequency = 0.75 * 1/25)f=1, # trees fecundityeG = 0.7,eS = 0.8, m = .20)#------------------------------------------# intit#------------------------------------------T0 = c(T=0.1, S=0.5, H=10)#------------------------------------------# run simulation#------------------------------------------library(rootSolve)out = stode(func=model, y=T0, parms = params, positive = TRUE)#summary(out)eq = out$yeq["G"] = 1-eq["T"] -eq["S"]
+eq
+u1 = 200,
+params = c(alpha = 1,u1 = 200, h1 = 1/7, u2 = 500, h2 = 1/5, phi = 0.2,r = 5,p  = 5 ,a0 = 0.07, # succession rate (1 / age maturity)c0 = 0.8 ,d=0.05,  # disturbance rate (intensity * frequency = 0.75 * 1/25)f=1, # trees fecundityeG = 0.7,eS = 0.8, m = .20)#------------------------------------------# intit#------------------------------------------T0 = c(T=0.1, S=0.5, H=100)#------------------------------------------# run simulation#------------------------------------------library(rootSolve)out = stode(func=model, y=T0, parms = params, positive = TRUE)#summary(out)eq = out$yeq["G"] = 1-eq["T"] -eq["S"]eq
+T0 = c(T=0.1, S=0.5, H=1000)#------------------------------------------# run simulation#------------------------------------------library(rootSolve)out = stode(func=model, y=T0, parms = params, positive = TRUE)#summary(out)eq = out$yeq["G"] = 1-eq["T"] -eq["S"]eq
+T0 = c(T=0.1, S=0.5, H=1)
+library(rootSolve)out = stode(func=model, y=T0, parms = params, positive = TRUE)#summary(out)eq = out$yeq["G"] = 1-eq["T"] -eq["S"]eq
+T0 = c(T=0.1, S=0.5, H=10)
+library(rootSolve)out = stode(func=model, y=T0, parms = params, positive = TRUE)#summary(out)eq = out$yeq["G"] = 1-eq["T"] -eq["S"]eq
+T0 = c(T=0.1, S=0.5, H=100)#------------------------------------------# run simulation#------------------------------------------library(rootSolve)out = stode(func=model, y=T0, parms = params, positive = TRUE)#summary(out)eq = out$yeq["G"] = 1-eq["T"] -eq["S"]eq
+T0 = c(T=0.1, S=0.5, H=1000)#------------------------------------------# run simulation#------------------------------------------library(rootSolve)out = stode(func=model, y=T0, parms = params, positive = TRUE)#summary(out)eq = out$yeq["G"] = 1-eq["T"] -eq["S"]eq
+T0 = c(T=0.1, S=0.5, H=1)#------------------------------------------# run simulation#------------------------------------------library(rootSolve)out = stode(func=model, y=T0, parms = params, positive = TRUE)#summary(out)eq = out$yeq["G"] = 1-eq["T"] -eq["S"]eq
+T0 = c(T=0.1, S=0.5, H=100)
+T0 = c(T=0.1, S=0.5, H=1000)#------------------------------------------# run simulation#------------------------------------------library(rootSolve)out = stode(func=model, y=T0, parms = params, positive = TRUE)#summary(out)eq = out$yeq["G"] = 1-eq["T"] -eq["S"]eq
+eqMat = matrix(NA, ncol = 5, nrow = 1000)for(i in 1:1000){T0 = c(T=0.1, S=0.5, H=i)#------------------------------------------# run simulation#------------------------------------------library(rootSolve)out = stode(func=model, y=T0, parms = params, positive = TRUE)#summary(out)eq = out$yeq["G"] = 1-eq["T"] -eq["S"]eqMat[i,] = eq}
+eqMat = matrix(NA, ncol = 4, nrow = 1000)for(i in 1:1000){T0 = c(T=0.1, S=0.5, H=i)#------------------------------------------# run simulation#------------------------------------------library(rootSolve)out = stode(func=model, y=T0, parms = params, positive = TRUE)#summary(out)eq = out$yeq["G"] = 1-eq["T"] -eq["S"]eqMat[i,] = eq}
+eqMat$H = 1:1000
+eqMat = as.data.frame(eqMat)
+eqMat$H = 1:1000
+head(eqMat)
+dim(eqMat)
+eqMat = matrix(NA, ncol = 4, nrow = 1000)for(i in 1:1000){T0 = c(T=0.1, S=0.5, H=i)#------------------------------------------# run simulation#------------------------------------------library(rootSolve)out = stode(func=model, y=T0, parms = params, positive = TRUE)#summary(out)eq = out$yeq["G"] = 1-eq["T"] -eq["S"]eqMat[i,] = eq}
+head(eqMat)
+eqMat = data.frame(eqMat)
+head(eqMat)
+eqMat$H = 1:1000
+head(eqMat)
+colnames(eqMat) = c("Teq", "Seq", "Heq", "Geq", "Hinit")
+head(eqMat)
+plot(Geq~Hinit, ylim= c(0,1), col = 2, data = eqMat)
+plot(Geq~Hinit, ylim= c(0,1), col = 2, data = eqMat)
+plot(Geq~Hinit, ylim= c(0,1), col = 2, data = eqMat, type = "l")
+eqMat = matrix(NA, ncol = 4, nrow = 500)for(i in 1:500){T0 = c(T=0.1, S=0.5, H=i)#------------------------------------------# run simulation#------------------------------------------library(rootSolve)out = stode(func=model, y=T0, parms = params, positive = TRUE)#summary(out)eq = out$yeq["G"] = 1-eq["T"] -eq["S"]eqMat[i,] = eq}head(eqMat)eqMat = data.frame(eqMat)eqMat$H = 1:500colnames(eqMat) = c("Teq", "Seq", "Heq", "Geq", "Hinit")head(eqMat)plot(Geq~Hinit, ylim= c(0,1), col = 2, data = eqMat, type = "l")
+lines(Seq~Hinit, col =3)
+lines(Seq~Hinit, col =3, data = eqMat)
+lines(Teq~Hinit, col =4, data = eqMat)
+plot(Heq~Hinit,  col = 1, data = eqMat, type = "l")
+eqMat
+?GenSA
+setwd('/Users/isabelle/Documents/RESEARCH/RECHERCHE/2013-2015 UQAR/QUICCFOR/STModel-Calibration/scripts')
+rm(list=ls())source("4-init_params.R")source("3-transition_model.R")# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")source("fit_fonctions/anneal_simple.R")
+source("3-transition_model_anneal.R")
+source("4-init_params.R")source("3-transition_model_anneal.R")# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")source("fit_fonctions/anneal_simple.R")#test
+model(params, data)
+var = list(st0 = "st0", st1 = "st1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted")
+anneal_simple
+anneal
+?GenSA
+model(params, data)var = list(st0 = "st0", st1 = "st1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted")estim.pars = anneal(model = model, par = params, fn = model, source_data = data, dep_var = "st1", pdf = PDF, par_lo = par_lo, par_hi = par_hi, max_iter = 10, initial_temp = 100, note = "", progress = TRUE, display=FALSE, support = FALSE, min_change = 1, min_drops = 10)
+estim.pars = anneal(model = model, par = list(params), fn = model, source_data = data,
+estim.pars = anneal(model = model, par = list(params), fn = model, source_data = data, dep_var = "st1", pdf = PDF, par_lo = par_lo, par_hi = par_hi, max_iter = 10, initial_temp = 100, note = "", progress = TRUE, display=FALSE, support = FALSE, min_change = 1, min_drops = 10)
+estim.pars = anneal(model = model, par = list(params), fn = model, source_data = data, dep_var = "st1", pdf = PDF, par_lo = par_lo, par_hi = par_hi, max_iter = 10, initial_temp = 100, note = "", progress = TRUE, display=FALSE, support = FALSE, min_change = 1, min_drops = 10)
+estim.pars = anneal(model = model, par = list(params), fn = model, source_data = data, dep_var = "st1", var = var, pdf = PDF, par_lo = par_lo, par_hi = par_hi, max_iter = 10, initial_temp = 100, note = "", progress = TRUE, display=FALSE, support = FALSE, min_change = 1, min_drops = 10)
+estim.pars = anneal(model = model, par = list(params), fn = model, source_data = data, dep_var = "st1", var = var, pdf = PDF, par_lo = list(par_lo), par_hi = list(par_hi), max_iter = 10, initial_temp = 100, note = "", progress = TRUE, display=FALSE, support = FALSE, min_change = 1, min_drops = 10)
+par_lo
+list(par_lo)
+as.list(params)
+estim.pars = anneal(model = model, par = as.list(params), fn = model, source_data = data, dep_var = "st1", var = var, pdf = PDF, par_lo = as.list(par_lo), par_hi = as.list(par_hi), max_iter = 10, initial_temp = 100, note = "", progress = TRUE, display=FALSE, support = FALSE, min_change = 1, min_drops = 10)
+params = as.list(params)
+params
+names(params) = unlist(lapply(names(params), function(x){strsplit(x, split = ".", fixed= TRUE)[[1]][[1]]}))
+params
+params = as.list(params)names(params) = unlist(lapply(names(params), function(x){strsplit(x, split = ".", fixed= TRUE)[[1]][[1]]}))par_lo = as.list(par_lo)par_hi = as.list(par_hi)names(par_lo) = names(par_hi) = names(params)estim.pars = anneal(model = model, par = as.list(params), fn = model, source_data = data, dep_var = "st1", var = var, pdf = PDF, par_lo = as.list(par_lo), par_hi = as.list(par_hi), max_iter = 10, initial_temp = 100, note = "", progress = TRUE, display=FALSE, support = FALSE, min_change = 1, min_drops = 10)
+rm(list=ls())source("4-init_params.R")source("3-transition_model_anneal.R")# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")source("fit_fonctions/anneal_simple.R")#
+var = list(st0 = "st0", st1 = "st1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted")#testmodel(params, data)params = as.list(params)names(params) = unlist(lapply(names(params), function(x){strsplit(x, split = ".", fixed= TRUE)[[1]][[1]]}))par_lo = as.list(par_lo)par_hi = as.list(par_hi)names(par_lo) = names(par_hi) = names(params)estim.pars = anneal(model = model, par = as.list(params), fn = model, source_data = data, dep_var = "st1", var = var, pdf = PDF, par_lo = as.list(par_lo), par_hi = as.list(par_hi), max_iter = 10, initial_temp = 100, note = "", progress = TRUE, display=FALSE, support = FALSE, min_change = 1, min_drops = 10)
+model(params, data)
+model
+estim.pars = anneal(model = model, par = as.list(params), fn = model, source_data = data, dep_var = "st1", var = var, pdf = PDF, par_lo = as.list(par_lo), par_hi = as.list(par_hi), max_iter = 10, initial_temp = 100, note = "", progress = TRUE, display=FALSE, support = FALSE, min_change = 1, min_drops = 10)
+rm(list=ls())source("4-init_params.R")source("3-transition_model_anneal.R")# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")source("fit_fonctions/anneal_simple.R")#
+var = list(st0 = "st0", st1 = "st1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted")#testparams = as.list(params)names(params) = unlist(lapply(names(params), function(x){strsplit(x, split = ".", fixed= TRUE)[[1]][[1]]}))par_lo = as.list(par_lo)par_hi = as.list(par_hi)names(par_lo) = names(par_hi) = names(params)#
+estim.pars = anneal(model = model, par = as.list(params), fn = model, source_data = data, dep_var = "st1", var = var, pdf = PDF, par_lo = as.list(par_lo), par_hi = as.list(par_hi), max_iter = 10, initial_temp = 100, note = "", progress = TRUE, display=FALSE, support = FALSE, min_change = 1, min_drops = 10)
+var = list(st0 = "st0", st1 = "st1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted", EB = "EB", ET = "ET", EM = "EM")#testparams = as.list(params)names(params) = unlist(lapply(names(params), function(x){strsplit(x, split = ".", fixed= TRUE)[[1]][[1]]}))par_lo = as.list(par_lo)par_hi = as.list(par_hi)names(par_lo) = names(par_hi) = names(params)#
+estim.pars = anneal(model = model, par = as.list(params), fn = model, source_data = data, dep_var = "st1", var = var, pdf = PDF, par_lo = as.list(par_lo), par_hi = as.list(par_hi), max_iter = 10, initial_temp = 100, note = "", progress = TRUE, display=FALSE, support = FALSE, min_change = 1, min_drops = 10)
+var = list(st0 = "st0", st1 = "st1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", itime = "itime")#testparams = as.list(params)names(params) = unlist(lapply(names(params), function(x){strsplit(x, split = ".", fixed= TRUE)[[1]][[1]]}))par_lo = as.list(par_lo)par_hi = as.list(par_hi)names(par_lo) = names(par_hi) = names(params)#
+estim.pars = anneal(model = model, par = as.list(params), fn = model, source_data = data, dep_var = "st1", var = var, pdf = PDF, par_lo = as.list(par_lo), par_hi = as.list(par_hi), max_iter = 10, initial_temp = 100, note = "", progress = TRUE, display=FALSE, support = FALSE, min_change = 1, min_drops = 10)
+xx = 1:100
+mod(xx,10)
+modulo(xx,10)
+??modulo
+xx%%10
+xx%%10==0
+50/50
+rm(list=ls())source("4-init_params.R")source("3-transition_model_anneal.R")# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")source("fit_fonctions/anneal_simple.R")#
+var = list(st0 = "st0", st1 = "st1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", itime = "itime")#testparams = as.list(params)names(params) = unlist(lapply(names(params), function(x){strsplit(x, split = ".", fixed= TRUE)[[1]][[1]]}))par_lo = as.list(par_lo)par_hi = as.list(par_hi)names(par_lo) = names(par_hi) = names(params)#
+estim.pars = anneal(model = model, par = as.list(params), fn = model, source_data = data, dep_var = "st1", var = var, pdf = PDF, par_lo = as.list(par_lo), par_hi = as.list(par_hi), max_iter = 10, initial_temp = 100, note = "", progress = TRUE, display=FALSE, support = FALSE, min_change = 1, min_drops = 10)
+rm(list=ls())source("4-init_params.R")source("3-transition_model_anneal.R")# Maximum likelihood estimationsource("fit_fonctions/analyze_function.R")source("fit_fonctions/likdisplay_ibou.R")source("fit_fonctions/support_limits_ibou.R")source("fit_fonctions/likeli.R")source("fit_fonctions/anneal_simple.R")#
+var = list(st0 = "st0", st1 = "st1", ENV1 = "ENV1", ENV2 = "ENV2", lik = "predicted", EB = "EB", ET = "ET", EM = "EM", itime = "itime")#testparams = as.list(params)names(params) = unlist(lapply(names(params), function(x){strsplit(x, split = ".", fixed= TRUE)[[1]][[1]]}))par_lo = as.list(par_lo)par_hi = as.list(par_hi)names(par_lo) = names(par_hi) = names(params)#
+estim.pars = anneal(model = model, par = as.list(params), fn = model, source_data = data, dep_var = "st1", var = var, pdf = PDF, par_lo = as.list(par_lo), par_hi = as.list(par_hi), max_iter = 10, initial_temp = 100, note = "", progress = TRUE, display=FALSE, support = FALSE, min_change = 1, min_drops = 10)
+rm(list=ls())# Load data#dataProj = as.data.frame(read.table("../data/data_pairs_filter.txt"))#dataProj$E = scale(dataProj$annual_mean_temp)#dataProj$P = scale(dataProj$annual_pp)data = read.csv("../data/statesFourState.csv"))data$E = scale(data$annual_mean_temp)data$P = scale(data$annual_pp)
+setwd('/Users/isabelle/Documents/RESEARCH/RECHERCHE/2013-2015 UQAR/QUICCFOR/STModel-Calibration/scripts')
+rm(list=ls())# Load data#dataProj = as.data.frame(read.table("../data/data_pairs_filter.txt"))#dataProj$E = scale(dataProj$annual_mean_temp)#dataProj$P = scale(dataProj$annual_pp)data = read.csv("../data/statesFourState.csv"))
+data = read.csv("../data/statesFourState.csv")
