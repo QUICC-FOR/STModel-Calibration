@@ -83,7 +83,7 @@ e0 = logit_eps_mn, e1 = 0, e2 = 0, e3=0, e4=0, e5=0, e6=0, e7 =0
 )
 
 # coeff variation
-cvar = 2
+cvar = 5
 
 par_lo = c(ab0 = logit_alphab_mn - abs(logit_alphab_mn*cvar),
 ab1 = logit_alphab_mn/max(abs(data$ENV1)) - abs(cvar*logit_alphab_mn/max(abs(data$ENV1))),
