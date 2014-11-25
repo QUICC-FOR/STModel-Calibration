@@ -17,7 +17,9 @@ estim.pars2 = GenSA(par = estim.pars$par, fn = model, lower = par_lo, upper= par
 
 #save(estim.pars2, file="../estimated_params/GenSA_test.rdata")
 names(estim.pars2$par) = unlist(lapply(names(params), function(x){strsplit(x, split = ".", fixed= TRUE)[[1]][[1]]}))
-write.table(estim.pars2$par,"../estimated_params/GenSA_test.txt")
+write.table(estim.pars2$par,file="../estimated_params/GenSA_test.txt")
+
+estim.pars3 = GenSA(par = estim.pars2$par, fn = model, lower = par_lo, upper= par_hi, control = list(verbose =TRUE, max.time = 2000, smooth=FALSE), dat = data)
 
 
 #
