@@ -19,7 +19,7 @@ dMdt = betaT*(T+M)*(1-eps)*B + betaB*(B+M)*(1-eps)*T - theta*(1-eps)*M  - eps*M
 systemEq = Matrix([dTdt, dBdt, dMdt])
 stateVar = Matrix([T, B, M])
 
-equilibrium = solve(systemEq, T,B,M)
+# equilibrium = solve(systemEq, T,B,M)
 
 Jacob = systemEq.jacobian(stateVar)
 
