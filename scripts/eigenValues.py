@@ -19,17 +19,19 @@ dMdt = betaT*(T+M)*(1-eps)*B + betaB*(B+M)*(1-eps)*T - theta*(1-eps)*M  - eps*M
 systemEq = Matrix([dTdt, dBdt, dMdt])
 stateVar = Matrix([T, B, M])
 
+equilibrium = solve(systemEq, T,B,M)
+
 Jacob = systemEq.jacobian(stateVar)
 
 
 # Solve the model for the case where T and M are at 0
-# and B = 1 - e/ab (ie a l'équilibre si T=0 et M=0)
-J_B = Jacob.subs([(T,0),(B,1-e/ab) , (M,0)])
+# and B = 1 - eps/alphaB (ie a l'équilibre si T=0 et M=0)
+J_B = Jacob.subs([(T,0),(B,1-eps/alphaB) , (M,0)])
 eigs_J_B = J_B.eigenvals().keys()
 invT = eigs_J_B
 
 # Solve the model for the case where B and M are at 0
 # and T = 1 - e/at (ie a l'équilibre si B=0 et M=0)
-J_T = Jacob.subs([(T,1-e/at), (B,0), (M,0)])
+J_T = Jacob.subs([(T,1-eps/alphaT), (B,0), (M,0)])
 eigs_J_T = J_T.eigenvals().keys()
 invB = eigs_J_T
