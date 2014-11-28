@@ -4,9 +4,14 @@ rm(list=ls())
 #dataProj$E = scale(dataProj$annual_mean_temp)
 #dataProj$P = scale(dataProj$annual_pp)
 
-data = read.csv("../data/statesFourState.csv")
+#data = read.csv("../data/statesFourState.csv")
+data = read.csv("~/Documents/GitHub/STModel-Data/out_files/statesFourState.csv")
 head(data)
 dim(data)
+
+setwd("~/Documents/GitHub/STModel-Calibration/scripts")
+load("../Rout_files/RandomForest_25112014.rObj")
+str(SDM2)
 
 # ----------------------
 ### choice of variables
@@ -43,15 +48,44 @@ rm(data)
 
 
 # ----------------------
+# Clean data
+# ---------------------
+
+# Clean Undefined state
+str(datSel)
+datSel_wo_U <- subset(datSel, state != "U")
+datSel_wo_U$state <- droplevels(datSel_wo_U$state)
+
+# ----------------------
 # models 
 # ----------------------
 # evaluation statistics
-source("BoulangeatEcoLet2012_fct.r") 
+HK <- function (Pred, Obs) 
+{
+	Pred = pred2[-sampl]
+	Obs = valid$state
+
+	Misc = table(Pred, Obs)
+	
+    if (nrow(Misc)!=ncol(Misc)) stop("wrong misclassification table")
+    Misc <- unclass(Misc)
+    k  <- ncol(Misc)
+    Nobs <- apply(Misc, 2, sum)
+    Npred <- apply(Misc, 1, sum)
+    N <- sum(Nobs)
+  
+
+   HK <- (sum(diag(Misc))/N - sum(as.numeric(Nobs)*as.numeric(Npred))/N/N ) / ( 1 - sum(as.numeric(Nobs)*as.numeric(Nobs))/N/N )
+
+    return(HK)
+}
+
+
 
 # cross validation - separation of the dataset
-sampl = sample(1:nrow(datSel), 2*nrow(datSel)/3)
-calib = datSel[sampl,c("state",selectedVars)] 
-valid = datSel[-sampl,c("state",selectedVars)]
+sampl = sample(1:nrow(datSel_wo_U), 2*nrow(datSel_wo_U)/3)
+calib = datSel_wo_U[sampl,c("state",selectedVars)] 
+valid = datSel_wo_U[-sampl,c("state",selectedVars)]
 
 # Run the models
 
@@ -61,19 +95,21 @@ library(randomForest)
 rs = runif(1,0,1)
 set.seed(rs)
 SDM2 = randomForest(state ~ . , data = calib, ntree = 500)
+save(SDM2,rs,sampl,file= "RandomForest_25112014.rObj")
 
 # valid
-set.seed(rn)
-pred2 = predict(SDM2,new=valid,"response", OOB=TRUE)
-(HK2 = HK(pred2, valid$state)) 
-
+set.seed(rs)
+pred2 = predict(SDM2,new=datSel_wo_U,"response", OOB=TRUE)
+(HK2 = HK(pred2[-sampl], valid$state)) 
 
 
 # multimodal
 #calib
 library(nnet)
-SDM1 = multinom(state ~ .^2 + I(annual_mean_temp^2) + I(pp_seasonality^2) + I(pp_warmest_quarter^2) + I(mean_diurnal_range^2) +I(annual_pp^2) + I(mean_temperatre_wettest_quarter^2), data = calib, maxit =200)
+SDM1 = multinom(state ~ .^2 + I(annual_mean_temp^2) + I(pp_seasonality^2) + I(pp_warmest_quarter^2) + I(mean_diurnal_range^2) +I(annual_pp^2) + I(mean_temperatre_wettest_quarter^2), data = calib, maxit =300)
 summary(SDM1)
+save(SDM1,file= "Multinom_25112014.rObj")
+
 
 #valid
 pred1 = predict(SDM1, new=valid,"class")
@@ -163,9 +199,6 @@ pred1 = predict(SDM1, new=valid,"class")
 #abline(0,1,lty=2)
 #plot(lowess(cbind(pred_rf[,"R"], pred_multi[,"R"])), type = "l", xlab = "RF", ylab = "multinom", xlim = c(0,1), ylim = c(0,1), main = "Early succession")
 #abline(0,1,lty=2)
-#
-
-
 
 
 

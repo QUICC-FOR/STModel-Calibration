@@ -487,5 +487,23 @@ fig_all_glm(pair_dat2, "_filterHarvest+Drainage", modelTransition = modelTransit
 
 #-------------------------------------------------------------------------------#-------------------------------------------------------------------------------
 
+#### Maps 
 
+require("ggmap")
+datmap = read.csv("~/Documents/GitHub/STModel-Data/out_files/statesFourState.csv")
 
+lon_med <- median(datmap$longitude)
+lat_med  <- median(datmap$latitude)
+
+theme_set(theme_grey(base_size=10))
+quicc.map = get_map(location = c(lon=lon_med,lat=lat_med), zoom = 4)
+
+ggmap(quicc.map, maprange=FALSE,extent = "normal") %+% datmap + aes(x = longitude, y = latitude ,color=state) +
+#geom_point(size=0.4,aes=0.5) + 
+facet_wrap(~state) +
+stat_density2d(aes(fill = ..level.., alpha = ..level..), bins = 10, geom = 'polygon') +
+scale_fill_gradient(low = "red", high = "red4") +
+#geom_density2d(color="orange4",size=.1) +
+scale_x_continuous(expand=c(0,0)) + scale_y_continuous(expand=c(0,0))+ 
+xlab("Longitude") + ylab("Latitude") +
+theme(legend.position = "none", text = element_text(size = 10))
