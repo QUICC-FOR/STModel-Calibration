@@ -1,6 +1,6 @@
 rm(list=ls())
 
-source("4-init_params.R")
+source("4-init_params_newData.R")
 source("3-transition_model.R")
 
 # Maximum likelihood estimation

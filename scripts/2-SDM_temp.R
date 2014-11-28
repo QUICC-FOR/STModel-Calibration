@@ -94,7 +94,7 @@ pred1 = predict(SDM1, new=valid,"class")
 # projection 
 # ----------------------
 ## ----recap data
-load("../data/Multinom_temp.rObj")
+#load("../data/Multinom_temp.rObj")
 load("../data/RandomForest_temp.rObj")
 selectedVars = c("annual_mean_temp",  "annual_pp")
 #---------------
@@ -113,9 +113,8 @@ set.seed(rs)
 projProba = predict(SDM2,new=datProjSel,"prob", OOB=TRUE)
 head(projProba)
 
-
 # sauvegarde
-write.table(projProba, file = "../data/projection_neigbor_rf_temp.txt", quote=F, row.names=dataProj$X.plot)
+write.table(projProba, file = "../data/projection_neigbor_rf_temp.txt", quote=F, row.names=FALSE)
 
 
 
