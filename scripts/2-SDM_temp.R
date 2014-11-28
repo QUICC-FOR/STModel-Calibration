@@ -4,7 +4,7 @@ rm(list=ls())
 # ----------------------
 
 data = read.csv("../data/statesFourState.csv")
-#data = read.csv("~/Documents/GitHub/STModel-Data/out_files/statesFourState.csv")
+#data = read.csv("../STModel-Data/out_files/statesFourState.csv")
 head(data)
 dim(data)
 
@@ -37,8 +37,6 @@ datSel_wo_U$state <- droplevels(datSel_wo_U$state)
 # evaluation statistics
 HK <- function (Pred, Obs) 
 {
-	Pred = pred2[-sampl]
-	Obs = valid$state
 
 	Misc = table(Pred, Obs)
 	
@@ -71,7 +69,8 @@ rs = runif(1,0,1)
 set.seed(rs)
 SDM2 = randomForest(state ~ . , data = calib, ntree = 500)
 SDM2
-save(SDM2,rs,sampl,file= "RandomForest_temp.rObj")
+save(SDM2,rs,sampl,file= "../data/RandomForest_temp.rObj")
+
 
 # valid
 set.seed(rs)
@@ -82,10 +81,9 @@ pred2 = predict(SDM2,new=datSel_wo_U,"response", OOB=TRUE)
 # multimodal
 #calib
 library(nnet)
-SDM1 = multinom(state ~ .^2 + I(annual_mean_temp^2) + I(pp_seasonality^2) + I(pp_warmest_quarter^2) + I(mean_diurnal_range^2) +I(annual_pp^2) + I(mean_temperatre_wettest_quarter^2), data = calib, maxit =300)
+SDM1 = multinom(state ~ .^2 + I(annual_mean_temp^2) + I(pp_seasonality^2) , data = calib, maxit =300)
 summary(SDM1)
-save(SDM1,file= "Multinom_temp.rObj")
-
+save(SDM1,file= "../data/Multinom_temp.rObj")
 
 #valid
 pred1 = predict(SDM1, new=valid,"class")
@@ -95,6 +93,12 @@ pred1 = predict(SDM1, new=valid,"class")
 # ----------------------
 # projection 
 # ----------------------
+## ----recap data
+load("../data/Multinom_temp.rObj")
+load("../data/RandomForest_temp.rObj")
+selectedVars = c("annual_mean_temp",  "annual_pp")
+#---------------
+
 dataProj = read.csv("../data/transitionsFourState.csv")
 head(dataProj)
 
@@ -108,6 +112,7 @@ datProjSel = dataProj[,selectedVars]
 set.seed(rs)
 projProba = predict(SDM2,new=datProjSel,"prob", OOB=TRUE)
 head(projProba)
+
 
 # sauvegarde
 write.table(projProba, file = "../data/projection_neigbor_rf_temp.txt", quote=F, row.names=dataProj$X.plot)

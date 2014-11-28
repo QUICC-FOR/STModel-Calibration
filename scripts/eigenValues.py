@@ -35,3 +35,11 @@ invT = eigs_J_B
 J_T = Jacob.subs([(T,1-eps/alphaT), (B,0), (M,0)])
 eigs_J_T = J_T.eigenvals().keys()
 invB = eigs_J_T
+
+##  solve eq
+mu1, alphaB, B, alphaT, mu2, eps, M = symbols('mu1 alphaB B alphaT mu2 eps M')
+equ = mu1*M + alphaB*(M+B)*(1-alphaT*M)*(1-M-B)-mu2*M*B-eps*B
+
+equilibrium = solve(equ,M)
+
+
