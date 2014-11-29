@@ -4,7 +4,7 @@ rm(list=ls())
 # load calibration data
 # ----------------------
 
-setwd("~/Documents/GitHub/STModel-Calibration/")
+#setwd("~/Documents/GitHub/STModel-Calibration/")
 
 data = read.csv("../data/statesFourState.csv")
 #data = read.csv("../STModel-Data/out_files/statesFourState.csv")
