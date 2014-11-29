@@ -1,4 +1,7 @@
-###############
+load("Rout_files/RandomForest_temp.rObj")
+load("Rout_files/Multinom_temp.rObj")
+
+##############
 # Carte de proba basé sur les deux SDM
 
 climate_grid <- read.csv("~/Documents/Maitrise/Analyse/dom_ouranos/dom_climate_grid.csv")

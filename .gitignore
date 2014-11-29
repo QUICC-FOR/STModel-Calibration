@@ -2,4 +2,5 @@
 .Rhistory
 .RData
 data/*
-Rout_files/*
+.Rapp.history
+ggmapTemp*
