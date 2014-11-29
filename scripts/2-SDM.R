@@ -57,23 +57,23 @@ datSel_wo_U <- subset(datSel, state != "U")
 datSel_wo_U$state <- droplevels(datSel_wo_U$state)
 
 # ----------------------
-# models 
+# models
 # ----------------------
 # evaluation statistics
-HK <- function (Pred, Obs) 
+HK <- function (Pred, Obs)
 {
 	Pred = pred2[-sampl]
 	Obs = valid$state
 
 	Misc = table(Pred, Obs)
-	
+
     if (nrow(Misc)!=ncol(Misc)) stop("wrong misclassification table")
     Misc <- unclass(Misc)
     k  <- ncol(Misc)
     Nobs <- apply(Misc, 2, sum)
     Npred <- apply(Misc, 1, sum)
     N <- sum(Nobs)
-  
+
 
    HK <- (sum(diag(Misc))/N - sum(as.numeric(Nobs)*as.numeric(Npred))/N/N ) / ( 1 - sum(as.numeric(Nobs)*as.numeric(Nobs))/N/N )
 
@@ -84,7 +84,7 @@ HK <- function (Pred, Obs)
 
 # cross validation - separation of the dataset
 sampl = sample(1:nrow(datSel_wo_U), 2*nrow(datSel_wo_U)/3)
-calib = datSel_wo_U[sampl,c("state",selectedVars)] 
+calib = datSel_wo_U[sampl,c("state",selectedVars)]
 valid = datSel_wo_U[-sampl,c("state",selectedVars)]
 
 # Run the models
@@ -100,7 +100,7 @@ save(SDM2,rs,sampl,file= "RandomForest_25112014.rObj")
 # valid
 set.seed(rs)
 pred2 = predict(SDM2,new=datSel_wo_U,"response", OOB=TRUE)
-(HK2 = HK(pred2[-sampl], valid$state)) 
+(HK2 = HK(pred2[-sampl], valid$state))
 
 
 # multimodal
@@ -113,7 +113,7 @@ save(SDM1,file= "Multinom_25112014.rObj")
 
 #valid
 pred1 = predict(SDM1, new=valid,"class")
-(HK1 = HK(pred1, valid$state)) 
+(HK1 = HK(pred1, valid$state))
 
 
 
@@ -130,8 +130,8 @@ pred1 = predict(SDM1, new=valid,"class")
 #write.table(pred_multi,"../data/pred_states_multinom.txt")
 #
 #pred_class = predict(SDM1,new=dataProj,"class")
-#(HK1 = HK(pred_class, dataProj$st0)) 
-#(HK1 = HK(pred_class, dataProj$st1)) 
+#(HK1 = HK(pred_class, dataProj$st0))
+#(HK1 = HK(pred_class, dataProj$st1))
 #
 #
 # random forest
@@ -144,8 +144,8 @@ pred1 = predict(SDM1, new=valid,"class")
 #write.table(pred_rf,"../data/pred_states_randomForest.txt")
 #
 #pred_class = predict(SDM2,new=dataProj,"response")
-#(HK2 = HK(pred_class, dataProj$st0)) 
-#(HK2 = HK(pred_class, dataProj$st1)) 
+#(HK2 = HK(pred_class, dataProj$st0))
+#(HK2 = HK(pred_class, dataProj$st1))
 #
 
 

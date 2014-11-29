@@ -1,24 +1,22 @@
 rm(list=ls())
+
 # ----------------------
-# load calibration data 
+# load calibration data
 # ----------------------
 
-data = read.csv("../data/statesFourState.csv")
+setwd("~/Documents/GitHub/STModel-Calibration/")
+
+data = read.csv("~/Documents/GitHub/STModel-Data/out_files/statesFourState.csv")
 #data = read.csv("~/Documents/GitHub/STModel-Data/out_files/statesFourState.csv")
 head(data)
 dim(data)
-
-
 
 # ----------------------
 ### choice of variables
 # ----------------------
 
-
-selectedVars = c("annual_mean_temp",  "annual_pp")
-
+selectedVars = c("annual_mean_temp","annual_pp")
 datSel = data[,c("state",selectedVars)]
-
 rm(data)
 
 
@@ -32,23 +30,21 @@ datSel_wo_U <- subset(datSel, state != "U")
 datSel_wo_U$state <- droplevels(datSel_wo_U$state)
 
 # ----------------------
-# models 
+# models
 # ----------------------
 # evaluation statistics
-HK <- function (Pred, Obs) 
+HK <- function (Pred, Obs)
 {
-	Pred = pred2[-sampl]
-	Obs = valid$state
 
 	Misc = table(Pred, Obs)
-	
+
     if (nrow(Misc)!=ncol(Misc)) stop("wrong misclassification table")
     Misc <- unclass(Misc)
     k  <- ncol(Misc)
     Nobs <- apply(Misc, 2, sum)
     Npred <- apply(Misc, 1, sum)
     N <- sum(Nobs)
-  
+
 
    HK <- (sum(diag(Misc))/N - sum(as.numeric(Nobs)*as.numeric(Npred))/N/N ) / ( 1 - sum(as.numeric(Nobs)*as.numeric(Nobs))/N/N )
 
@@ -59,7 +55,7 @@ HK <- function (Pred, Obs)
 
 # cross validation - separation of the dataset
 sampl = sample(1:nrow(datSel_wo_U), 2*nrow(datSel_wo_U)/3)
-calib = datSel_wo_U[sampl,c("state",selectedVars)] 
+calib = datSel_wo_U[sampl,c("state",selectedVars)]
 valid = datSel_wo_U[-sampl,c("state",selectedVars)]
 
 # Run the models
@@ -72,28 +68,29 @@ set.seed(rs)
 SDM2 = randomForest(state ~ . , data = calib, ntree = 500)
 SDM2
 save(SDM2,rs,sampl,file= "RandomForest_temp.rObj")
+#load("Rout_files/RandomForest_temp.rObj")
 
 # valid
 set.seed(rs)
-pred2 = predict(SDM2,new=datSel_wo_U,"response", OOB=TRUE)
-(HK2 = HK(pred2[-sampl], valid$state)) 
+pred2 = predict(SDM2,new=datSel_wo_U,"class", OOB=TRUE)
+(HK2 = HK(pred2[-sampl], valid$state))
 
 
 # multimodal
 #calib
 library(nnet)
-SDM1 = multinom(state ~ .^2 + I(annual_mean_temp^2) + I(pp_seasonality^2) + I(pp_warmest_quarter^2) + I(mean_diurnal_range^2) +I(annual_pp^2) + I(mean_temperatre_wettest_quarter^2), data = calib, maxit =300)
+SDM1 = multinom(state ~ .^2 + I(annual_mean_temp^2) + I(annual_pp^2) + I(annual_mean_temp^3) + I(annual_pp^3), data = calib, maxit =300)
 summary(SDM1)
-save(SDM1,file= "Multinom_temp.rObj")
-
+save(SDM1,file= "Multinom_temp_cube.rObj")
+#load("Rout_files/Multinom_temp.rObj")
 
 #valid
-pred1 = predict(SDM1, new=valid,"class")
-(HK1 = HK(pred1, valid$state)) 
+pred1 = predict(SDM1, new=datSel_wo_U,"class")
+(HK1 = HK(pred1[-sampl], valid$state))
 
 
 # ----------------------
-# projection 
+# projection
 # ----------------------
 dataProj = read.csv("../data/transitionsFourState.csv")
 head(dataProj)
@@ -111,9 +108,4 @@ head(projProba)
 
 # sauvegarde
 write.table(projProba, file = "../data/projection_neigbor_rf_temp.txt", quote=F, row.names=dataProj$X.plot)
-
-
-
-
-
 
