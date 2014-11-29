@@ -6,8 +6,9 @@ rm(list=ls())
 
 setwd("~/Documents/GitHub/STModel-Calibration/")
 
-data = read.csv("~/Documents/GitHub/STModel-Data/out_files/statesFourState.csv")
-#data = read.csv("~/Documents/GitHub/STModel-Data/out_files/statesFourState.csv")
+data = read.csv("../data/statesFourState.csv")
+#data = read.csv("../STModel-Data/out_files/statesFourState.csv")
+
 head(data)
 dim(data)
 
@@ -67,8 +68,8 @@ rs = runif(1,0,1)
 set.seed(rs)
 SDM2 = randomForest(state ~ . , data = calib, ntree = 500)
 SDM2
-save(SDM2,rs,sampl,file= "RandomForest_temp.rObj")
-#load("Rout_files/RandomForest_temp.rObj")
+save(SDM2,rs,sampl,file= "../data/RandomForest_temp.rObj")
+
 
 # valid
 set.seed(rs)
@@ -79,10 +80,11 @@ pred2 = predict(SDM2,new=datSel_wo_U,"class", OOB=TRUE)
 # multimodal
 #calib
 library(nnet)
+
 SDM1 = multinom(state ~ .^2 + I(annual_mean_temp^2) + I(annual_pp^2) + I(annual_mean_temp^3) + I(annual_pp^3), data = calib, maxit =300)
+
 summary(SDM1)
-save(SDM1,file= "Multinom_temp_cube.rObj")
-#load("Rout_files/Multinom_temp.rObj")
+save(SDM1,file= "../data/Multinom_temp.rObj")
 
 #valid
 pred1 = predict(SDM1, new=datSel_wo_U,"class")
@@ -92,6 +94,12 @@ pred1 = predict(SDM1, new=datSel_wo_U,"class")
 # ----------------------
 # projection
 # ----------------------
+## ----recap data
+#load("../data/Multinom_temp.rObj")
+load("../data/RandomForest_temp.rObj")
+selectedVars = c("annual_mean_temp",  "annual_pp")
+#---------------
+
 dataProj = read.csv("../data/transitionsFourState.csv")
 head(dataProj)
 
@@ -107,5 +115,5 @@ projProba = predict(SDM2,new=datProjSel,"prob", OOB=TRUE)
 head(projProba)
 
 # sauvegarde
-write.table(projProba, file = "../data/projection_neigbor_rf_temp.txt", quote=F, row.names=dataProj$X.plot)
+write.table(projProba, file = "../data/projection_neigbor_rf_temp.txt", quote=F, row.names=FALSE)
 
