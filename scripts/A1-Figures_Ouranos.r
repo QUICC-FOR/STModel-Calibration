@@ -256,13 +256,13 @@ for (i in 1:length(models)){
 }
 
 gg_prob_dat <- do.call(rbind,prob_grid)
-gg_prob_dat$class_prob <- cut(gg_prob_dat$prob,11)
+gg_prob_dat$class_prob <- cut(gg_prob_dat$prob,11,dig.lab = 2)
 gg_prob_dat$transition <- factor(gg_prob_dat$transition,labels=c("R -> T","R -> B","R -> M", "(T,B,M) -> R"))
 
 theme_set(theme_grey(base_size=14))
-ggplot(gg_prob_dat, aes(x=annual_mean_temp,y=annual_pp)) + geom_raster(aes(fill=class_prob)) + facet_wrap(~transition) + scale_fill_manual(values = rev(brewer.pal(11,"RdYlBu")),guide = guide_legend(reverse=TRUE),name="Class of probability")+
+ggplot(gg_prob_dat, aes(x=annual_mean_temp,y=annual_pp)) + geom_raster(aes(fill=class_prob)) + facet_wrap(~transition) + scale_fill_manual(values = rev(brewer.pal(11,"RdYlBu")),guide = guide_legend(reverse=TRUE),name="Probability")+
     xlab("Annual mean temperature (°C)") + ylab("Precipitation (meter)")
-ggsave(file="Transition_prob_glm.pdf",width=12,height=8)
+ggsave(file="./figures/Transition_prob_glm.pdf",width=12,height=8)
 
 
 
