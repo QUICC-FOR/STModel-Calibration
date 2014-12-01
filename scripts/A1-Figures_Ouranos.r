@@ -1,7 +1,7 @@
 setwd("~/Documents/GitHub/STModel-Calibration/")
 
 load("data/RandomForest_temp.rObj")
-load("data/Multinom_temp.rObj")
+load("data/Multinom_temp_run3.rObj")
 
 require("randomForest")
 require("nnet")
@@ -18,7 +18,6 @@ lakes <- readShapePoly("~/Documents/Maitrise/Analyse/dom_ouranos/crop_shapefile/
 lakes@proj4string <- CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs +towgs84=0,0,0")
 region_qc <- readShapePoly("~/Documents/Maitrise/Analyse/dom_ouranos/crop_shapefile/region_qc.shp")
 region_qc@proj4string <- CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs +towgs84=0,0,0")
-
 
 #Subset sur l'aire des polygones (prend les lacs avec une superficie supérieur à 0.005 km²)
 area <- gArea(lakes, byid=TRUE)
@@ -66,8 +65,6 @@ gg_prob_clim <- melt(prob_clim,id=c("lon","lat","SDM"))
 gg_prob_RF <- melt(prob_RF[,-7],id=c("lon","lat"))
 gg_prob_Multi <- melt(prob_Multi[,-7],id=c("lon","lat"))
 
-
-
 #################################
 #######  Carto SMD  #############
 ################################
@@ -108,8 +105,8 @@ ggplot_multi = ggplot(gg_prob_Multi) +
         strip.text.x = element_text(size = 12,face="bold" ,colour = "white"),strip.background = element_rect(colour="black", fill="black"))+
     ggtitle("SDM: Multinomial")
 
-ggsave(ggplot_RF,file="../data/proj_RF_qc.pdf",height=8,width=10)
-ggsave(ggplot_multi,file="../data/proj_multi_qc.pdf",height=8,width=10)
+ggsave(ggplot_RF,file="./figures/proj_RF_qc.pdf",height=8,width=10)
+ggsave(ggplot_multi,file="./figures/proj_multi_qc.pdf",height=8,width=10)
 
 
 #################################
@@ -157,13 +154,12 @@ ggplot_state = ggplot(gg_prob_state) +
 
 ggsave(ggplot_state,file="./data/proj_state_qc.pdf",height=7,width=8)
 
+
+###########################################################################################################################
+
 #################################
 ####  GLM Transition  ###########
 #################################
-
-###################################################################
-#####    Reshaping data from STM-Data repo                  #######
-###################################################################
 
 # Open data
 pair.dat <- read.csv("../STModel-Data/out_files/transitionsFourState.csv")
@@ -264,5 +260,44 @@ ggplot(gg_prob_dat, aes(x=annual_mean_temp,y=annual_pp)) + geom_raster(aes(fill=
     xlab("Annual mean temperature (°C)") + ylab("Precipitation (meter)")
 ggsave(file="./figures/Transition_prob_glm.pdf",width=12,height=8)
 
+##########################################################################################################################
 
+###############################
+#####    SDM CLIMATE        ###
+##### State pickup randomly ###
+###############################
 
+temp = seq(-2.5,5.5, length.out = 500)
+pp = seq(750,1350, length.out = 500)
+grid = expand.grid(annual_mean_temp = temp, annual_pp = pp)
+
+prob <- predict(SDM1,new=grid,"prob", OOB=TRUE)
+colors_state = c("darkcyan","palegreen3","black","orange")
+States = apply(prob,1,draw)
+
+rnd_state_SDM <- data.frame(grid,States=States)
+
+theme_set(theme_grey(base_size=14))
+ggplot(rnd_state_SDM, aes(x=annual_mean_temp,y=annual_pp)) + geom_raster(aes(fill=States)) +
+scale_fill_manual(values = colors_state,name="Probability")+
+    xlab("Annual mean temperature (°C)") + ylab("Precipitation (meter)")
+ggsave(file="./figures/Transition_prob_glm.pdf",width=12,height=8)
+
+###############################
+#####    SDM CLIMATE        ###
+#####  probabilities space  ###
+###############################
+
+temp = seq(-2.5,5.5, length.out = 500)
+pp = seq(750,1350, length.out = 500)
+grid = expand.grid(annual_mean_temp = temp, annual_pp = pp)
+prob <- predict(SDM1,new=grid,"prob", OOB=TRUE)
+
+prob_SDM <- data.frame(grid,prob)
+gg_prob_SDM <- melt(prob_SDM,id=c("annual_mean_temp","annual_pp"))
+gg_prob_SDM$class_prob <- cut(gg_prob_SDM$value,11,dig.lab = 2)
+
+theme_set(theme_grey(base_size=14))
+ggplot(gg_prob_SDM, aes(x=annual_mean_temp,y=annual_pp)) + geom_raster(aes(fill=class_prob)) + facet_wrap(~variable) + scale_fill_manual(values = rev(brewer.pal(11,"RdYlBu")),guide = guide_legend(reverse=TRUE),name="Probability")+
+    xlab("Annual mean temperature (°C)") + ylab("Precipitation (meter)")
+ggsave(file="./figures/State_prob_SDM.pdf",width=12,height=8)
