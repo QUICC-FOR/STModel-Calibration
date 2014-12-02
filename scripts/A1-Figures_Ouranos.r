@@ -51,8 +51,9 @@ rg_lon <- range(plots$longitude)
 # Carte de proba pour chaque SDM ('Multi', 'Random Forest')
 
 climate_grid <- read.csv("~/Documents/Maitrise/Analyse/dom_ouranos/dom_climate_grid.csv")
-climate_grid <- subset(climate_grid,lat>=rg_lat[1] & lat<=rg_lat[2])
-climate_grid <- subset(climate_grid,lon>=rg_lon[1] & lon<=rg_lon[2])
+#climate_grid <- subset(climate_grid,lat>=rg_lat[1] & lat<=rg_lat[2])
+#climate_grid <- subset(climate_grid,lon>=rg_lon[1] & lon<=rg_lon[2])
+climate_grid <- subset(climate_grid, annual_mean_temp >= -4)
 
 # Prob SDM
 prob_RF = cbind(climate_grid,as.data.frame(predict(SDM2,new=climate_grid,"prob", OOB=TRUE)))
@@ -102,8 +103,7 @@ ggplot_multi = ggplot(gg_prob_Multi) +
         panel.background = element_rect(fill = "lightskyblue"),
         panel.grid.minor = element_blank(),
         panel.grid.major = element_line(color = "grey90",size=0.1),
-        strip.text.x = element_text(size = 12,face="bold" ,colour = "white"),strip.background = element_rect(colour="black", fill="black"))+
-    ggtitle("SDM: Multinomial")
+        strip.text.x = element_text(size = 12,face="bold" ,colour = "white"),strip.background = element_rect(colour="black", fill="black"))
 
 ggsave(ggplot_RF,file="./figures/proj_RF_qc.pdf",height=8,width=10)
 ggsave(ggplot_multi,file="./figures/proj_multi_qc.pdf",height=8,width=10)
@@ -280,7 +280,7 @@ rnd_state_SDM <- data.frame(grid,States=States)
 theme_set(theme_grey(base_size=14))
 ggplot(rnd_state_SDM, aes(x=annual_mean_temp,y=annual_pp)) + geom_raster(aes(fill=States)) +
 scale_fill_manual(values = colors_state,name="Probability")+
-    xlab("Annual mean temperature (°C)") + ylab("Precipitation (meter)")
+    xlab("Annual mean temperature (°C)") + ylab("Precipitation (mm)")
 ggsave(file="./figures/Transition_prob_glm.pdf",width=12,height=8)
 
 ###############################
@@ -299,5 +299,6 @@ gg_prob_SDM$class_prob <- cut(gg_prob_SDM$value,11,dig.lab = 2)
 
 theme_set(theme_grey(base_size=14))
 ggplot(gg_prob_SDM, aes(x=annual_mean_temp,y=annual_pp)) + geom_raster(aes(fill=class_prob)) + facet_wrap(~variable) + scale_fill_manual(values = rev(brewer.pal(11,"RdYlBu")),guide = guide_legend(reverse=TRUE),name="Probability")+
-    xlab("Annual mean temperature (°C)") + ylab("Precipitation (meter)")
+    xlab("Annual mean temperature (°C)") + ylab("Precipitation (mm)")
 ggsave(file="./figures/State_prob_SDM.pdf",width=12,height=8)
+
