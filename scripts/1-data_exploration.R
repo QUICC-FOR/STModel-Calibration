@@ -1,5 +1,5 @@
 
-#rm(list = ls())
+rm(list = ls())
 ####################################################################
 ######                Clean data (temporary version)         #######
 ####################################################################
@@ -14,7 +14,7 @@
 #
 ## List of interests species
 #I_sp  <- c("bop","peb","peg","pet","prp","sal","soa")
-#B_sp  <- c("epn","epb","epr", "mel","pig","sab") 
+#B_sp  <- c("epn","epb","epr", "mel","pig","sab")
 #T_sp  <- c("ers","fra","frn","heg","osv","til","cet")
 #
 ##retirer frn
@@ -32,7 +32,7 @@
 #
 ## Class into state types
 #
-#class_fn = function(x) { 
+#class_fn = function(x) {
 #  Itot = x[1]; Btot =x[2]; Ttot=x[3]; BAtot=x[4]
 #  classPlot = "Unclass"
 #  if(BAtot < 10) classPlot = "R"
@@ -62,11 +62,11 @@
 ## remove only one releve in time
 #liste = liste[-which(nreleves==1)]
 #
-### Function to match remeasurements on the same line 
+### Function to match remeasurements on the same line
 #prwise  <- function(x){
 #    #climatic columns
 #    clim = c(which(colnames(x) == "annual_pp") ,which(colnames(x) == "annual_mean_temp"))
-#        
+#
 #    x = x[order(x$yr_measured),]
 #
 #    for (i in 1:(nrow(x)-1))
@@ -121,7 +121,7 @@
 ### filtre 1
 ###-----------
 #
-### Rm all harvested plots 
+### Rm all harvested plots
 #dat1  <- dat0[-which(dat0$disturbance%in%c("BRP", "CAM", "CB", "CD", "CDL", "CE", "CJ", "CP", "DLD", "EPC")),]
 ## BRP = brulis partiel ## ne pas enlever
 ## CAM = coupe d'amélioration
@@ -202,7 +202,7 @@ pair.dat <- pair.dat[,-c(9:12)]
 pair.dat$transition <- paste(pair.dat$st0,pair.dat$st1,sep="")
 
 # Datset without filters
-pair_dat0 <- pair.dat 
+pair_dat0 <- pair.dat
 
 # Graph lim
 rg_pp <- range(pair.dat$annual_pp)
@@ -487,7 +487,7 @@ fig_all_glm(pair_dat2, "_filterHarvest+Drainage", modelTransition = modelTransit
 
 #-------------------------------------------------------------------------------#-------------------------------------------------------------------------------
 
-#### Maps 
+#### Maps
 
 require("ggmap")
 datmap = read.csv("~/Documents/GitHub/STModel-Data/out_files/statesFourState.csv")
@@ -498,12 +498,12 @@ lat_med  <- median(datmap$latitude)
 theme_set(theme_grey(base_size=10))
 quicc.map = get_map(location = c(lon=lon_med,lat=lat_med), zoom = 4)
 
-ggmap(quicc.map, maprange=FALSE,extent = "normal") %+% datmap + aes(x = longitude, y = latitude ,color=state) +
-#geom_point(size=0.4,aes=0.5) + 
+ggmap(quicc.map, maprange=FALSE,extent = "normal") %+% datmap + aes(x = longitude, y = latitude) +
+#geom_point(size=0.4,aes=0.5) +
 facet_wrap(~state) +
 stat_density2d(aes(fill = ..level.., alpha = ..level..), bins = 10, geom = 'polygon') +
 scale_fill_gradient(low = "red", high = "red4") +
 #geom_density2d(color="orange4",size=.1) +
-scale_x_continuous(expand=c(0,0)) + scale_y_continuous(expand=c(0,0))+ 
+scale_x_continuous(expand=c(0,0)) + scale_y_continuous(expand=c(0,0))+
 xlab("Longitude") + ylab("Latitude") +
 theme(legend.position = "none", text = element_text(size = 10))
