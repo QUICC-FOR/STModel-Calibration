@@ -43,8 +43,6 @@ varCor2 = cor(data[, selectedVars])
 
 datSel = data[,c("state",selectedVars)]
 
-rm(data)
-
 
 # ----------------------
 # Clean data
@@ -54,6 +52,8 @@ rm(data)
 str(datSel)
 datSel_wo_U <- subset(datSel, state != "U")
 datSel_wo_U$state <- droplevels(datSel_wo_U$state)
+
+###########################################################################################################
 
 # ----------------------
 ### Explo Data et PCA Steve
@@ -66,22 +66,62 @@ ggdata <- melt(datSel_wo_U,id=c("state"))
 
 # Histograme
 hists = ggplot(ggdata) + geom_histogram(aes(x=value,fill=state)) + facet_grid(state~variable,scales="free") + scale_fill_brewer(palette="Accent","State")
-ggsave(hists,file="../figures/explo_hist_selVars_by_state.pdf")
+ggsave(hists,file="../figures/explo_hist_selVars_by_state.pdf",width=15,height=7)
 
 #install.packages("GGally")
 require(GGally)
 
 ggplot <- function(...) ggplot2::ggplot(...) + scale_color_brewer(palette="Accent")
 
-explo_clim <- ggpairs(data=datSel_wo_U,
-        columns=2:3,
+ggpairs(data=datSel_wo_U,
+        columns=2:ncol(datSel_wo_U),
         lower = list(continuous = "density"), # data.frame with variables
         title="Climate exploration by state", # title of the plot
         colour = "state") # aesthetics, ggplot2 style
 
-dev.copy2pdf(height=16,width=16,out.type="pdf")
-    print(explo_clim)
+dev.copy2pdf(height=16,width=18,out.type="pdf")
 dev.off()
+
+### PCA
+# See histogram figures
+
+library(FactoMineR)
+
+result.acp <- PCA(data[,-c(1:5)], scale.unit = TRUE,graph=FALSE)
+summary(result.acp)
+
+result.acp
+result.acp$eig
+
+plot(result.acp, choix="var", select="contrib 10")
+plot(result.acp, choix = "var", select="contrib 6")
+plot(result.acp, choix = "var", select="contrib 3")
+
+var.coord <- result.acp$var$xy.coords
+eig <- result.acp$eig
+var.contrib <- sweep(var.coord, 2, sqrt(eig[1:ncol(var.coord), 1]), FUN="/")
+
+(ev <- result.acp$eig[,1])
+ev[ev > mean(ev)]
+
+n <- length(ev)
+bsm <- data.frame(j = seq(1:n), p = 0)
+bsm$p[1] <- 1/n
+for (i in 2:n) {
+  bsm$p[i] = bsm$p[i-1] + (1/(n+1-i))
+}
+bsm$p <- 100 * bsm$p/n
+
+layout(matrix(c(1:2), 1, 2))
+barplot(result.acp$eig[,1],main="Eigenvalues",names.arg=1:nrow(result.acp$eig))
+abline(h=mean(ev), col="red")
+legend("topright", "Moyenne valeurs propres", lwd=1, col=2, bty="n")
+barplot(t(cbind(100*ev/sum(ev),bsm$p[n:1])), beside=TRUE,
+    main="% variance", col=c("bisque",2), las=2)
+legend("topright", c("% eigenvalue", "Broken stick model"),
+    pch=15, col=c("bisque",2), bty="n")
+
+###########################################################################################################
 
 # ----------------------
 # models
@@ -133,7 +173,14 @@ pred2 = predict(SDM2,new=datSel_wo_U,"response", OOB=TRUE)
 # multimodal
 #calib
 library(nnet)
-SDM1 = multinom(state ~ .^2 + I(annual_mean_temp^2) + I(pp_seasonality^2) + I(pp_warmest_quarter^2) + I(mean_diurnal_range^2) +I(annual_pp^2) + I(mean_temperatre_wettest_quarter^2), data = calib, maxit =1500)
+
+SDM1.a = multinom(state ~ . + I(annual_mean_temp^2) + I(pp_seasonality^2) + I(pp_warmest_quarter^2) + I(mean_diurnal_range^2) +I(annual_pp^2) + I(mean_temperatre_wettest_quarter^2), data = calib, maxit =1500)
+SDM1.b = multinom(state ~ .^2 + I(annual_mean_temp^2) + I(pp_seasonality^2) + I(pp_warmest_quarter^2) + I(mean_diurnal_range^2) +I(annual_pp^2) + I(mean_temperatre_wettest_quarter^2), data = calib, maxit =1500)
+
+SDM1.c = multinom(state ~ . + I(annual_mean_temp^2) + I(pp_seasonality^2) + I(pp_warmest_quarter^2) + I(mean_diurnal_range^2) +I(annual_pp^2) + I(mean_temperatre_wettest_quarter^2) + I(annual_mean_temp^3) + I(pp_seasonality^3) + I(pp_warmest_quarter^3) + I(mean_diurnal_range^3) +I(annual_pp^3) + I(mean_temperatre_wettest_quarter^3), data = calib, maxit =1500)
+
+SDM1.d = multinom(state ~ .^2 + I(annual_mean_temp^2) + I(pp_seasonality^2) + I(pp_warmest_quarter^2) + I(mean_diurnal_range^2) +I(annual_pp^2) + I(mean_temperatre_wettest_quarter^2) + I(annual_mean_temp^3) + I(pp_seasonality^3) + I(pp_warmest_quarter^3) + I(mean_diurnal_range^3) +I(annual_pp^3) + I(mean_temperatre_wettest_quarter^3), data = calib, maxit =1500)
+
 summary(SDM1)
 save(SDM1,file= "Multinom_7vars.rObj")
 
@@ -142,6 +189,8 @@ save(SDM1,file= "Multinom_7vars.rObj")
 pred1 = predict(SDM1, new=valid,"class")
 (HK1 = HK(pred1, valid$state))
 
+
+###########################################################################################################
 
 
 
