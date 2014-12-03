@@ -4,10 +4,10 @@ rm(list=ls())
 # load calibration data
 # ----------------------
 
-#setwd("~/Documents/GitHub/STModel-Calibration/")
+setwd("~/Documents/GitHub/STModel-Calibration/scripts")
 
-data = read.csv("../data/statesFourState.csv")
-#data = read.csv("../STModel-Data/out_files/statesFourState.csv")
+#data = read.csv("../data/statesFourState.csv")
+data = read.csv("../../STModel-Data/out_files/statesFourState.csv")
 
 head(data)
 dim(data)
@@ -23,7 +23,7 @@ rm(data)
 
 # ----------------------
 # Clean data
-# ---------------------
+# ---------------------m
 
 # Clean Undefined state
 str(datSel)
@@ -80,14 +80,13 @@ pred2 = predict(SDM2,new=datSel_wo_U,"class", OOB=TRUE)
 # multimodal
 #calib
 library(nnet)
-
 SDM1 = multinom(state ~ .^2 + I(annual_mean_temp^2) + I(annual_pp^2) + I(annual_mean_temp^3) + I(annual_pp^3), data = calib, maxit =300)
 
 summary(SDM1)
-save(SDM1,file= "../data/Multinom_temp.rObj")
+save(SDM1,file= "../data/Multinom_temp_run3.rObj")
 
 #valid
-pred1 = predict(SDM1, new=datSel_wo_U,"class")
+pred1 = predict(SDM1, new=datSel_wo_U,"prob")
 (HK1 = HK(pred1[-sampl], valid$state))
 
 

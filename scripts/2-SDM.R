@@ -10,8 +10,7 @@ head(data)
 dim(data)
 
 setwd("~/Documents/GitHub/STModel-Calibration/scripts")
-load("../Rout_files/RandomForest_25112014.rObj")
-str(SDM2)
+
 
 # ----------------------
 ### choice of variables
@@ -21,7 +20,7 @@ varCor = cor(data[,-c(1:5)]) # check correlation between variables
 varCor
 
 # acp
-library(ade4)
+library("ade4")
 var.pca = dudi.pca(data[,-c(1:5)], scannf=FALSE, nf = 5)
 var.pca$eig / sum(var.pca$eig)
 
@@ -55,6 +54,34 @@ rm(data)
 str(datSel)
 datSel_wo_U <- subset(datSel, state != "U")
 datSel_wo_U$state <- droplevels(datSel_wo_U$state)
+
+# ----------------------
+### Explo Data et PCA Steve
+# ----------------------
+
+require(reshape2)
+require(ggplot2)
+
+ggdata <- melt(datSel_wo_U,id=c("state"))
+
+# Histograme
+hists = ggplot(ggdata) + geom_histogram(aes(x=value,fill=state)) + facet_grid(state~variable,scales="free") + scale_fill_brewer(palette="Accent","State")
+ggsave(hists,file="../figures/explo_hist_selVars_by_state.pdf")
+
+#install.packages("GGally")
+require(GGally)
+
+ggplot <- function(...) ggplot2::ggplot(...) + scale_color_brewer(palette="Accent")
+
+explo_clim <- ggpairs(data=datSel_wo_U,
+        columns=2:3,
+        lower = list(continuous = "density"), # data.frame with variables
+        title="Climate exploration by state", # title of the plot
+        colour = "state") # aesthetics, ggplot2 style
+
+dev.copy2pdf(height=16,width=16,out.type="pdf")
+    print(explo_clim)
+dev.off()
 
 # ----------------------
 # models
@@ -95,7 +122,7 @@ library(randomForest)
 rs = runif(1,0,1)
 set.seed(rs)
 SDM2 = randomForest(state ~ . , data = calib, ntree = 500)
-save(SDM2,rs,sampl,file= "RandomForest_25112014.rObj")
+save(SDM2,rs,sampl,file= "RandomForest_7vars.rObj")
 
 # valid
 set.seed(rs)
@@ -106,9 +133,9 @@ pred2 = predict(SDM2,new=datSel_wo_U,"response", OOB=TRUE)
 # multimodal
 #calib
 library(nnet)
-SDM1 = multinom(state ~ .^2 + I(annual_mean_temp^2) + I(pp_seasonality^2) + I(pp_warmest_quarter^2) + I(mean_diurnal_range^2) +I(annual_pp^2) + I(mean_temperatre_wettest_quarter^2), data = calib, maxit =300)
+SDM1 = multinom(state ~ .^2 + I(annual_mean_temp^2) + I(pp_seasonality^2) + I(pp_warmest_quarter^2) + I(mean_diurnal_range^2) +I(annual_pp^2) + I(mean_temperatre_wettest_quarter^2), data = calib, maxit =1500)
 summary(SDM1)
-save(SDM1,file= "Multinom_25112014.rObj")
+save(SDM1,file= "Multinom_7vars.rObj")
 
 
 #valid
