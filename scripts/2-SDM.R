@@ -37,11 +37,13 @@ nonCorVars = intersect(nonCorVars, names(varCor[which(abs(varCor[,"mean_diurnal_
 
 nonCorVars = intersect(nonCorVars, names(varCor[which(abs(varCor[,"annual_pp"])<0.7),"annual_pp"]))
 
-selectedVars = c("annual_mean_temp", "pp_seasonality", "pp_warmest_quarter", "mean_diurnal_range", "annual_pp", "mean_temperatre_wettest_quarter")
+selectedVars = c("annual_mean_temp", "pp_seasonality", "pp_warmest_quarter", "mean_diurnal_range","annual_pp", "mean_temperatre_wettest_quarter")
+
+selectedVars_CCbio = c("annual_mean_temp", "pp_seasonality", "min_temp_coldest_period", "mean_temp_coldest_quarter", "mean_temperatre_wettest_quarter","annual_pp")
 
 varCor2 = cor(data[, selectedVars])
 
-datSel = data[,c("state",selectedVars)]
+datSel = data[,c("state",selectedVars_CCbio)]
 
 
 # ----------------------
@@ -63,6 +65,7 @@ require(reshape2)
 require(ggplot2)
 
 ggdata <- melt(datSel_wo_U,id=c("state"))
+ggdata_all <- data[,5:34]
 
 # Histograme
 hists = ggplot(ggdata) + geom_histogram(aes(x=value,fill=state)) + facet_grid(state~variable,scales="free") + scale_fill_brewer(palette="Accent","State")
@@ -73,8 +76,8 @@ require(GGally)
 
 ggplot <- function(...) ggplot2::ggplot(...) + scale_color_brewer(palette="Accent")
 
-ggpairs(data=datSel_wo_U,
-        columns=2:ncol(datSel_wo_U),
+ggpairs(ggdata_all,
+        columns=2:ncol(ggdata_all),
         lower = list(continuous = "density"), # data.frame with variables
         title="Climate exploration by state", # title of the plot
         colour = "state") # aesthetics, ggplot2 style
@@ -87,12 +90,13 @@ dev.off()
 
 library(FactoMineR)
 
-result.acp <- PCA(data[,-c(1:5)], scale.unit = TRUE,graph=FALSE)
+result.acp <- PCA(data[,-c(1:5)], scale.unit = TRUE)
 summary(result.acp)
 
 result.acp
 result.acp$eig
 
+plot(result.acp)
 plot(result.acp, choix="var", select="contrib 10")
 plot(result.acp, choix = "var", select="contrib 6")
 plot(result.acp, choix = "var", select="contrib 3")
@@ -101,6 +105,8 @@ var.coord <- result.acp$var$xy.coords
 eig <- result.acp$eig
 var.contrib <- sweep(var.coord, 2, sqrt(eig[1:ncol(var.coord), 1]), FUN="/")
 
+
+### Broken stick
 (ev <- result.acp$eig[,1])
 ev[ev > mean(ev)]
 
@@ -121,6 +127,30 @@ barplot(t(cbind(100*ev/sum(ev),bsm$p[n:1])), beside=TRUE,
 legend("topright", c("% eigenvalue", "Broken stick model"),
     pch=15, col=c("bisque",2), bty="n")
 
+# ----------------------
+### Discriminante analyze
+# ----------------------
+
+require(MASS)
+
+dat.dfa <-datSel_wo_U[,c("state",selectedVars)]
+
+state.dfa <- lda(state~., dat.dfa)
+state.dfa
+
+clim <- as.matrix(dat.dfa[,-1])
+state <- dat.dfa[, 1]
+test <- manova(clim ~ state)
+summary(test, test = "Wilks")
+
+plot(state.dfa, dimen=1, type="both", cex=1.2)
+plot(state.dfa, abbrev=TRUE)
+
+library(klaR)
+partimat(state~., data = dat.dfa, method = "lda")
+partimat(state ~ ., data = dat.dfa, method = "lda",     plot.matrix = TRUE, imageplot = FALSE)
+
+
 ###########################################################################################################
 
 # ----------------------
@@ -129,9 +159,6 @@ legend("topright", c("% eigenvalue", "Broken stick model"),
 # evaluation statistics
 HK <- function (Pred, Obs)
 {
-	Pred = pred2[-sampl]
-	Obs = valid$state
-
 	Misc = table(Pred, Obs)
 
     if (nrow(Misc)!=ncol(Misc)) stop("wrong misclassification table")
@@ -151,8 +178,8 @@ HK <- function (Pred, Obs)
 
 # cross validation - separation of the dataset
 sampl = sample(1:nrow(datSel_wo_U), 2*nrow(datSel_wo_U)/3)
-calib = datSel_wo_U[sampl,c("state",selectedVars)]
-valid = datSel_wo_U[-sampl,c("state",selectedVars)]
+calib = datSel_wo_U[sampl,c("state",selectedVars_CCbio)]
+valid = datSel_wo_U[-sampl,c("state",selectedVars_CCbio)]
 
 # Run the models
 
@@ -162,7 +189,7 @@ library(randomForest)
 rs = runif(1,0,1)
 set.seed(rs)
 SDM2 = randomForest(state ~ . , data = calib, ntree = 500)
-save(SDM2,rs,sampl,file= "RandomForest_7vars.rObj")
+save(SDM2,rs,sampl,file= "RandomForest_6vars.rObj")
 
 # valid
 set.seed(rs)
@@ -175,20 +202,70 @@ pred2 = predict(SDM2,new=datSel_wo_U,"response", OOB=TRUE)
 library(nnet)
 
 SDM1.a = multinom(state ~ . + I(annual_mean_temp^2) + I(pp_seasonality^2) + I(pp_warmest_quarter^2) + I(mean_diurnal_range^2) +I(annual_pp^2) + I(mean_temperatre_wettest_quarter^2), data = calib, maxit =1500)
+
+save(SDM1.a,sampl,file= "Multinom_6vars_version_a.rObj")
+rm(SDM1.a)
+
+
 SDM1.b = multinom(state ~ .^2 + I(annual_mean_temp^2) + I(pp_seasonality^2) + I(pp_warmest_quarter^2) + I(mean_diurnal_range^2) +I(annual_pp^2) + I(mean_temperatre_wettest_quarter^2), data = calib, maxit =1500)
+
+save(SDM1.b,sampl,file= "Multinom_6vars_version_b.rObj")
+rm(SDM1.b)
+
+SDM1.ccbio = multinom(state ~ .^2 + I(annual_mean_temp^2) + I(pp_seasonality^2) + I(min_temp_coldest_period^2) + I(mean_temp_coldest_quarter^2) +I(annual_pp^2) + I(mean_temperatre_wettest_quarter^2), data = calib, maxit =1500)
+
+save(SDM1.ccbio,sampl,file= "Multinom_6vars_version_b.rObj")
+rm(SDM1.ccbio)
 
 SDM1.c = multinom(state ~ . + I(annual_mean_temp^2) + I(pp_seasonality^2) + I(pp_warmest_quarter^2) + I(mean_diurnal_range^2) +I(annual_pp^2) + I(mean_temperatre_wettest_quarter^2) + I(annual_mean_temp^3) + I(pp_seasonality^3) + I(pp_warmest_quarter^3) + I(mean_diurnal_range^3) +I(annual_pp^3) + I(mean_temperatre_wettest_quarter^3), data = calib, maxit =1500)
 
+save(SDM1.c,sampl,file= "Multinom_6vars_version_c.rObj")
+rm(SDM1.c)
+
 SDM1.d = multinom(state ~ .^2 + I(annual_mean_temp^2) + I(pp_seasonality^2) + I(pp_warmest_quarter^2) + I(mean_diurnal_range^2) +I(annual_pp^2) + I(mean_temperatre_wettest_quarter^2) + I(annual_mean_temp^3) + I(pp_seasonality^3) + I(pp_warmest_quarter^3) + I(mean_diurnal_range^3) +I(annual_pp^3) + I(mean_temperatre_wettest_quarter^3), data = calib, maxit =1500)
 
-summary(SDM1)
-save(SDM1,file= "Multinom_7vars.rObj")
+save(SDM1.d,sampl,file= "Multinom_6vars_version_d.rObj")
+rm(SDM1.d)
+
+###### Evaluate models
+
+load('../data/Multinom_6vars_version_a.rObj')
+load('../data/Multinom_6vars_version_b.rObj')
+load('../data/Multinom_6vars_version_c.rObj')
+load('../data/Multinom_6vars_version_d.rObj')
+load('../data/Multinom_6vars_version_d.rObj')
+load('../data/RandomForest_7vars.rObj')
+
+summary(SDM1.a,Wald=TRUE)
+summary(SDM1.b,Wald=TRUE)
+summary(SDM1.c,Wald=TRUE)
+summary(SDM1.d,Wald=TRUE)
 
 
-#valid
-pred1 = predict(SDM1, new=valid,"class")
-(HK1 = HK(pred1, valid$state))
+predA = predict(SDM1.a,new=datSel_wo_U,"class")
+predB = predict(SDM1.b,new=datSel_wo_U,"class")
+predC = predict(SDM1.c,new=datSel_wo_U,"class")
+predD = predict(SDM1.d,new=datSel_wo_U,"class")
+predccbio = predict(SDM1.ccbio,new=datSel_wo_U,"class")
 
+
+(HKA = table(predccbio[-sampl], valid$state))
+(HKB = HK(predB[-sampl], valid$state))
+(HKC = HK(predC[-sampl], valid$state))
+(HKD = HK(predD[-sampl], valid$state))
+(HKD = HK(predccbio[-sampl], valid$state))
+
+climate_grid <- read.csv("~/Documents/Maitrise/Analyse/dom_ouranos/dom_climate_grid.csv")
+#climate_grid <- subset(climate_grid,lat>=rg_lat[1] & lat<=rg_lat[2])
+#climate_grid <- subset(climate_grid,lon>=rg_lon[1] & lon<=rg_lon[2])
+
+# Prob SDM
+prob_RF = cbind(climate_grid,as.data.frame(predict(SDM2,new=climate_grid,"prob", OOB=TRUE)))
+prob_Multi_a = cbind(climate_grid,as.data.frame(predict(SDM1.a,new=climate_grid,"prob")))
+prob_Multi_b = cbind(climate_grid,as.data.frame(predict(SDM1.b,new=climate_grid,"prob")))
+prob_Multi_b = cbind(climate_grid,as.data.frame(predict(SDM1.bstep,new=climate_grid,"prob")))
+prob_Multi_c = cbind(climate_grid,as.data.frame(predict(SDM1.c,new=climate_grid,"prob")))
+prob_Multi_d = cbind(climate_grid,as.data.frame(predict(SDM1.d,new=climate_grid,"prob")))
 
 ###########################################################################################################
 
