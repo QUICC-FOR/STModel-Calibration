@@ -46,6 +46,8 @@ query_SDMClimate_grid  <- " SELECT ST_X(geom) as lon, ST_Y(geom) as lat, val, bi
 ## Send the query to the database
 res_SDMClimate_grid <- dbGetQuery(con, query_SDMClimate_grid)
 ## Time: Approx. 5-15 minutes
+###### ###### ###### ###### ###### ###### ###### ######
+###### Predicted map
 
 # Clean data
 res_SDMClimate_grid$biovar <- as.factor(res_SDMClimate_grid$biovar)
@@ -62,10 +64,9 @@ rg_md <- range(stm_dat[,4])
 rg_app <- range(stm_dat[,5])
 rg_mtwet <- range(stm_dat[,6])
 
-
 # # Calib space
 spaceClim_SDM <- dcast(res_SDMClimate_grid,lon+lat ~ biovar, value.var="val")
-spaceClim_SDM[,5] <- spaceClim_SDM[,5]/10
+spaceClim_SDM[,4:5] <- spaceClim_SDM[,4:5]/10
 spaceClim_SDM <- subset(spaceClim_SDM, annual_mean_temp <= rg_amt[2] & annual_mean_temp >= rg_amt[1])
 spaceClim_SDM <- subset(spaceClim_SDM, pp_seasonality <= rg_ppseas[2] & pp_seasonality >= rg_ppseas[1])
 spaceClim_SDM <- subset(spaceClim_SDM, pp_warmest_quarter <= rg_ppwarm[2] & pp_warmest_quarter >= rg_ppwarm[1])
@@ -78,20 +79,16 @@ spaceClim_SDM <- subset(spaceClim_SDM, mean_temp_wettest_quarter <= rg_mtwet[2] 
 require("ggplot2")
 require("maptools")
 require("raster")
-require("reshape2")
-require("grid")
 require("rgeos")
 require("RColorBrewer")
-
-load("../data/shp_lakes_regions_study_area.Robj")
-
-###### Predicted map
-names(spaceClim_SDM)[8] <- "annual_pp"
-names(spaceClim_SDM)[5] <- "mean_temperatre_wettest_quarter"
-
 require("randomForest")
 require("nnet")
 require("reshape2")
+
+load("../data/shp_lakes_regions_study_area.Robj")
+
+names(spaceClim_SDM)[8] <- "annual_pp"
+names(spaceClim_SDM)[5] <- "mean_temperatre_wettest_quarter"
 
 load('../data/Multinom_6vars_version_b.rObj')
 load('../data/RandomForest_7vars.rObj')
@@ -127,7 +124,8 @@ theme(plot.title = element_text(face="bold"),
     strip.text.x = element_text(size = 12,face="bold" ,colour = "white"),strip.background = element_rect(colour="black", fill="black"))
 
 ggsave(map_pred,file="../figures/multinom_proj_SDM.jpg",width=15,height=12)
-#«
+
+###### ###### ###### ###### ###### ###### ######
 ###### Climatic map
 
 map_var <- function(dat,var,pal,n){
@@ -169,3 +167,53 @@ res_SDMClimate_grid$biovar <- factor(res_SDMClimate_grid$biovar,labels=c(
     map_var(res_SDMClimate_grid,levels(res_SDMClimate_grid$biovar)[i],"Spectral",11)
     ggsave(paste("../figures/var",i,"_1970-2000.jpg",sep=""),height=5,width=7)
  }
+
+###### ###### ###### ###### ###### ###### ######
+###### Climatic map
+
+require(dplyr)
+
+desc_val<- stm_dat
+n <- 1000
+
+load('../data/Multinom_6vars_version_b.rObj')
+load('../data/RandomForest_7vars.rObj')
+
+out_ls <- list()
+
+require("randomForest")
+require("nnet")
+
+for (i in 1:ncol(desc_val)){
+    var_test <- seq(min(desc_val[,i]),max(desc_val[,i]),length.out=n)
+    vars_mean <- apply(desc_val,2,mean)
+    df <- data.frame(
+        annual_mean_temp=rep(vars_mean[1],length(var_test)),
+        pp_seasonality=rep(vars_mean[2],length(var_test)),
+        pp_warmest_quarter=rep(vars_mean[3],length(var_test)),
+        mean_diurnal_range=rep(vars_mean[4],length(var_test)),
+        annual_pp=rep(vars_mean[5],length(var_test)),
+        mean_temperatre_wettest_quarter=rep(vars_mean[6],length(var_test)))
+    df[,i] <- var_test
+
+    pred_multinom <- predict(SDM1.b,new=df,"prob")
+    df_multinom <- data.frame(model=rep("MN",nrow(pred_multinom)),var_test=rep(names(vars_mean)[i],nrow(pred_multinom)),value_var_test=var_test,pred_multinom)
+    pred_RF <- predict(SDM2,new=df,"prob")
+    df_RF <- data.frame(model=rep("RF",nrow(pred_multinom)),var_test=rep(names(vars_mean)[i],nrow(pred_multinom)),value_var_test=var_test,pred_RF)
+
+    final_df <- rbind(df_multinom,df_RF)
+
+    out_ls[[i]] <- final_df
+}
+
+ggdata <- melt(do.call(rbind,out_ls),id=c("model","var_test","value_var_test"),value.name="probability",variable.name="state")
+
+require(ggplot2)
+
+theme_set(theme_grey(base_size=14))
+
+ggplot(subset(ggdata,model=="MN"),aes(x=value_var_test,y=probability,colour=state)) + geom_line() + facet_wrap(~var_test,scales="free_x") + xlab("Var tested") + ylab("Probability")
+ggsave(file="../figures/MN_oneVar_test.jpg",width=12,height=8)
+
+ggplot(subset(ggdata,model=="RF"),aes(x=value_var_test,y=probability,colour=state)) + geom_line() + facet_wrap(~var_test,scales="free_x") + xlab("Var tested") + ylab("Probability")
+ggsave(file="../figures/RF_oneVar_test.jpg",width=12,height=8)
