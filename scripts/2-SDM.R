@@ -11,49 +11,78 @@ dim(data)
 
 setwd("~/Documents/GitHub/STModel-Calibration/scripts")
 
-
-# ----------------------
-### choice of variables
-# ----------------------
-
-varCor = cor(data[,-c(1:5)]) # check correlation between variables
-varCor
-
-# acp
-library("ade4")
-var.pca = dudi.pca(data[,-c(1:5)], scannf=FALSE, nf = 5)
-var.pca$eig / sum(var.pca$eig)
-
-s.corcircle(var.pca$co, clab = 0.5)
-contrib = inertia.dudi(var.pca, row = FALSE, col = TRUE)$col.abs
-
-nonCorVars = intersect(names(varCor[which(abs(varCor[,"annual_mean_temp"])<0.7),"annual_mean_temp"]), names(varCor[which(abs(varCor[,"pp_seasonality"])<0.7),"pp_seasonality"]))
-
-contrib[nonCorVars,]
-
-nonCorVars = intersect(nonCorVars, names(varCor[which(abs(varCor[,"pp_warmest_quarter"])<0.7),"pp_warmest_quarter"]))
-
-nonCorVars = intersect(nonCorVars, names(varCor[which(abs(varCor[,"mean_diurnal_range"])<0.7),"mean_diurnal_range"]))
-
-nonCorVars = intersect(nonCorVars, names(varCor[which(abs(varCor[,"annual_pp"])<0.7),"annual_pp"]))
-
-selectedVars = c("annual_mean_temp", "pp_seasonality", "pp_warmest_quarter", "mean_diurnal_range","annual_pp", "mean_temperatre_wettest_quarter")
-
-selectedVars_CCbio = c("annual_mean_temp", "pp_seasonality", "min_temp_coldest_period", "mean_temp_coldest_quarter", "mean_temperatre_wettest_quarter","annual_pp")
-
-varCor2 = cor(data[, selectedVars])
-
-datSel = data[,c("state",selectedVars_CCbio)]
-
-
 # ----------------------
 # Clean data
 # ---------------------
 
 # Clean Undefined state
-str(datSel)
-datSel_wo_U <- subset(datSel, state != "U")
-datSel_wo_U$state <- droplevels(datSel_wo_U$state)
+dat_wo_U <- subset(data, state != "U")
+dat_wo_U$state <- droplevels(dat_wo_U$state)
+
+# ----------------------
+### choice of variables
+# ----------------------
+
+varCor = cor(dat_wo_U[,-c(1:5)]) # check correlation between variables
+varCor["annual_pp",]
+
+# ----------------------
+### ACP & Correlation
+# ----------------------
+
+library("ade4")
+var.pca = dudi.pca(dat_wo_U[,-c(1:5)], scannf=FALSE, nf = 5)
+var.pca$eig / sum(var.pca$eig)
+
+# ----------------------
+### Analyze de coinertie
+# ----------------------
+
+com <- acm.disjonctif(dat_wo_U[,c("plot","state")])
+
+com <- dat_wo_U[,"state"]
+com <- data.frame(rec=seq(1,length(com),1),state=com,val=rep(1,length(com)))
+com <- dcast(com,rec~state, value.var="val")
+com[is.na(com)]<-0
+com <- com[,-1]
+
+coi <- niche(var.pca,com,scannf=F,nf=4)
+s.class(coi$ls,fac=dat_wo_U$state,cpoint=0,cstar=0,col=colors_state)
+s.arrow(30*coi$co[selectedVars,],clab=0.8,add.plot=TRUE)
+s.label(coi$li,add.plot=TRUE)
+
+coi$eig/sum(coi$eig)
+s.corcircle(coi$co, clab = 0.5)
+
+
+# s.corcircle(var.pca$co, clab = 0.5)
+# contrib = inertia.dudi(var.pca, row = FALSE, col = TRUE)$col.abs
+
+# nonCorVars = intersect(names(varCor[which(abs(varCor[,"annual_mean_temp"])<0.7),"annual_mean_temp"]), names(varCor[which(abs(varCor[,"pp_seasonality"])<0.7),"pp_seasonality"]))
+
+# contrib[nonCorVars,]
+
+# nonCorVars = intersect(nonCorVars, names(varCor[which(abs(varCor[,"pp_warmest_quarter"])<0.7),"pp_warmest_quarter"]))
+
+# nonCorVars = intersect(nonCorVars, names(varCor[which(abs(varCor[,"mean_diurnal_range"])<0.7),"mean_diurnal_range"]))
+
+# nonCorVars = intersect(nonCorVars, names(varCor[which(abs(varCor[,"annual_pp"])<0.7),"annual_pp"]))
+
+selectedVars = c("annual_mean_temp", "pp_seasonality", "pp_warmest_quarter", "mean_diurnal_range","annual_pp", "mean_temperatre_wettest_quarter")
+
+# selectedVars_CCbio = c("annual_mean_temp", "pp_seasonality", "min_temp_coldest_period", "mean_temp_coldest_quarter", "mean_temperatre_wettest_quarter","annual_pp")
+
+varCor2 = cor(dat_wo_U[, selectedVars])
+varCor2
+
+datSel = dat_wo_U[,c("state",selectedVars)]
+
+
+colors_state = c("darkcyan","palegreen3","black","orange","pink")
+
+s.class(var.pca$li,fac=datSel$state,cpoint=0,cstar=0,col=colors_state)
+s.arrow(10*var.pca$co[selectedVars,],clab=0.8,,add.plot=TRUE)
+
 
 ###########################################################################################################
 
@@ -131,24 +160,23 @@ legend("topright", c("% eigenvalue", "Broken stick model"),
 ### Discriminante analyze
 # ----------------------
 
-require(MASS)
+# require(MASS)
 
-dat.dfa <-datSel_wo_U[,c("state",selectedVars)]
+# dat.dfa <-datSel_wo_U
 
-state.dfa <- lda(state~., dat.dfa)
-state.dfa
+# state.dfa <- qda(state~., dat.dfa)
+# state.dfa
 
-clim <- as.matrix(dat.dfa[,-1])
-state <- dat.dfa[, 1]
-test <- manova(clim ~ state)
-summary(test, test = "Wilks")
+# clim <- as.matrix(dat.dfa[,-1])
+# state <- dat.dfa[, 1]
+# test <- manova(clim ~ state)
+# summary(test, test = "Wilks")
 
-plot(state.dfa, dimen=1, type="both", cex=1.2)
-plot(state.dfa, abbrev=TRUE)
+# plot(state.dfa)
 
-library(klaR)
-partimat(state~., data = dat.dfa, method = "lda")
-partimat(state ~ ., data = dat.dfa, method = "lda",     plot.matrix = TRUE, imageplot = FALSE)
+# library(klaR)
+# partimat(state~., data = dat.dfa, method = "qda")
+# partimat(state ~ ., data = dat.dfa, method = "lda",     plot.matrix = TRUE, imageplot = FALSE)
 
 
 ###########################################################################################################

@@ -24,7 +24,7 @@ source('../../STModel-Data/con_quicc_db_local.r')
 require('reshape2')
 
 # Query
-query_SDMClimate_grid  <- " SELECT ST_X(geom) as lon, ST_Y(geom) as lat, val, biovar FROM (
+query_SDMClimate_grid  <- "SELECT ST_X(geom) as lon, ST_Y(geom) as lat, val, biovar FROM (
     SELECT biovar, (ST_PixelAsCentroids(ST_Transform(rasters,4326))).* FROM (
     SELECT biovar, ST_Union(ST_Clip(ST_Resample(rast,ref_rast),env_stm.env_plots),'MEAN') as rasters
     FROM
@@ -93,12 +93,12 @@ names(spaceClim_SDM)[5] <- "mean_temperatre_wettest_quarter"
 load('../data/Multinom_6vars_version_b.rObj')
 load('../data/RandomForest_7vars.rObj')
 
-pred_multinom <- predict(SDM1.b,new=pred_dat[,-c(1:2)],"prob")
-pred_RF <- predict(SDM2,new=pred_dat[,-c(1:2)],"prob")
+pred_multinom <- predict(SDM1.b,new=spaceClim_SDM[,-c(1:2)],"prob")
+pred_RF <- predict(SDM2,new=spaceClim_SDM[,-c(1:2)],"prob")
 
 pred <- pred_multinom
 
-pred <- cbind(pred_dat[,c(1,2)],pred)
+pred <- cbind(pred[,c(1,2)],pred)
 pred <- melt(pred,id=c("lon","lat"))
 names(pred)<-c("lon","lat","state","prob")
 pred$prob <- cut(pred$prob,11)
@@ -186,7 +186,7 @@ require("nnet")
 
 for (i in 1:ncol(desc_val)){
     var_test <- seq(min(desc_val[,i]),max(desc_val[,i]),length.out=n)
-    vars_mean <- apply(desc_val,2,mean)
+    vars_mean <- apply(desc_val,2,median)
     df <- data.frame(
         annual_mean_temp=rep(vars_mean[1],length(var_test)),
         pp_seasonality=rep(vars_mean[2],length(var_test)),
@@ -212,8 +212,16 @@ require(ggplot2)
 
 theme_set(theme_grey(base_size=14))
 
+x11()
 ggplot(subset(ggdata,model=="MN"),aes(x=value_var_test,y=probability,colour=state)) + geom_line() + facet_wrap(~var_test,scales="free_x") + xlab("Var tested") + ylab("Probability")
 ggsave(file="../figures/MN_oneVar_test.jpg",width=12,height=8)
 
 ggplot(subset(ggdata,model=="RF"),aes(x=value_var_test,y=probability,colour=state)) + geom_line() + facet_wrap(~var_test,scales="free_x") + xlab("Var tested") + ylab("Probability")
 ggsave(file="../figures/RF_oneVar_test.jpg",width=12,height=8)
+
+
+###### ###### ###### ###### ###### ###### ######
+######
+
+alldat_MN_pred <- predict(SDM1.b,new=stm_dat,class="prob")
+alldat_RF_pred <- predict(SDM1.b,new=stm_dat,class="prob")
