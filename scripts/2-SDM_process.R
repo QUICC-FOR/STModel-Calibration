@@ -18,7 +18,7 @@ dat_wo_U$state <- droplevels(dat_wo_U$state)
 
 selectedVars = c("state","annual_mean_temp", "pp_seasonality", "pp_warmest_quarter", "mean_diurnal_range","annual_pp", "mean_temperatre_wettest_quarter")
 
-
+dat_wo_U <- dat_wo_U[,selectedVars]
 # ----------------------
 # models
 # ----------------------
@@ -56,6 +56,7 @@ rs = runif(1,0,1)
 set.seed(rs)
 SDM2 = randomForest(state ~ . , data = calib, ntree = 500)
 save(SDM2,rs,sampl,file= "RandomForest_6vars.rObj")
+#rm(SDM2)
 
 # valid
 set.seed(rs)
@@ -71,7 +72,7 @@ library(nnet)
 SDM1 = multinom(state ~ .^2 + I(annual_mean_temp^2) + I(pp_seasonality^2) + I(pp_warmest_quarter^2) + I(mean_diurnal_range^2) +I(annual_pp^2) + I(mean_temperatre_wettest_quarter^2), data = calib, maxit =1500)
 
 save(SDM1,sampl,file= "Multinom_6vars_version_new_class.rObj")
-rm(SDM1)
+#rm(SDM1)
 
 summary(SDM1,Wald=TRUE)
 
