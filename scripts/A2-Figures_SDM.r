@@ -221,7 +221,9 @@ ggsave(file="../figures/RF_oneVar_test.jpg",width=12,height=8)
 
 
 ###### ###### ###### ###### ###### ###### ######
-######
 
-alldat_MN_pred <- predict(SDM1.b,new=stm_dat,class="prob")
-alldat_RF_pred <- predict(SDM1.b,new=stm_dat,class="prob")
+
+plot_dat <- read.csv2('../../STModel-Data/out_files/treeData.csv')
+str(plot_dat)
+
+
