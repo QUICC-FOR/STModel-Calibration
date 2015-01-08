@@ -64,7 +64,7 @@ model = function(params, dat)
     e4 = params[47]
     e5 = params[48]
     e6 = params[49]
-    e7 = params[50]
+#    e7 = params[50]
     
 	lik = numeric(length(st0))
 
@@ -74,7 +74,8 @@ model = function(params, dat)
     logit_betat 	= bt0 + bt1*ENV1 + bt2*ENV2 + bt3*ENV1^2 + bt4*ENV2^2 + bt5*ENV1^3 + bt6*ENV2^3
     logit_theta	= t0 + t1*ENV1 + t2*ENV2 + t3*ENV1^2 + t4*ENV2^2 + t5*ENV1^3 + t6*ENV2^3
     logit_thetat	= tt0 + tt1*ENV1 + tt2*ENV2 + tt3*ENV1^2 + tt4*ENV2^2 + tt5*ENV1^3 + tt6*ENV2^3
-    logit_eps 	= e0  + e1*ENV1 + e2*ENV2  + e3*ENV1^2 + e4*ENV2^2 + e5*ENV1^3 + e6*ENV2^3 + e7*EB
+    logit_eps 	= e0  + e1*ENV1 + e2*ENV2  + e3*ENV1^2 + e4*ENV2^2 + e5*ENV1^3 + e6*ENV2^3  
+#    + e7*EB
 
     # compute transitions accounting for interval time and logit transformation
     # ! might be NaN because exp(bigNumber) 
