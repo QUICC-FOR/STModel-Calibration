@@ -13,6 +13,14 @@ fit =
 source("3-transition_model.R")
 source("4-init_params.R")
 
+#------------------------------
+# sample data
+
+
+
+
+#------------------------------
+
 # Maximum likelihood estimation
 library(GenSA)
 

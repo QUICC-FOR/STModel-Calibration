@@ -4,9 +4,9 @@
 ##-----------
 
 # neighborhood
-if(neiborgh == "rf") pred = read.table("../dat/projection_rf_complete.txt", h=T)
-if(neiborgh == "multinom2") pred = read.table("../dat/projection_multimod_complete_2steps.txt", h=T)
-if(neiborgh == "multinom") pred = read.table("../dat/projection_multimod_complete.txt", h=T)
+if(neiborgh == "rf") pred = read.table("../data/projection_rf_complete.txt", h=T)
+if(neiborgh == "multinom2") pred = read.table("../data/projection_multimod_complete_2steps.txt", h=T)
+if(neiborgh == "multinom") pred = read.table("../data/projection_multimod_complete.txt", h=T)
 
 
 ##-----------
@@ -29,14 +29,14 @@ datProj_subset10 = datProj[datProj$plot %in% select,]
 load("scale_info.Robj")
 dat_scale = datProj_subset10[c("annual_mean_temp", "annual_pp")]
 dat_scale = t(apply(dat_scale, 1, function(x) {(x-vars.means[c("annual_mean_temp", "annual_pp")])/vars.sd[c("annual_mean_temp", "annual_pp")]}))
-dat_scale = dat.frame(dat_scale)
+dat_scale = data.frame(dat_scale)
 head(dat_scale)
 summary(dat_scale)
 
 # remove transitions directes B->T ou T->B
 toremove = c(which(datProj_subset10$state1 == "T" & datProj_subset10$state2 == "B"), which(datProj_subset10$state1 == "B" & datProj_subset10$state2 == "T"))
 
-dat = dat.frame(dat_scale[-toremove,])
+dat = data.frame(dat_scale[-toremove,])
 pred = pred[-toremove,]
 datProj_subset10= datProj_subset10[-toremove,]
 
@@ -49,6 +49,7 @@ dat$st0 = datProj_subset10$state1
 dat$st1 = datProj_subset10$state2
 dat$itime = datProj_subset10$interval
 
+head(dat)
 
 rm(dat_scale, datProj, datProj_subset10)
 
@@ -109,114 +110,21 @@ bb0 = logit_betab_mn, bb1 = 0, bb2 = 0, bb3=0, bb4=0, bb5=0, bb6=0,
 bt0 = logit_betat_mn, bt1 = 0, bt2 = 0, bt3=0, bt4=0, bt5=0, bt6=0,
 tt0 = logit_thetat_mn, tt1 = 0, tt2 = 0, tt3 =0, tt4=0, tt5=0, tt6=0,
 t0 = logit_theta_mn, t1 = 0, t2 = 0, t3=0, t4=0, t5=0, t6=0,
-e0 = logit_eps_mn, e1 = 0, e2 = 0, e3=0, e4=0, e5=0, e6=0, e7 =0
+e0 = logit_eps_mn, e1 = 0, e2 = 0, e3=0, e4=0, e5=0, e6=0, e7 =0)
 
 
 # coeff variation
 cvar = 5
+scaleOfVar = c(rep(abs(logit_alphab_mn*cvar), 7), 
+   rep(abs(logit_alphat_mn*cvar), 7) ,
+   rep(abs(logit_betab_mn*cvar), 7) ,
+   rep(abs(logit_betat_mn*cvar), 7) ,
+   rep(abs(logit_thetat_mn*cvar), 7) ,
+   rep(abs(logit_theta_mn*cvar), 7) ,
+   rep(abs(logit_eps_mn*cvar), 7) ,
+   10)
 
-par_lo = c(ab0 = logit_alphab_mn - abs(logit_alphab_mn*cvar),
-ab1 = logit_alphab_mn/max(abs(dat$ENV1)) - abs(cvar*logit_alphab_mn/max(abs(dat$ENV1))),
-ab2 = logit_alphab_mn/max(abs(dat$ENV2)) - abs(cvar*logit_alphab_mn/max(abs(dat$ENV2))), 
-ab3 = logit_alphab_mn/max(abs(dat$ENV1^2)) - abs(cvar*logit_alphab_mn/max(abs(dat$ENV1^2))), 
-ab4= logit_alphab_mn/max(abs(dat$ENV2^2)) - abs(cvar*logit_alphab_mn/max(abs(dat$ENV2^2))),
-ab5= logit_alphab_mn/max(abs(dat$ENV1^3)) - abs(cvar*logit_alphab_mn/max(abs(dat$ENV1^3))),
-ab6= logit_alphab_mn/max(abs(dat$ENV2^3)) - abs(cvar*logit_alphab_mn/max(abs(dat$ENV2^3))),
-at0 = logit_alphat_mn - abs(logit_alphat_mn*cvar),
-at1 = logit_alphat_mn/max(abs(dat$ENV1)) - abs(cvar*logit_alphat_mn/max(abs(dat$ENV1))),
-at2 = logit_alphat_mn/max(abs(dat$ENV2)) - abs(cvar*logit_alphat_mn/max(abs(dat$ENV2))),
-at3 = logit_alphat_mn/max(abs(dat$ENV1^2)) - abs(cvar*logit_alphat_mn/max(abs(dat$ENV1^2))),
-at4 = logit_alphat_mn/max(abs(dat$ENV2^2)) - abs(cvar*logit_alphat_mn/max(abs(dat$ENV2^2))),
-at5= logit_alphat_mn/max(abs(dat$ENV1^3)) - abs(cvar*logit_alphat_mn/max(abs(dat$ENV1^3))),
-at6= logit_alphat_mn/max(abs(dat$ENV2^3)) - abs(cvar*logit_alphat_mn/max(abs(dat$ENV2^3))),
-bb0 = logit_betab_mn - abs(logit_betab_mn*cvar),
-bb1 = logit_betab_mn/max(abs(dat$ENV1)) - abs(cvar*logit_betab_mn/max(abs(dat$ENV1))),
-bb2 = logit_betab_mn/max(abs(dat$ENV2)) - abs(cvar*logit_betab_mn/max(abs(dat$ENV2))),
-bb3 = logit_betab_mn/max(abs(dat$ENV1^2)) - abs(cvar*logit_betab_mn/max(abs(dat$ENV1^2))),
-bb4 = logit_betab_mn/max(abs(dat$ENV2^2)) - abs(cvar*logit_betab_mn/max(abs(dat$ENV2^2))),
-bb5= logit_betab_mn/max(abs(dat$ENV1^3)) - abs(cvar*logit_betab_mn/max(abs(dat$ENV1^3))),
-bb6= logit_betab_mn/max(abs(dat$ENV2^3)) - abs(cvar*logit_betab_mn/max(abs(dat$ENV2^3))),
-bt0 = logit_betat_mn - abs(logit_betat_mn*cvar),
-bt1 = logit_betat_mn/max(abs(dat$ENV1)) - abs(cvar*logit_betat_mn/max(abs(dat$ENV1))),
-bt2 =logit_betat_mn/max(abs(dat$ENV2)) - abs(cvar*logit_betat_mn/max(abs(dat$ENV2))),
-bt3 = logit_betat_mn/max(abs(dat$ENV1^2)) - abs(cvar*logit_betat_mn/max(abs(dat$ENV1^2))),
-bt4 = logit_betat_mn/max(abs(dat$ENV2^2)) - abs(cvar*logit_betat_mn/max(abs(dat$ENV2^2))),
-bt5= logit_betat_mn/max(abs(dat$ENV1^3)) - abs(cvar*logit_betat_mn/max(abs(dat$ENV1^3))),
-bt6= logit_betat_mn/max(abs(dat$ENV2^3)) - abs(cvar*logit_betat_mn/max(abs(dat$ENV2^3))),
-tt0 = logit_thetat_mn - abs(logit_thetat_mn*cvar),
-tt1 = logit_thetat_mn/max(abs(dat$ENV1)) - abs(cvar*logit_thetat_mn/max(abs(dat$ENV1))),
-tt2 = logit_thetat_mn/max(abs(dat$ENV2)) - abs(cvar*logit_thetat_mn/max(abs(dat$ENV2))),
-tt3 = logit_thetat_mn/max(abs(dat$ENV1^2)) - abs(cvar*logit_thetat_mn/max(abs(dat$ENV1^2))),
-tt4 = logit_thetat_mn/max(abs(dat$ENV2^2)) - abs(cvar*logit_thetat_mn/max(abs(dat$ENV2^2))),
-tt5= logit_thetat_mn/max(abs(dat$ENV1^3)) - abs(cvar*logit_thetat_mn/max(abs(dat$ENV1^3))),
-tt6= logit_thetat_mn/max(abs(dat$ENV2^3)) - abs(cvar*logit_thetat_mn/max(abs(dat$ENV2^3))),
-t0 = logit_theta_mn - abs(logit_theta_mn*cvar),
-t1 = logit_theta_mn/max(abs(dat$ENV1)) - abs(cvar*logit_theta_mn/max(abs(dat$ENV1))),
-t2 = logit_theta_mn/max(abs(dat$ENV2)) - abs(cvar*logit_theta_mn/max(abs(dat$ENV2))),
-t3 = logit_theta_mn/max(abs(dat$ENV1^2)) - abs(cvar*logit_theta_mn/max(abs(dat$ENV1^2))),
-t4 = logit_theta_mn/max(abs(dat$ENV2^2)) - abs(cvar*logit_theta_mn/max(abs(dat$ENV2^2))),
-t5= logit_theta_mn/max(abs(dat$ENV1^3)) - abs(cvar*logit_theta_mn/max(abs(dat$ENV1^3))),
-t6= logit_theta_mn/max(abs(dat$ENV2^3)) - abs(cvar*logit_theta_mn/max(abs(dat$ENV2^3))),
-e0 = logit_eps_mn - abs(logit_eps_mn*cvar),
-e1 = logit_eps_mn/max(abs(dat$ENV1)) - abs(cvar*logit_eps_mn/max(abs(dat$ENV1))),
-e2 = logit_eps_mn/max(abs(dat$ENV2)) - abs(cvar*logit_eps_mn/max(abs(dat$ENV2))), 
-e3 = logit_eps_mn/max(abs(dat$ENV1^2)) - abs(cvar*logit_eps_mn/max(abs(dat$ENV1^2))),
-e4 = logit_eps_mn/max(abs(dat$ENV2^2)) - abs(cvar*logit_eps_mn/max(abs(dat$ENV2^2))), 
-e5= logit_eps_mn/max(abs(dat$ENV1^3)) - abs(cvar*logit_eps_mn/max(abs(dat$ENV1^3))),
-e6= logit_eps_mn/max(abs(dat$ENV2^3)) - abs(cvar*logit_eps_mn/max(abs(dat$ENV2^3))),
-e7=-10
-)
+par_lo = params - scaleOfVar
 
-par_hi = c(ab0 = logit_alphab_mn + abs(logit_alphab_mn*cvar),
-ab1 = logit_alphab_mn/max(abs(dat$ENV1)) + abs(cvar*logit_alphab_mn/max(abs(dat$ENV1))),
-ab2 = logit_alphab_mn/max(abs(dat$ENV2)) + abs(cvar*logit_alphab_mn/max(abs(dat$ENV2))), 
-ab3 = logit_alphab_mn/max(abs(dat$ENV1^2)) + abs(cvar*logit_alphab_mn/max(abs(dat$ENV1^2))), 
-ab4= logit_alphab_mn/max(abs(dat$ENV2^2)) + abs(cvar*logit_alphab_mn/max(abs(dat$ENV2^2))),
-ab5= logit_alphab_mn/max(abs(dat$ENV1^3)) + abs(cvar*logit_alphab_mn/max(abs(dat$ENV1^3))),
-ab6= logit_alphab_mn/max(abs(dat$ENV2^3)) + abs(cvar*logit_alphab_mn/max(abs(dat$ENV2^3))),
-at0 = logit_alphat_mn + abs(logit_alphat_mn*cvar),
-at1 = logit_alphat_mn/max(abs(dat$ENV1)) + abs(cvar*logit_alphat_mn/max(abs(dat$ENV1))),
-at2 = logit_alphat_mn/max(abs(dat$ENV2)) + abs(cvar*logit_alphat_mn/max(abs(dat$ENV2))),
-at3 = logit_alphat_mn/max(abs(dat$ENV1^2)) + abs(cvar*logit_alphat_mn/max(abs(dat$ENV1^2))),
-at4 = logit_alphat_mn/max(abs(dat$ENV2^2)) + abs(cvar*logit_alphat_mn/max(abs(dat$ENV2^2))),
-at5= logit_alphat_mn/max(abs(dat$ENV1^3)) + abs(cvar*logit_alphat_mn/max(abs(dat$ENV1^3))),
-at6= logit_alphat_mn/max(abs(dat$ENV2^3)) + abs(cvar*logit_alphat_mn/max(abs(dat$ENV2^3))),
-bb0 = logit_betab_mn + abs(logit_betab_mn*cvar),
-bb1 = logit_betab_mn/max(abs(dat$ENV1)) + abs(cvar*logit_betab_mn/max(abs(dat$ENV1))),
-bb2 = logit_betab_mn/max(abs(dat$ENV2)) + abs(cvar*logit_betab_mn/max(abs(dat$ENV2))),
-bb3 = logit_betab_mn/max(abs(dat$ENV1^2)) + abs(cvar*logit_betab_mn/max(abs(dat$ENV1^2))),
-bb4 = logit_betab_mn/max(abs(dat$ENV2^2)) + abs(cvar*logit_betab_mn/max(abs(dat$ENV2^2))),
-bb5= logit_betab_mn/max(abs(dat$ENV1^3)) + abs(cvar*logit_betab_mn/max(abs(dat$ENV1^3))),
-bb6= logit_betab_mn/max(abs(dat$ENV2^3)) + abs(cvar*logit_betab_mn/max(abs(dat$ENV2^3))),
-bt0 = logit_betat_mn + abs(logit_betat_mn*cvar),
-bt1 = logit_betat_mn/max(abs(dat$ENV1)) + abs(cvar*logit_betat_mn/max(abs(dat$ENV1))),
-bt2 =logit_betat_mn/max(abs(dat$ENV2)) + abs(cvar*logit_betat_mn/max(abs(dat$ENV2))),
-bt3 = logit_betat_mn/max(abs(dat$ENV1^2)) + abs(cvar*logit_betat_mn/max(abs(dat$ENV1^2))),
-bt4 = logit_betat_mn/max(abs(dat$ENV2^2)) + abs(cvar*logit_betat_mn/max(abs(dat$ENV2^2))),
-bt5= logit_betat_mn/max(abs(dat$ENV1^3)) + abs(cvar*logit_betat_mn/max(abs(dat$ENV1^3))),
-bt6= logit_betat_mn/max(abs(dat$ENV2^3)) + abs(cvar*logit_betat_mn/max(abs(dat$ENV2^3))),
-tt0 = logit_thetat_mn + abs(logit_thetat_mn*cvar),
-tt1 = logit_thetat_mn/max(abs(dat$ENV1)) + abs(cvar*logit_thetat_mn/max(abs(dat$ENV1))),
-tt2 = logit_thetat_mn/max(abs(dat$ENV2)) + abs(cvar*logit_thetat_mn/max(abs(dat$ENV2))),
-tt3 = logit_thetat_mn/max(abs(dat$ENV1^2)) + abs(cvar*logit_thetat_mn/max(abs(dat$ENV1^2))),
-tt4 = logit_thetat_mn/max(abs(dat$ENV2^2)) + abs(cvar*logit_thetat_mn/max(abs(dat$ENV2^2))),
-tt5= logit_thetat_mn/max(abs(dat$ENV1^3)) + abs(cvar*logit_thetat_mn/max(abs(dat$ENV1^3))),
-tt6= logit_thetat_mn/max(abs(dat$ENV2^3)) + abs(cvar*logit_thetat_mn/max(abs(dat$ENV2^3))),
-t0 = logit_theta_mn + abs(logit_theta_mn*cvar),
-t1 = logit_theta_mn/max(abs(dat$ENV1)) + abs(cvar*logit_theta_mn/max(abs(dat$ENV1))),
-t2 = logit_theta_mn/max(abs(dat$ENV2)) + abs(cvar*logit_theta_mn/max(abs(dat$ENV2))),
-t3 = logit_theta_mn/max(abs(dat$ENV1^2)) + abs(cvar*logit_theta_mn/max(abs(dat$ENV1^2))),
-t4 = logit_theta_mn/max(abs(dat$ENV2^2)) + abs(cvar*logit_theta_mn/max(abs(dat$ENV2^2))),
-t5= logit_theta_mn/max(abs(dat$ENV1^3)) + abs(cvar*logit_theta_mn/max(abs(dat$ENV1^3))),
-t6= logit_theta_mn/max(abs(dat$ENV2^3)) + abs(cvar*logit_theta_mn/max(abs(dat$ENV2^3))),
-e0 = logit_eps_mn + abs(logit_eps_mn*cvar),
-e1 = logit_eps_mn/max(abs(dat$ENV1)) + abs(cvar*logit_eps_mn/max(abs(dat$ENV1))),
-e2 = logit_eps_mn/max(abs(dat$ENV2)) + abs(cvar*logit_eps_mn/max(abs(dat$ENV2))), 
-e3 = logit_eps_mn/max(abs(dat$ENV1^2)) + abs(cvar*logit_eps_mn/max(abs(dat$ENV1^2))),
-e4 = logit_eps_mn/max(abs(dat$ENV2^2)) + abs(cvar*logit_eps_mn/max(abs(dat$ENV2^2))), 
-e5= logit_eps_mn/max(abs(dat$ENV1^3)) + abs(cvar*logit_eps_mn/max(abs(dat$ENV1^3))),
-e6= logit_eps_mn/max(abs(dat$ENV2^3)) + abs(cvar*logit_eps_mn/max(abs(dat$ENV2^3))),
-e7=10
-)
-
+par_hi = params + scaleOfVar
 
