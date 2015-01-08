@@ -12,7 +12,7 @@ if(neiborgh == "multinom") pred = read.table("../dat/projection_multimod_complet
 ##-----------
 ## load dat
 ##-----------
-datProj = read.csv("../dat/transitionsFourState.csv")
+datProj = read.csv("../data/transitionsFourState.csv")
 head(datProj)
 dim(datProj)
 str(datProj)
@@ -109,8 +109,7 @@ bb0 = logit_betab_mn, bb1 = 0, bb2 = 0, bb3=0, bb4=0, bb5=0, bb6=0,
 bt0 = logit_betat_mn, bt1 = 0, bt2 = 0, bt3=0, bt4=0, bt5=0, bt6=0,
 tt0 = logit_thetat_mn, tt1 = 0, tt2 = 0, tt3 =0, tt4=0, tt5=0, tt6=0,
 t0 = logit_theta_mn, t1 = 0, t2 = 0, t3=0, t4=0, t5=0, t6=0,
-e0 = logit_eps_mn, e1 = 0, e2 = 0, e3=0, e4=0, e5=0, e6=0)
-#, e7 =0
+e0 = logit_eps_mn, e1 = 0, e2 = 0, e3=0, e4=0, e5=0, e6=0, e7 =0
 
 
 # coeff variation
@@ -165,7 +164,7 @@ e3 = logit_eps_mn/max(abs(dat$ENV1^2)) - abs(cvar*logit_eps_mn/max(abs(dat$ENV1^
 e4 = logit_eps_mn/max(abs(dat$ENV2^2)) - abs(cvar*logit_eps_mn/max(abs(dat$ENV2^2))), 
 e5= logit_eps_mn/max(abs(dat$ENV1^3)) - abs(cvar*logit_eps_mn/max(abs(dat$ENV1^3))),
 e6= logit_eps_mn/max(abs(dat$ENV2^3)) - abs(cvar*logit_eps_mn/max(abs(dat$ENV2^3))),
-e7=-1e15
+e7=-10
 )
 
 par_hi = c(ab0 = logit_alphab_mn + abs(logit_alphab_mn*cvar),
@@ -217,7 +216,7 @@ e3 = logit_eps_mn/max(abs(dat$ENV1^2)) + abs(cvar*logit_eps_mn/max(abs(dat$ENV1^
 e4 = logit_eps_mn/max(abs(dat$ENV2^2)) + abs(cvar*logit_eps_mn/max(abs(dat$ENV2^2))), 
 e5= logit_eps_mn/max(abs(dat$ENV1^3)) + abs(cvar*logit_eps_mn/max(abs(dat$ENV1^3))),
 e6= logit_eps_mn/max(abs(dat$ENV2^3)) + abs(cvar*logit_eps_mn/max(abs(dat$ENV2^3))),
-e7=1e-15
+e7=10
 )
 
 
