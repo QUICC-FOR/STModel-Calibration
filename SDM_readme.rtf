@@ -1,0 +1,97 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid1\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid1}
+{\list\listtemplateid2\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid101\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid2}
+{\list\listtemplateid3\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid201\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid3}
+{\list\listtemplateid4\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid301\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid4}}
+{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}{\listoverride\listid2\listoverridecount0\ls2}{\listoverride\listid3\listoverridecount0\ls3}{\listoverride\listid4\listoverridecount0\ls4}}
+\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+
+\f0\fs24 \cf0 \
+Data input: \
+\pard\tx220\tx720\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\li720\fi-720\pardirnatural
+\ls1\ilvl0\cf0 {\listtext	\'95	}statesFourState.csv, i.e. all plot-year observation (calibration)\
+{\listtext	\'95	}transitionsFourState.csv, i.e. all \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf0 \
+Output:\
+\pard\tx220\tx720\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\li720\fi-720\pardirnatural
+\ls2\ilvl0\cf0 {\listtext	\'95	}projection_multimod_complete.txt\
+{\listtext	\'95	}projection_rf_complete.txt\
+{\listtext	\'95	}projection_rfLowess_complete.txt\
+{\listtext	\'95	}SDM_figs.pdf\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf0 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+
+\b \cf0 \ul \ulc0 Clean data 
+\b0 \ulnone \
+\
+We removed plots-year with states "Unclassified".\
+We selected only plots with annual mean temperature <=10\'b0C (at least one year).\
+\
+
+\b \ul Choice of variables\
+\
+
+\b0 \ulnone Variables were selected such as the pairwise correlations do not exceed 0.7, among correlated variables we selected the one associated to the simplest ecological interpretation.\
+\
+6 variables were selected: \
+\pard\tx220\tx720\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\li720\fi-720\pardirnatural
+\ls3\ilvl0\cf0 {\listtext	\'95	}annual mean temperature\
+{\listtext	\'95	}annual precipitations\
+{\listtext	\'95	}mean diurnal range\
+{\listtext	\'95	}precipitations of the warmest quarter\
+{\listtext	\'95	}mean temperature of the wettest quarter\
+{\listtext	\'95	}mean temperature of the driest quarter\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf0 \
+From a PCA point of view the two first axis represent 80% of the variance (48% and 32%).\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+
+\b \cf0 \ul \ulc0 Transformation of variables\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+
+\b0 \cf0 \ulnone \
+We scaled the variables. This is very important to have sound models (in particular for the squared terms in the multinomial). \
+To reverse transform, use < X*sd + mean >\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+
+\b \cf0 \ul \ulc0 Model calibration\
+\
+\ulnone Multinomial\ul \
+
+\b0 \ulnone Calibration: on the total dataset with the 6 variables at degree 2  and there pairwise interactions.\
+Evaluation: on the total dataset, HK score of 0.23 and error rate of 42%\
+
+\b \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf0 Two-step multinomial (test)\ul \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+
+\b0 \cf0 \ulnone Calibration: on the total dataset with the 6 variables at degree 2  and there pairwise interactions.\
+Evaluation: on the total dataset, HK score of 0.25 and error rate of 42%\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+
+\b \cf0 \
+Random forest
+\b0 \
+Calibration: on the total dataset with the 6 variables.\
+Evaluation: on the total dataset, HK score of 0.77 and error rate of 14%\
+\
+
+\b \ul Model projection\
+
+\b0 \ulnone \
+Projections were made on pairwise plots data, and generated three neighbourhood predicted proportions:\
+\pard\tx220\tx720\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\li720\fi-720\pardirnatural
+\ls4\ilvl0\cf0 {\listtext	\'95	}multinomial\
+{\listtext	\'95	}random forest\
+{\listtext	\'95	}loess applied to random forest predictions\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf0 \
+}
