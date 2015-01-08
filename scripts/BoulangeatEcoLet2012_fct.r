@@ -32,23 +32,23 @@ function (Pred, Obs)
 }
 
 #Hanssen-Kuipers score
-HK <-
-function (Pred, Obs)
-{
-	Misc = table(Pred, Obs)
-
-    if (nrow(Misc)!=ncol(Misc)) stop("wrong misclassification table")
-    Misc <- unclass(Misc)
-    k  <- ncol(Misc)
-    Nobs <- apply(Misc, 2, sum)
-    Npred <- apply(Misc, 1, sum)
-    N <- sum(Nobs)
-
-   HK <- (sum(diag(Misc))/N - sum(Nobs*Npred)/N/N ) / ( 1 - sum(Nobs*Nobs)/N/N )
-
-    return(HK)
-}
-
+#HK <-
+#function (Pred, Obs)
+#{
+#	Misc = table(Pred, Obs)
+#
+#    if (nrow(Misc)!=ncol(Misc)) stop("wrong misclassification table")
+#    Misc <- unclass(Misc)
+#    k  <- ncol(Misc)
+#    Nobs <- apply(Misc, 2, sum)
+#    Npred <- apply(Misc, 1, sum)
+#    N <- sum(Nobs)
+#
+#   HK <- (sum(diag(Misc))/N - sum(Nobs*Npred)/N/N ) / ( 1 - sum(Nobs*Nobs)/N/N )
+#
+#    return(HK)
+#}
+#
 
 
 #
@@ -57,43 +57,43 @@ function (Pred, Obs)
 # # From probabilities to classes
 # #------------------------------------------------------------------------------------------
 # #Selection of optimal treshold, adapted from library(BIOMOD)
-# CutOff.optim <-
-# function (Pred_proba, Obs, ncuts=99)
-# {
-#     if (sum(Obs) == 0)
-#         stop("\n The observed data only contains 0")
-#
-#     Quant <- quantile(Pred_proba)
-#     stat_tab <- as.data.frame(matrix(NA, nrow = ncuts, ncol = 2))
-#
-#     if (length(unique(Quant)) == 1) {
-#         CutOff <- Quant[1]
-#
-#     } else {
-#
-#      for (j in 0:ncuts) {
-#             Seuil <- Quant[1] + (j * ((Quant[5] - Quant[1])/(ncuts+1)))
-#             Pred= ifelse(Pred_proba >= Seuil,1,0)
-#
-#             Stat <- TSS(Pred, Obs)
-#
-#
-#     	    if (!is.na(Stat))  {
-#
-#         	        stat_tab[j+1 , 1] <- Seuil
-#             	    stat_tab[j+1 , 2] <- Stat
-#             }
-#
-#        }
-#
-#         maxStat <- max(stat_tab[, 2], na.rm = T)
-#         seuil <- stat_tab[stat_tab[, 2] == maxStat, 1]
-#         CutOff = seuil[1]
-#      }
-# 	return(list(CutOff = CutOff, tab= stat_tab))
-#
-#
-# }
+ CutOff.optim <-
+ function (Pred_proba, Obs, ncuts=99)
+ {
+     if (sum(Obs) == 0)
+         stop("\n The observed data only contains 0")
+
+     Quant <- quantile(Pred_proba)
+     stat_tab <- as.data.frame(matrix(NA, nrow = ncuts, ncol = 2))
+
+     if (length(unique(Quant)) == 1) {
+         CutOff <- Quant[1]
+
+     } else {
+
+      for (j in 0:ncuts) {
+             Seuil <- Quant[1] + (j * ((Quant[5] - Quant[1])/(ncuts+1)))
+             Pred= ifelse(Pred_proba >= Seuil,1,0)
+
+             Stat <- TSS(Pred, Obs)
+
+
+     	    if (!is.na(Stat))  {
+
+         	        stat_tab[j+1 , 1] <- Seuil
+             	    stat_tab[j+1 , 2] <- Stat
+             }
+
+        }
+
+         maxStat <- max(stat_tab[, 2], na.rm = T)
+         seuil <- stat_tab[stat_tab[, 2] == maxStat, 1]
+         CutOff = seuil[1]
+      }
+ 	return(list(CutOff = CutOff, tab= stat_tab))
+
+
+ }
 #
 #
 # #Selection of optimal weights for abundance classes

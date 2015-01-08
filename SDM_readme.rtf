@@ -50,31 +50,30 @@ We selected only plots with annual mean temperature <=10\'b0C (at least one year
 \cf0 \
 From a PCA point of view the two first axis represent 80% of the variance (48% and 32%).\
 \
-\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
 
-\b \cf0 \ul \ulc0 Transformation of variables\
-\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\b \ul Transformation of variables\
 
-\b0 \cf0 \ulnone \
+\b0 \ulnone \
 We scaled the variables. This is very important to have sound models (in particular for the squared terms in the multinomial). \
 To reverse transform, use < X*sd + mean >\
 \
-\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
 
-\b \cf0 \ul \ulc0 Model calibration\
+\b \ul Model calibration\
 \
-\ulnone Multinomial\ul \
-
-\b0 \ulnone Calibration: on the total dataset with the 6 variables at degree 2  and there pairwise interactions.\
-Evaluation: on the total dataset, HK score of 0.23 and error rate of 42%\
-
-\b \
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
-\cf0 Two-step multinomial (test)\ul \
+\cf0 \ulnone Multinomial\ul \
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
 
 \b0 \cf0 \ulnone Calibration: on the total dataset with the 6 variables at degree 2  and there pairwise interactions.\
-Evaluation: on the total dataset, HK score of 0.25 and error rate of 42%\
+Evaluation: on the total dataset, HK score of 0.23 and error rate of 42%\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+
+\b \cf0 \
+Two-step multinomial (test)\ul \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+
+\b0 \cf0 \ulnone Calibration: on the total dataset with the 6 variables at degree 2  and there pairwise interactions.\
+Evaluation: on the total dataset, HK score of 0.31 and error rate of 43%\
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
 
 \b \cf0 \
@@ -83,15 +82,16 @@ Random forest
 Calibration: on the total dataset with the 6 variables.\
 Evaluation: on the total dataset, HK score of 0.77 and error rate of 14%\
 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
 
-\b \ul Model projection\
+\b \cf0 \ul Model projection\
 
 \b0 \ulnone \
-Projections were made on pairwise plots data, and generated three neighbourhood predicted proportions:\
+Projections were made on pairwise plots data (scaled using same means and sd as during calibration: < (X - mean)/sd >), and generated three neighbourhood predicted proportions:\
 \pard\tx220\tx720\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\li720\fi-720\pardirnatural
 \ls4\ilvl0\cf0 {\listtext	\'95	}multinomial\
-{\listtext	\'95	}random forest\
-{\listtext	\'95	}loess applied to random forest predictions\
+{\listtext	\'95	}multinomial two steps\
+\ls4\ilvl0{\listtext	\'95	}random forest\
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
 \cf0 \
 }
