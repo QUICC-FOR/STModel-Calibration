@@ -5,18 +5,18 @@ rm(list = ls())
 pair.dat <- read.csv("../data/transitionsFourState.csv")
 
 # subset 10 degree
-select = unique(dat_wo_U$plot[which(dat_wo_U$annual_mean_temp<=10)])
-dat_subset10 = dat_wo_U[dat_wo_U$plot %in% select,]
+select = unique(pair.dat$plot[which(pair.dat$annual_mean_temp<=10)])
+pair.dat_subset10 = pair.dat[pair.dat$plot %in% select,]
 
 # Rename and clean columns
-names(pair.dat)[7:8] <- c("st0","st1")
+names(pair.dat_subset10)[7:8] <- c("st0","st1")
 #pair.dat <- pair.dat[,-c(9:12)]
 
 # Create transition column
-pair.dat$transition <- paste(pair.dat$st0,pair.dat$st1,sep="")
+pair.dat_subset10$transition <- paste(pair.dat_subset10$st0,pair.dat_subset10$st1,sep="")
 
 # Datset without filters
-pair_dat0 <- pair.dat
+pair_dat0 <- pair.dat_subset10
 
 # Graph lim
 rg_pp <- range(pair.dat$annual_pp)
@@ -202,6 +202,7 @@ dev.off()
 
 
 fig_all_glm(pair_dat0, "", modelTransition = modelTransition_climate)
+
 
 
 
