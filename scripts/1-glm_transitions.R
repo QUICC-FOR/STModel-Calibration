@@ -4,6 +4,9 @@ rm(list = ls())
 # Open data
 pair.dat <- read.csv("../data/transitionsFourState.csv")
 
+# subset 10 degree
+select = unique(dat_wo_U$plot[which(dat_wo_U$annual_mean_temp<=10)])
+dat_subset10 = dat_wo_U[dat_wo_U$plot %in% select,]
 
 # Rename and clean columns
 names(pair.dat)[7:8] <- c("st0","st1")
