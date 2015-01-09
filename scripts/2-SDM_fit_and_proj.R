@@ -264,7 +264,7 @@ dataRescaledProj = t(apply(dataRescaledProj, 1, function(x) {(x-vars.means)/vars
 
 # multinomial
 # ----------------------
-#load("../data/Multinom_complete.rObj")
+load("../data/Multinom_complete.rObj")
 
 proj1 = predict(SDM1,new=dataRescaledProj,"prob")
 head(proj1)
@@ -274,7 +274,7 @@ write.table(proj1, file = "../data/projection_multimod_complete.txt", quote=F, r
 
 # multinomial 2 states
 # ----------------------
-#load("../data/Multinom_complete_2steps.rObj")
+load("../data/Multinom_complete_2steps.rObj")
 
 projR =  predict(SDM1.R,new=data.frame(dataRescaledProj),"response")
 proj1.2 = predict(SDM1.2,new=dataRescaledProj,"probs")
@@ -289,7 +289,7 @@ write.table(proj1.2, file = "../data/projection_multimod_complete_2steps.txt", q
 
 # random Forest
 # ----------------------
-#load("../data/RandomForest_complete.rObj")
+load("../data/RandomForest_complete.rObj")
 
 set.seed(rs)
 proj2 = predict(SDM2,new=dataRescaledProj,"prob", OOB=TRUE)

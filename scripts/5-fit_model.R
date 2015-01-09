@@ -2,13 +2,24 @@
 #rm(list=ls())
 args <- commandArgs(trailingOnly = TRUE)
 
+## added by MT for using Rscript so we can see console output on the command line
+# instead of R CMD BATCH above, use: 
+# Rscript 5-fit_model.R choiceSDM subsetProp
+# to save to a file instead of printing to the console, use:
+# Rscript 5-fit_model.R choiceSDM subsetProp > r.out
+if(!interactive()) {
+	args = commandArgs(TRUE)
+}
+
+
+
 # choice of the SDM
 #neiborgh == "rf"
 #neiborgh == "multinom"
 #neiborgh == "multinom2"
 neiborgh <- as.character(args)[1]
+subsetProp = as.numeric(args[2])
 
-subsetProp = as.numeric(args)[2]
 
 # fit name
 fit = paste(neiborgh, subsetProp*100, sep="_")
@@ -70,7 +81,7 @@ library(GenSA)
 cat("starting logLik")
 print(model(params, datSel))
 
-estim.pars = GenSA(par = params, fn = model, lower = par_lo, upper= par_hi, control = list(verbose =TRUE, maxit = 2000, smooth=FALSE), dat = datSel)
+estim.pars = GenSA(par = params, fn = model, lower = par_lo, upper= par_hi, control = list(verbose =TRUE, maxit = 5000, smooth=FALSE), dat = datSel)
 
 
 #save(estim.pars, file="../estimated_params/GenSA_test.rdata")
