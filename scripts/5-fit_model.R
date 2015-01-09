@@ -1,18 +1,24 @@
+# R CMD BATCH --no-save --no-restore '--args choiceSDM subsetProp' 5-fit_model.R r.out
 #rm(list=ls())
+args <- commandArgs(trailingOnly = TRUE)
 
 # choice of the SDM
-neiborgh == "rf"
-neiborgh == "multinom"
-neiborgh == "multinom2"
+#neiborgh == "rf"
+#neiborgh == "multinom"
+#neiborgh == "multinom2"
+neiborgh <- as.character(args)[1]
+
+subsetProp = as.numeric(args)[2]
 
 # fit name
-fit = "test"
-subsetProp = 0.001
-
+fit = paste(neiborgh, subsetProp*100, sep="_")
+print(fit)
 #------------------------------
-
+#setwd("/Users/isabelle/Documents/RESEARCH/RECHERCHE/2013-2015 UQAR/QUICCFOR/STModel-Calibration/scripts")
 source("3-transition_model.R")
 source("4-init_params.R")
+
+#print(getwd())
 
 #------------------------------
 # sample data (stratified)
@@ -48,11 +54,13 @@ distance[select[i],] = 100
 
 datSel = dat[select,]
 
-pdf("../figures/climaticSpace_sample.pdf")
+pdf(paste("../figures/climaticSpace_sample_",fit,".pdf", sep=""))
 plot(dat$ENV1, dat$ENV2, pch = 19, cex=.5, main = "climatic space", xlab="temperature", ylab = "precipitations")
 points(datSel$ENV1, datSel$ENV2, pch = 19, cex=.5, main = "climatic space", xlab="temperature", ylab = "precipitations", col =2)
 polygon(dat$ENV1[hull], dat$ENV2[hull],  col = NA)
 dev.off()
+
+save(select, file = paste("selectForFit_", fit,sep=""))
 #------------------------------
 
 # Maximum likelihood estimation
