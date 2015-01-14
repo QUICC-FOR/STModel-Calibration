@@ -12,7 +12,7 @@ if(neiborgh == "multinom") pred = read.table("../data/projection_multimod_comple
 ##-----------
 ## load dat
 ##-----------
-datProj = read.csv("../data/transitionsFourState.csv")
+datProj = read.csv("../data/transitionsFourState_inf1.csv")
 head(datProj)
 dim(datProj)
 str(datProj)
@@ -110,19 +110,19 @@ bb0 = logit_betab_mn, bb1 = 0, bb2 = 0, bb3=0, bb4=0, bb5=0, bb6=0,
 bt0 = logit_betat_mn, bt1 = 0, bt2 = 0, bt3=0, bt4=0, bt5=0, bt6=0,
 tt0 = logit_thetat_mn, tt1 = 0, tt2 = 0, tt3 =0, tt4=0, tt5=0, tt6=0,
 t0 = logit_theta_mn, t1 = 0, t2 = 0, t3=0, t4=0, t5=0, t6=0,
-e0 = logit_eps_mn, e1 = 0, e2 = 0, e3=0, e4=0, e5=0, e6=0, e7 =0)
+e0 = logit_eps_mn, e1 = 0, e2 = 0, e3=0, e4=0, e5=0, e6=0)#, e7 =0)
 
-
+# bounds
 # coeff variation
-cvar = 5
-scaleOfVar = c(rep(abs(logit_alphab_mn*cvar), 7), 
-   rep(abs(logit_alphat_mn*cvar), 7) ,
-   rep(abs(logit_betab_mn*cvar), 7) ,
-   rep(abs(logit_betat_mn*cvar), 7) ,
-   rep(abs(logit_thetat_mn*cvar), 7) ,
-   rep(abs(logit_theta_mn*cvar), 7) ,
-   rep(abs(logit_eps_mn*cvar), 7) ,
-   10)
+#cvar = 5
+#scaleOfVar = c(rep(abs(logit_alphab_mn*cvar), 7), 
+#   rep(abs(logit_alphat_mn*cvar), 7) ,
+#   rep(abs(logit_betab_mn*cvar), 7) ,
+#   rep(abs(logit_betat_mn*cvar), 7) ,
+#   rep(abs(logit_thetat_mn*cvar), 7) ,
+#   rep(abs(logit_theta_mn*cvar), 7) ,
+#   rep(abs(logit_eps_mn*cvar), 7) )
+scaleOfVar = c(rep(170, 14), rep(70, 35))
 
 par_lo = params - scaleOfVar
 

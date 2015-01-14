@@ -25,18 +25,18 @@ Scripts:\
 {\listtext	\'95	}5-fit_model.R (main script)\
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
 \cf0 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
 
-\b \ul Transition model
+\b \cf0 \ul \ulc0 Transition model
 \b0 \ulnone \
 \
-\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
-\cf0 The function computes the likelihood of observations, from data and a parameter set. It gives a value to minimize in GenSA (- sum of the log likelihood).\
+The function computes the likelihood of observations, from data and a parameter set. It gives a value to minimize in GenSA (- sum of the log likelihood).\
+\
+There are 50 parameters to fit in the complete model (each of the seven parameters of the transition model being function of climate). The functions of climate are build there.\
 \
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
-\cf0 There are 50 parameters to fit in the complete model (each of the seven parameters of the transition model being function of climate). The functions of climate are build there.\
-\
 
-\f1 logit_alphab = ab0 + ab1*ENV1 + ab2*ENV2 + ab3*ENV1^2 + ab4*ENV2^2 + ab5*ENV1^3 + ab6*ENV2^3\
+\f1 \cf0 logit_alphab = ab0 + ab1*ENV1 + ab2*ENV2 + ab3*ENV1^2 + ab4*ENV2^2 + ab5*ENV1^3 + ab6*ENV2^3\
     logit_alphat = at0 + at1*ENV1 + at2*ENV2 + at3*ENV1^2 + at4*ENV2^2 + at5*ENV1^3 + at6*ENV2^3\
     logit_betab 	= bb0 + bb1*ENV1 + bb2*ENV2 + bb3*ENV1^2 + bb4*ENV2^2 + bb5*ENV1^3 + bb6*ENV2^3\
     logit_betat 	= bt0 + bt1*ENV1 + bt2*ENV2 + bt3*ENV1^2 + bt4*ENV2^2 + bt5*ENV1^3 + bt6*ENV2^3\
@@ -51,11 +51,11 @@ N.B. Variables names are used here. Transitions are converted to annual transiti
 
 \b \cf0 \ul \ulc0 Parameter initialization
 \b0 \ulnone  \
-\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
-\cf0 \
+\
 Parameters were initialized using estimated probabilities for epsilon, theta, thetaT, betaB, betaT, alphaT, and alphaB.\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
 
-\i calculs:
+\i \cf0 calculs:
 \i0 \
 \pard\tx220\tx720\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\li720\fi-720\pardirnatural
 \ls4\ilvl0\cf0 {\listtext	\'95	}epsilon was estimated by the average of: \
@@ -79,9 +79,8 @@ Parameters were initialized using estimated probabilities for epsilon, theta, th
 {\listtext	\uc0\u8259 	}alphaB = (RM+RB) / (M+B)\
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
 \cf0 \
-\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
-\cf0 The intercept terms were initialized by the estimated value (with logic transformation). All other terms were initialized at 0.\
+The intercept terms were initialized by the estimated value (with logic transformation). All other terms were initialized at 0.\
 \
-To set up bound we used a coefficient of variation of 5 of the intercept term and added or subtracted it to the initial parameter values.\
+To set up bound we tried with a coefficient of variation of 5 of the intercept term and added or subtracted it to the initial parameter values. Then we enlarged bounds and chose fixed variations according to parameters (+/- 170 and +/- 70).\
 \
 }

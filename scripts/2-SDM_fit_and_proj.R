@@ -3,7 +3,7 @@ rm(list=ls())
 # Load data
 # ---------------------
 
-data = read.csv("../data/statesFourState.csv")
+data = read.csv("../data/statesFourState_inf1.csv")
 head(data)
 dim(data)
 str(data)
@@ -34,7 +34,7 @@ dat_subset10 = dat_wo_U[dat_wo_U$plot %in% select,]
 #varCor = varCor[nonCor,nonCor]
 #nonCor = names(which(abs(varCor[,"mean_diurnal_range"])<0.7))
 #varCor[nonCor,nonCor]
-#
+
 
 selectedVars = c("annual_mean_temp", "annual_pp", "mean_diurnal_range", "pp_warmest_quarter", "mean_temperatre_wettest_quarter", "mean_temp_driest_quarter")
 
@@ -98,7 +98,7 @@ library(nnet)
 
 ## stepwise
 
-SDM1 = multinom(state ~ (annual_mean_temp + mean_temperatre_wettest_quarter + annual_pp + mean_temp_driest_quarter + pp_warmest_quarter + mean_diurnal_range)^2 + I(annual_pp^2) + I(annual_mean_temp^2) + I(mean_temp_driest_quarter^2) + I(pp_warmest_quarter^2)+I(mean_temperatre_wettest_quarter^2) - mean_diurnal_range , data = datSel, maxit =1500)
+SDM1 = multinom(state ~ (annual_mean_temp + annual_pp  + pp_warmest_quarter + mean_diurnal_range+ mean_temperatre_wettest_quarter +mean_temp_driest_quarter)^2 + I(annual_pp^2) + I(annual_mean_temp^2) + I(pp_warmest_quarter^2)- mean_diurnal_range -pp_warmest_quarter:mean_diurnal_range + I(mean_temp_driest_quarter^2) + I(mean_temperatre_wettest_quarter^2), data = datSel, maxit =1500)
 
 save(SDM1,file= "../data/Multinom_complete.rObj")
 
@@ -106,10 +106,10 @@ save(SDM1,file= "../data/Multinom_complete.rObj")
 # evaluation
 
 pred1 = predict(SDM1,new=datSel,"class")
-(HK1 = HK(pred1, datSel$state)) # 0.23
+(HK1 = HK(pred1, datSel$state)) # 0.33
 tt1 = table(pred1, datSel$state)
 #error rate
-1-sum(diag(tt1))/sum(tt1) # 42%
+1-sum(diag(tt1))/sum(tt1) # 46%
 
 dat_rc = data.frame(annual_mean_temp = seq(-5, 3, length.out = 200), annual_pp = rep(0, 200), mean_diurnal_range=rep(0, 200),pp_warmest_quarter= rep(0, 200),mean_temperatre_wettest_quarter= rep(0, 200), mean_temp_driest_quarter=rep(0, 200))
 
@@ -128,7 +128,7 @@ plot(dat_subset10[,"longitude"], dat_subset10[,"latitude"], cex = .1, pch = 20, 
 title("multinomial")
 dev.off()
 
-rm(SDM1)
+#rm(SDM1)
 
 # multimodal two steps
 # ----------------------
@@ -146,7 +146,7 @@ datSel$rstate = ifelse(datSel$state =="R",  1, 0)
 #mod4 = glm(rstate ~ (annual_mean_temp + mean_temperatre_wettest_quarter + annual_pp + mean_temp_driest_quarter + pp_warmest_quarter + mean_diurnal_range)^2 + I(annual_pp^2) + I(annual_mean_temp^2) + I(mean_diurnal_range^2), data = datSel, family = "binomial")
 #lrtest(modAll, SDM1.R)
 
-SDM1.R = glm(rstate ~ (annual_mean_temp + mean_temperatre_wettest_quarter + annual_pp + mean_temp_driest_quarter + pp_warmest_quarter + mean_diurnal_range)^2 + I(annual_pp^2) + I(annual_mean_temp^2) + I(mean_diurnal_range^2) + I(mean_temperatre_wettest_quarter^2) - annual_mean_temp:annual_pp - annual_pp:pp_warmest_quarter - mean_temp_driest_quarter:mean_diurnal_range, data = datSel, family = "binomial")
+SDM1.R = glm(rstate ~ (annual_mean_temp + annual_pp  + pp_warmest_quarter + mean_diurnal_range+ mean_temperatre_wettest_quarter +mean_temp_driest_quarter)^2 + I(annual_pp^2) + I(annual_mean_temp^2) + I(pp_warmest_quarter^2)- mean_diurnal_range -pp_warmest_quarter:mean_diurnal_range + I(mean_temp_driest_quarter^2) + I(mean_temperatre_wettest_quarter^2), data = datSel, family = "binomial")
 
 # step1 evaluation intermédiaire
 predR = predict(SDM1.R,new=datSel,"response")
@@ -156,7 +156,7 @@ title("model R")
 source("BoulangeatEcoLet2012_fct.r")
 cutoff = CutOff.optim(predR, datSel$rstate)$CutOff
 
-SDM1.2 = multinom(state ~ (annual_mean_temp + mean_temperatre_wettest_quarter + annual_pp + mean_temp_driest_quarter + pp_warmest_quarter + mean_diurnal_range)^2 + I(annual_pp^2) + I(annual_mean_temp^2) + I(mean_diurnal_range^2) + I(mean_temperatre_wettest_quarter^2)  + I(mean_temp_driest_quarter^2) + I(pp_warmest_quarter^2), data = datSel[which(datSel$state!="R"),], maxit =1500)
+SDM1.2 = multinom(state ~ (annual_mean_temp + annual_pp  + pp_warmest_quarter + mean_diurnal_range+ mean_temperatre_wettest_quarter +mean_temp_driest_quarter)^2 + I(annual_pp^2) + I(annual_mean_temp^2) + I(pp_warmest_quarter^2)- mean_diurnal_range -pp_warmest_quarter:mean_diurnal_range + I(mean_temp_driest_quarter^2) + I(mean_temperatre_wettest_quarter^2), data = datSel[which(datSel$state!="R"),], maxit =1500)
 
 save(SDM1.R, SDM1.2, cutoff, file= "../data/Multinom_complete_2steps.rObj")
 
@@ -170,7 +170,7 @@ pred1.final = as.factor(pred1.final)
 (HK1.2 = HK(pred1.final, datSel$state)) # 0.31
 tt1 = table(pred1.final, datSel$state)
 #error rate
-1-sum(diag(tt1))/sum(tt1) # 43%
+1-sum(diag(tt1))/sum(tt1) # 47%
 
 dat_rc = data.frame(annual_mean_temp = seq(-5, 3, length.out = 200), annual_pp = rep(0, 200), mean_diurnal_range=rep(0, 200),pp_warmest_quarter= rep(0, 200),mean_temperatre_wettest_quarter= rep(0, 200), mean_temp_driest_quarter=rep(0, 200))
 
@@ -193,7 +193,7 @@ plot(dat_subset10[,"longitude"], dat_subset10[,"latitude"], cex = .1, pch = 20, 
 title("multinomial 2 steps model")
 dev.off()
 
-rm(SDM1.R, SDM1.2)
+#rm(SDM1.R, SDM1.2)
 
 # random Forest
 # ----------------------
@@ -204,6 +204,7 @@ library(randomForest)
 rs = runif(1,0,1)
 set.seed(rs)
 SDM2 = randomForest(state ~ . , data = datSel, ntree = 500)
+
 save(SDM2,rs,file= "../data/RandomForest_complete.rObj")
 
 
@@ -237,14 +238,14 @@ title("random forest")
 dev.off()
 
 
-rm(SDM2)
+#rm(SDM2)
 
 
 # ----------------------
 # projection
 # ---------------------
 
-dataProj = read.csv("../data/transitionsFourState.csv")
+dataProj = read.csv("../data/transitionsFourState_inf1.csv")
 head(dataProj)
 dim(dataProj)
 str(dataProj)
@@ -281,8 +282,8 @@ proj1.2 = predict(SDM1.2,new=dataRescaledProj,"probs")
 proj1.2 = data.frame(proj1.2)
 proj1.2$R = projR
 proj1.2 = t(apply(proj1.2, 1, function(x)x/sum(x)))
-head(proj1)
-summary(proj1)
+head(proj1.2)
+summary(proj1.2)
 # sauvegarde
 write.table(proj1.2, file = "../data/projection_multimod_complete_2steps.txt", quote=F, row.names=FALSE)
 

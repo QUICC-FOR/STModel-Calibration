@@ -2,7 +2,7 @@
 rm(list = ls())
 
 # Open data
-pair.dat <- read.csv("../data/transitionsFourState.csv")
+pair.dat <- read.csv("../data/transitionsFourState_inf1.csv")
 
 # subset 10 degree
 select = unique(pair.dat$plot[which(pair.dat$annual_mean_temp<=10)])
@@ -201,7 +201,7 @@ dev.off()
 }
 
 
-fig_all_glm(pair_dat0, "", modelTransition = modelTransition_climate)
+fig_all_glm(pair_dat0, "_inf1_", modelTransition = modelTransition_climate)
 
 
 
