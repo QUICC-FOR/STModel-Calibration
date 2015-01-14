@@ -1,16 +1,22 @@
 rm(list = ls())
-#veget_pars = read.table("../estimated_params/GenSA_multinom_0.1.txt")
+
+veget_pars = read.table("../estimated_params/GenSA_multinom_0.1.txt")
+load("selectForFit_multinom_0.1")
+
 veget_pars = read.table("../estimated_params/GenSA_rf_0.1.txt")
+load("selectForFit_rf_0.1")
+
+#---
 pars = as.numeric(veget_pars[,1])
 names(pars) = rownames(veget_pars)
 pars = as.list(pars)
-load("selectForFit_rf_0.1")
 
 load("scale_info.Robj")
 
 ##----------------
 neiborgh = "rf"
-source("4-init_params.R")
+#source("4-init_params.R")
+load("pars_bounds.RData")
 ##-----------------
 
 #-----
@@ -91,9 +97,9 @@ eps = macroPars$eps
 source("invasibility_values.r")
 
 #invT = invT2
-invT = apply(cbind(invT1, invT2), 1, function(x){x[which.max((x))]})
+invT = apply(cbind(invT1, invT2), 1, function(x){max(x, na.rm=TRUE)})
 #invB = invB1
-invB = apply(cbind(invB1, invB2), 1, function(x){x[which.max((x))]})
+invB = apply(cbind(invB1, invB2), 1, function(x){max(x, na.rm=TRUE)})
 
 # Interpret the invasability criterion
 coexist = numeric(length(invT))
@@ -121,6 +127,8 @@ coexist[invB<0 & invT>0 & (alphaT-eps)>0] = 3
 coexist[invB > 0 & invT > 0 & (alphaB-eps)>0 & (alphaT-eps)>0] = 4
 #coexist[invB > 0 & invT > 0] = 4
 
+coexist[is.na(invT)]=NA
+coexist[is.na(invB)]=NA
 
 # instabilité vers crash
 #coexist[] = 0
