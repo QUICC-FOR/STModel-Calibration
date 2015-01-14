@@ -26,5 +26,5 @@ estim.pars = GenSA(par = params, fn = model, lower = par_lo, upper= par_hi, cont
 
 #save(estim.pars, file="../estimated_params/GenSA_test.rdata")
 names(estim.pars$par) = unlist(lapply(names(params), function(x){strsplit(x, split = ".", fixed= TRUE)[[1]][[1]]}))
-write.table(estim.pars$par,file=paste("../estimated_params/GenSA_", fit, ".txt", sep=""))
+write.table(estim.pars$par,file=paste("../estimated_params/GenSA_", initForFit, ".txt", sep=""))
 

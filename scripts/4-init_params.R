@@ -1,5 +1,5 @@
-# R CMD BATCH --no-save --no-restore '--args choiceSDM subsetProp' 5-fit_model.R r.out
-# or # R script 5-fit_model.R choiceSDM subsetProp
+# R CMD BATCH --no-save --no-restore '--args choiceSDM subsetProp' 4-init_params.R r.out
+# or # R script 4-init_params.R choiceSDM subsetProp
 #rm(list=ls())
 args <- commandArgs(trailingOnly = TRUE)
 
@@ -187,4 +187,4 @@ dev.off()
 
 #-----------
 
-save(datSel, select,par_lo, par_hi, file = paste("initForFit_", fit,sep=""))
+save(datSel, select,params, par_lo, par_hi, file = paste("initForFit_", fit,sep=""))
