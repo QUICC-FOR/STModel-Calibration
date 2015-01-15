@@ -1,23 +1,20 @@
 rm(list = ls())
 
-veget_pars = read.table("../estimated_params/GenSA_multinom_0.1.txt")
-load("selectForFit_multinom_0.1")
+veget_pars = read.table("../estimated_params/GenSA_initForFir_multinom_0.01.txt")
+load("initForFit_multinom_0.01")
 
-veget_pars = read.table("../estimated_params/GenSA_rf_0.1.txt")
-load("selectForFit_rf_0.1")
+veget_pars = read.table("../estimated_params/GenSA_initForFit_rf_0.01.txt")
+load("initForFit_rf_0.01")
+
+#--
+
+load("scale_info.Robj")
 
 #---
 pars = as.numeric(veget_pars[,1])
 names(pars) = rownames(veget_pars)
 pars = as.list(pars)
 
-load("scale_info.Robj")
-
-##----------------
-neiborgh = "rf"
-#source("4-init_params.R")
-load("pars_bounds.RData")
-##-----------------
 
 #-----
 # check estimated params and bounds
