@@ -1,6 +1,6 @@
 rm(list = ls())
 
-veget_pars = read.table("../estimated_params/GenSA_initForFir_multinom_0.01.txt")
+veget_pars = read.table("../estimated_params/GenSA_initForFit_multinom_0.01.txt")
 load("initForFit_multinom_0.01")
 
 veget_pars = read.table("../estimated_params/GenSA_initForFit_rf_0.01.txt")
@@ -113,19 +113,22 @@ coexist[invT<0 & invB<0] = 1
 
 # Species B wins (instabilité au point B=0,T=kT + (ab-e)>0 et stabilité au point B=kB,T=0
 # 
-coexist[invB>0 & invT<0 & (alphaB-eps)>0] = 2
-#coexist[invB>0 & invT<0] = 2
+#coexist[invB>0 & invT<0 & (alphaB-eps)>0] = 2
+coexist[invB>0 & invT<0] = 2
 
 # Species T wins
-coexist[invB<0 & invT>0 & (alphaT-eps)>0] = 3
-#coexist[invB<0 & invT>0] = 3
+#coexist[invB<0 & invT>0 & (alphaT-eps)>0] = 3
+coexist[invB<0 & invT>0] = 3
 
 # Reciprocal invasibility
-coexist[invB > 0 & invT > 0 & (alphaB-eps)>0 & (alphaT-eps)>0] = 4
-#coexist[invB > 0 & invT > 0] = 4
+#coexist[invB > 0 & invT > 0 & (alphaB-eps)>0 & (alphaT-eps)>0] = 4
+coexist[invB > 0 & invT > 0] = 4
 
-coexist[is.na(invT)]=NA
-coexist[is.na(invB)]=NA
+## deal with cases where alphaB or alphaT = 0
+coexist[alphaB==0&alphaT>0] = 3
+coexist[alphaT==0&alphaB>0] = 2
+
+
 
 # instabilité vers crash
 #coexist[] = 0
