@@ -65,7 +65,7 @@ dat$itime = datProj_subset10$interval
 
 head(dat)
 
-rm(dat_scale, datProj, datProj_subset10)
+rm(dat_scale, datProj)
 
 
 # Evaluate initial parameter values
@@ -152,22 +152,22 @@ require(lhs)
 sampl.raw = randomLHS(as.integer(subsetProp*nrow(dat)*1.25), 2)
 # transform to the data range
 sampl = data.frame(sampl.raw)
-sampl[,1] = sampl[,1]*(range(dat$ENV1)[2]-range(dat$ENV1)[1]) + range(dat$ENV1)[1]
-sampl[,2] = sampl[,2]*(range(dat$ENV2)[2]-range(dat$ENV2)[1]) + range(dat$ENV2)[1]
+sampl[,1] = sampl[,1]*(range(datProj_subset10$longitude)[2]-range(datProj_subset10$longitude)[1]) + range(datProj_subset10$longitude)[1]
+sampl[,2] = sampl[,2]*(range(datProj_subset10$latitude)[2]-range(datProj_subset10$latitude)[1]) + range(datProj_subset10$latitude)[1]
 
 
 # remove from outside the convex hull
 library(grDevices)
-hull = chull(dat$ENV1, dat$ENV2)
+hull = chull(datProj_subset10$longitude, datProj_subset10$latitude)
 library(splancs)
-inPoly <- inout(as.points(sampl[,1], sampl[,2]),as.points(dat$ENV1[hull], dat$ENV2[hull]))
+inPoly <- inout(as.points(sampl[,1], sampl[,2]),as.points(datProj_subset10$longitude[hull], datProj_subset10$latitude[hull]))
 sampl2 = sampl[inPoly,]
 
 cat("sampl asked ", nrow(dat)*subsetProp, "\n")
 cat("sampl taken ", nrow(sampl2), "\n")
 
 library(sp)
-distance = spDists(as.matrix(dat[,c("ENV1","ENV2")]), sampl2)
+distance = spDists(as.matrix(datProj_subset10[,c("longitude","latitude")]), sampl2)
 #head(distance)
 
 select = rep(NA, nrow(sampl2))
@@ -179,12 +179,12 @@ distance[select[i],] = 100
 
 datSel = dat[select,]
 
-pdf(paste("../figures/climaticSpace_sample_",fit,".pdf", sep=""))
-plot(dat$ENV1, dat$ENV2, pch = 19, cex=.5, main = "climatic space", xlab="temperature", ylab = "precipitations")
-points(datSel$ENV1, datSel$ENV2, pch = 19, cex=.5, main = "climatic space", xlab="temperature", ylab = "precipitations", col =2)
-polygon(dat$ENV1[hull], dat$ENV2[hull],  col = NA)
+pdf(paste("../figures/spatially_stratified_sample_",fit,".pdf", sep=""))
+plot(datProj_subset10$longitude, datProj_subset10$latitude, pch = 19, cex=.5, main = "climatic space", xlab="temperature", ylab = "precipitations")
+points(datProj_subset10$longitude[select], datProj_subset10$latitude[select], pch = 19, cex=.5, main = "stratified sample", xlab="longitude", ylab = "latitude", col =2)
+polygon(datProj_subset10$longitude[hull], datProj_subset10$latitude[hull],  col = NA)
 dev.off()
 
 #-----------
-
-save(datSel, select,params, par_lo, par_hi, file = paste("initForFit_", fit,sep=""))
+coords = cbind(datProj_subset10$longitude, datProj_subset10$latitude)
+save(datSel, coords, select,params, par_lo, par_hi, file = paste("initForFit_", fit,sep=""))
