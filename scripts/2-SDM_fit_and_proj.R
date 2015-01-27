@@ -7,10 +7,14 @@ load("../data/stateData.RData")
 head(stateData)
 dim(stateData)
 str(stateData)
-
-#jpeg("plots_states.jpeg")
-#colo = c(T = "orange", B = "lightgreen", M = "blue", R =1  )
+#
+#jpeg("../figures/plots_states.jpeg")
+#colo = c(R = rgb(.5,.5,.5,.5), T = rgb(1,0,0,.5), B = rgb(0.2,.8,.2,.5), M = rgb(0,0,1,.5))
 #plot(stateData$lat~stateData$lon, pch = 20, cex=.2, asp = 1, col = colo[stateData$state])
+#dev.off()
+#
+#jpeg("../figures/plots_Rstates.jpeg")
+#plot(stateData$lat~stateData$lon, pch = 20, cex=.2, asp = 1, col = ifelse(stateData$state=="R", 1, "grey"), main="R states")
 #dev.off()
 
 # ----------------------
@@ -32,28 +36,28 @@ dat_subset10 = dat_wo_U[dat_wo_U$plot %in% select,]
 ### choice of variables
 # ----------------------
 #
-varCor = cor(dat_subset10[,-c(1:9)]) # check correlation between variables
-
-nonCor = names(which(abs(varCor[,"annual_mean_temp"])<0.7))
-varCor = varCor[nonCor,nonCor]
-nonCor = names(which(abs(varCor[,"tot_annual_pp"])<0.7))
-varCor = varCor[nonCor,nonCor]
-nonCor = names(which(abs(varCor[,"mean_diurnal_range"])<0.7))
-varCor[nonCor,nonCor]
-
-
-selectedVars = c("annual_mean_temp", "tot_annual_pp", "mean_diurnal_range", "pp_warmest_quarter", "pp_wettest_period", "mean_temperatre_wettest_quarter", "mean_temp_driest_quarter")
+#varCor = cor(dat_subset10[,-c(1:9)]) # check correlation between variables
+#
+#nonCor = names(which(abs(varCor[,"annual_mean_temp"])<0.7))
+#varCor = varCor[nonCor,nonCor]
+#nonCor = names(which(abs(varCor[,"tot_annual_pp"])<0.7))
+#varCor = varCor[nonCor,nonCor]
+#nonCor = names(which(abs(varCor[,"mean_diurnal_range"])<0.7))
+#varCor[nonCor,nonCor]
 
 
-library("ade4")
-var.pca = dudi.pca(dat_subset10[,-c(1:5)], scannf=FALSE, nf = 5)
-var.pca$eig / sum(var.pca$eig)
+selectedVars = c("annual_mean_temp", "tot_annual_pp", "mean_diurnal_range", "pp_warmest_quarter", "pp_wettest_period", "mean_temp_wettest_quarter", "mean_temp_driest_quarter")
+
+
+#library("ade4")
+#var.pca = dudi.pca(dat_subset10[,-c(1:9)], scannf=FALSE, nf = 5)
+#(var.pca$eig / sum(var.pca$eig))*100
 
 #inertia.dudi(var.pca, row=F,col=T)
 
-pdf("../figures/PCA_selectedVariables.pdf")
-s.arrow(var.pca$co[selectedVars,], clab = .6, xlim = c(-2,2))
-dev.off()
+#pdf("../figures/PCA_selectedVariables.pdf")
+#s.arrow(var.pca$co[selectedVars,], clab = .6, xlim = c(-2,2), sub = "axe 1: 47% ; axe 2: 30 %")
+#dev.off()
 
 varCor2 = cor(dat_subset10[, selectedVars])
 varCor2
@@ -62,17 +66,18 @@ varCor2
 # ----------------------
 
 datSel = dat_subset10[,c("state",selectedVars)]
+datSel$state = as.factor(datSel$state)
 
-rm(data, dat_wo_U)
+rm(stateData, dat_wo_U)
 
 # ----------------------
 # scale transformation
 # ----------------------
-vars.means = apply(datSel[,2:7], 2, mean)
-vars.sd = apply(datSel[,2:7], 2, sd)
+vars.means = apply(datSel[,2:8], 2, mean)
+vars.sd = apply(datSel[,2:8], 2, sd)
 save(vars.means, vars.sd, file = "scale_info.Robj")
 
-datSel[,2:7] = scale(datSel[,2:7])
+datSel[,2:8] = scale(datSel[,2:8])
 
 # ----------------------
 # Calibration of the models
@@ -95,29 +100,46 @@ HK <- function (Pred, Obs)
 
     return(HK)
 }
+# ----------------------
+# subsample of the data
+# ----------------------
+source("subsample.r")
+select = subsample.temp(dat_subset10$annual_mean_temp, .33)
 
+jpeg("../figures/subsample_SDM_calib.jpeg", height=5000, width=5000, res=600)
+plot(dat_subset10[,c("lon","lat")], pch = 20, cex=.2, col = "grey")
+points(dat_subset10[select,c("lon","lat")], pch = 20, cex=.2, col = 1)
+dev.off()
 
+save(select, file = "subsample_SDM_calib.RData")
+
+#-----------------------
+
+datCal = datSel[select,]
+datEval = datSel[-select,]
+
+# ----------------------
 # multimodal
 # ----------------------
 
 library(nnet)
 
-## stepwise
+##  complete
+# ----------------------
 
-SDM1 = multinom(state ~ (annual_mean_temp + annual_pp  + pp_warmest_quarter + mean_diurnal_range+ mean_temperatre_wettest_quarter +mean_temp_driest_quarter)^2 + I(annual_pp^2) + I(annual_mean_temp^2) + I(pp_warmest_quarter^2)- mean_diurnal_range -pp_warmest_quarter:mean_diurnal_range + I(mean_temp_driest_quarter^2) + I(mean_temperatre_wettest_quarter^2), data = datSel, maxit =1500)
-
+SDM1 = multinom(state ~ (annual_mean_temp + tot_annual_pp  + pp_warmest_quarter + pp_wettest_period + mean_diurnal_range+ mean_temp_wettest_quarter +mean_temp_driest_quarter)^2 + I(tot_annual_pp^2) + I(annual_mean_temp^2) + I(pp_warmest_quarter^2) + I(pp_wettest_period^2) + I(mean_temp_driest_quarter^2) + I(mean_temp_wettest_quarter^2), data = datSel, maxit =1500)
 save(SDM1,file= "../data/Multinom_complete.rObj")
 
-
 # evaluation
-
 pred1 = predict(SDM1,new=datSel,"class")
-(HK1 = HK(pred1, datSel$state)) # 0.33
+(HK1 = HK(pred1, datSel$state)) 
 tt1 = table(pred1, datSel$state)
 #error rate
-1-sum(diag(tt1))/sum(tt1) # 46%
+1-sum(diag(tt1))/sum(tt1) 
 
-dat_rc = data.frame(annual_mean_temp = seq(-5, 3, length.out = 200), annual_pp = rep(0, 200), mean_diurnal_range=rep(0, 200),pp_warmest_quarter= rep(0, 200),mean_temperatre_wettest_quarter= rep(0, 200), mean_temp_driest_quarter=rep(0, 200))
+# graph
+# -----
+dat_rc = data.frame(annual_mean_temp = seq(-5, 3, length.out = 200), tot_annual_pp = rep(0, 200), mean_diurnal_range=rep(0, 200),pp_warmest_quarter= rep(0, 200),mean_temp_wettest_quarter= rep(0, 200), mean_temp_driest_quarter=rep(0, 200),pp_wettest_period= rep(0,200) )
 
 pred1_rc =  predict(SDM1,new=dat_rc,"probs")
 
@@ -129,82 +151,50 @@ lines(pred1_rc[,"T"]~seq(-5, 3, length.out = 200), col = colo["T"], lwd = 1.5)
 lines(pred1_rc[,"B"]~seq(-5, 3, length.out = 200), col = colo["B"], lwd = 1.5)
 lines(pred1_rc[,"M"]~seq(-5, 3, length.out = 200), col = colo["M"], lwd = 1.5)
 legend("topright", bty = "n", col = colo, legend = names(colo), lwd = 2)
+dev.off()
 ##--
-plot(dat_subset10[,"longitude"], dat_subset10[,"latitude"], cex = .1, pch = 20, xlab = "longitude", ylab = "latitude", asp = 1, col = colo[as.character(pred1)])
+jpeg("../figures/multinomial predictions_map.jpeg", height=5000, width=5000, res=600)
+plot(dat_subset10[,"lon"], dat_subset10[,"lat"], cex = .1, pch = 20, xlab = "longitude", ylab = "latitude", asp = 1, col = colo[as.character(pred1)])
 title("multinomial")
 dev.off()
 
 #rm(SDM1)
 
-# multimodal two steps
+## calib / eval
 # ----------------------
-
-library(nnet)
-
-datSel$rstate = ifelse(datSel$state =="R",  1, 0)
-
-## manual stepwise (drop 2 square terms and some interaction terms)
-#library(lmtest)
-#mod0 = glm(rstate ~ 1 , data = datSel, family = "binomial")
-#mod1 = glm(rstate ~ annual_pp , data = datSel, family = "binomial")
-#mod2 = glm(rstate ~ annual_mean_temp + mean_temperatre_wettest_quarter + annual_pp + mean_temp_driest_quarter + pp_warmest_quarter + mean_diurnal_range, data = datSel, family = "binomial")
-#mod3 = glm(rstate ~ (annual_mean_temp + mean_temperatre_wettest_quarter + annual_pp + mean_temp_driest_quarter + pp_warmest_quarter + mean_diurnal_range)^2, data = datSel, family = "binomial")
-#mod4 = glm(rstate ~ (annual_mean_temp + mean_temperatre_wettest_quarter + annual_pp + mean_temp_driest_quarter + pp_warmest_quarter + mean_diurnal_range)^2 + I(annual_pp^2) + I(annual_mean_temp^2) + I(mean_diurnal_range^2), data = datSel, family = "binomial")
-#lrtest(modAll, SDM1.R)
-
-SDM1.R = glm(rstate ~ (annual_mean_temp + annual_pp  + pp_warmest_quarter + mean_diurnal_range+ mean_temperatre_wettest_quarter +mean_temp_driest_quarter)^2 + I(annual_pp^2) + I(annual_mean_temp^2) + I(pp_warmest_quarter^2)- mean_diurnal_range -pp_warmest_quarter:mean_diurnal_range + I(mean_temp_driest_quarter^2) + I(mean_temperatre_wettest_quarter^2), data = datSel, family = "binomial")
-
-# step1 evaluation intermédiaire
-predR = predict(SDM1.R,new=datSel,"response")
-boxplot(predR~datSel$rstate)
-title("model R")
-
-source("BoulangeatEcoLet2012_fct.r")
-cutoff = CutOff.optim(predR, datSel$rstate)$CutOff
-
-SDM1.2 = multinom(state ~ (annual_mean_temp + annual_pp  + pp_warmest_quarter + mean_diurnal_range+ mean_temperatre_wettest_quarter +mean_temp_driest_quarter)^2 + I(annual_pp^2) + I(annual_mean_temp^2) + I(pp_warmest_quarter^2)- mean_diurnal_range -pp_warmest_quarter:mean_diurnal_range + I(mean_temp_driest_quarter^2) + I(mean_temperatre_wettest_quarter^2), data = datSel[which(datSel$state!="R"),], maxit =1500)
-
-save(SDM1.R, SDM1.2, cutoff, file= "../data/Multinom_complete_2steps.rObj")
+SDM1_cal = multinom(state ~ (annual_mean_temp + tot_annual_pp  + pp_warmest_quarter + pp_wettest_period + mean_diurnal_range+ mean_temp_wettest_quarter +mean_temp_driest_quarter)^2 + I(tot_annual_pp^2) + I(annual_mean_temp^2) + I(pp_warmest_quarter^2) + I(pp_wettest_period^2) + I(mean_temp_driest_quarter^2) + I(mean_temp_wettest_quarter^2), data = datCal, maxit =1500)
+save(SDM1_cal,file= "../data/Multinom_cal.rObj")
 
 # evaluation
-
-pred1.2 = predict(SDM1.2,new=datSel[predR<cutoff,],"class")
-pred1.final = predR
-pred1.final[predR>=cutoff] = "R"
-pred1.final[predR<cutoff] = as.character(pred1.2)
-pred1.final = as.factor(pred1.final)
-(HK1.2 = HK(pred1.final, datSel$state)) # 0.31
-tt1 = table(pred1.final, datSel$state)
+pred1 = predict(SDM1_cal,new=datEval,"class")
+(HK1 = HK(pred1, datEval$state)) 
+tt1 = table(pred1, datEval$state)
 #error rate
-1-sum(diag(tt1))/sum(tt1) # 47%
+1-sum(diag(tt1))/sum(tt1) 
 
-dat_rc = data.frame(annual_mean_temp = seq(-5, 3, length.out = 200), annual_pp = rep(0, 200), mean_diurnal_range=rep(0, 200),pp_warmest_quarter= rep(0, 200),mean_temperatre_wettest_quarter= rep(0, 200), mean_temp_driest_quarter=rep(0, 200))
-
-pred1_rcR =  predict(SDM1.R,new=dat_rc,"response")
-pred1_rc = predict(SDM1.2,new=dat_rc,"probs")
-pred1_rc = data.frame(pred1_rc)
-pred1_rc$R = pred1_rcR
-pred1_rc = t(apply(pred1_rc, 1, function(x)x/sum(x)))
+# graph
+# -----
+pred1_rc =  predict(SDM1_cal,new=dat_rc,"probs")
 
 ##--- 
-pdf("../figures/multinomial2steps predictions.pdf")
+pdf("../figures/multinomial predictions_cal.pdf")
 colo = c(R = rgb(.5,.5,.5,.5), T = rgb(1,0,0,.5), B = rgb(0.2,.8,.2,.5), M = rgb(0,0,1,.5))
-plot(pred1_rc[,"R"]~seq(-5, 3, length.out = 200), type = "l", col = colo["R"], lwd = 1.5, ylim = c(0,1), xlab = "temperature gradient", ylab = "proportion of states", main = "multinomial 2 steps")
+plot(pred1_rc[,"R"]~seq(-5, 3, length.out = 200), type = "l", col = colo["R"], lwd = 1.5, ylim = c(0,1), xlab = "temperature gradient", ylab = "proportion of states", main = "multinomial")
 lines(pred1_rc[,"T"]~seq(-5, 3, length.out = 200), col = colo["T"], lwd = 1.5)
 lines(pred1_rc[,"B"]~seq(-5, 3, length.out = 200), col = colo["B"], lwd = 1.5)
 lines(pred1_rc[,"M"]~seq(-5, 3, length.out = 200), col = colo["M"], lwd = 1.5)
 legend("topright", bty = "n", col = colo, legend = names(colo), lwd = 2)
-##--
-plot(dat_subset10[,"longitude"], dat_subset10[,"latitude"], cex = .1, pch = 20, xlab = "longitude", ylab = "latitude", asp = 1, col = colo[as.character(pred1.final)])
-title("multinomial 2 steps model")
 dev.off()
+##--
 
-#rm(SDM1.R, SDM1.2)
 
+
+# ----------------------
 # random Forest
 # ----------------------
 
-datSel = datSel[,1:7] ## careful not include rstate variable!
+##  complete
+# ----------------------
 
 library(randomForest)
 rs = runif(1,0,1)
@@ -213,6 +203,7 @@ SDM2 = randomForest(state ~ . , data = datSel, ntree = 500)
 
 save(SDM2,rs,file= "../data/RandomForest_complete.rObj")
 
+(imp = importance(SDM2))
 
 # evaluation random Forest
 set.seed(rs)
@@ -225,7 +216,8 @@ tt2 = table(pred2, datSel$state)
 
 #--
 
-dat_rc = data.frame(annual_mean_temp = seq(-5, 3, length.out = 200), annual_pp = rep(0, 200), mean_diurnal_range=rep(0, 200),pp_warmest_quarter= rep(0, 200),mean_temperatre_wettest_quarter= rep(0, 200), mean_temp_driest_quarter=rep(0, 200))
+dat_rc = data.frame(annual_mean_temp = seq(-5, 3, length.out = 200), tot_annual_pp = rep(0, 200), mean_diurnal_range=rep(0, 200),pp_warmest_quarter= rep(0, 200),mean_temp_wettest_quarter= rep(0, 200), mean_temp_driest_quarter=rep(0, 200),pp_wettest_period= rep(0,200) )
+
 
 set.seed(rs)
 pred1_rc =  predict(SDM2,new=dat_rc,"prob")
@@ -233,25 +225,61 @@ pred1_rc =  predict(SDM2,new=dat_rc,"prob")
 ##--- 
 pdf("../figures/randomForest predictions.pdf", width = 8, height = 8)
 colo = c(R = rgb(.5,.5,.5,.5), T = rgb(1,0,0,.5), B = rgb(0.2,.8,.2,.5), M = rgb(0,0,1,.5))
-plot(pred1_rc[,"R"]~seq(-5, 3, length.out = 200), type = "l", col = colo["R"], lwd = 1.5, ylim = c(0,1), xlab = "temperature gradient", ylab = "proportion of states", main = "multinomial 2 steps")
+plot(pred1_rc[,"R"]~seq(-5, 3, length.out = 200), type = "l", col = colo["R"], lwd = 1.5, ylim = c(0,1), xlab = "temperature gradient", ylab = "proportion of states", main = "random forest")
 lines(pred1_rc[,"T"]~seq(-5, 3, length.out = 200), col = colo["T"], lwd = 1.5)
 lines(pred1_rc[,"B"]~seq(-5, 3, length.out = 200), col = colo["B"], lwd = 1.5)
 lines(pred1_rc[,"M"]~seq(-5, 3, length.out = 200), col = colo["M"], lwd = 1.5)
 legend("topright", bty = "n", col = colo, legend = names(colo), lwd = 2)
+dev.off()
 ##--
-plot(dat_subset10[,"longitude"], dat_subset10[,"latitude"], cex = .1, pch = 20, xlab = "longitude", ylab = "latitude", asp = 1, col = colo[as.character(pred2)])
+jpeg("../figures/randomForest predictions_map.jpeg", height=5000, width=5000, res=600)
+plot(dat_subset10[,"lon"], dat_subset10[,"lat"], cex = .1, pch = 20, xlab = "longitude", ylab = "latitude", asp = 1, col = colo[as.character(pred2)])
 title("random forest")
 dev.off()
 
-
 #rm(SDM2)
+
+## calib / eval
+# ----------------------
+
+set.seed(rs)
+SDM2_cal = randomForest(state ~ . , data = datCal, ntree = 500)
+
+save(SDM2_cal,rs,file= "../data/RandomForest_cal.rObj")
+
+(imp = importance(SDM2_cal))
+
+# evaluation random Forest
+set.seed(rs)
+pred2 = predict(SDM2_cal,new=datEval,"response", OOB=TRUE)
+(HK2 = HK(pred2, datEval$state)) 
+#error rate
+tt2 = table(pred2, datEval$state)
+1-sum(diag(tt2))/sum(tt2)
+
+# graph
+set.seed(rs)
+pred1_rc =  predict(SDM2_cal,new=dat_rc,"prob")
+
+##--- 
+pdf("../figures/randomForest predictions_cal.pdf", width = 8, height = 8)
+colo = c(R = rgb(.5,.5,.5,.5), T = rgb(1,0,0,.5), B = rgb(0.2,.8,.2,.5), M = rgb(0,0,1,.5))
+plot(pred1_rc[,"R"]~seq(-5, 3, length.out = 200), type = "l", col = colo["R"], lwd = 1.5, ylim = c(0,1), xlab = "temperature gradient", ylab = "proportion of states", main = "random forest")
+lines(pred1_rc[,"T"]~seq(-5, 3, length.out = 200), col = colo["T"], lwd = 1.5)
+lines(pred1_rc[,"B"]~seq(-5, 3, length.out = 200), col = colo["B"], lwd = 1.5)
+lines(pred1_rc[,"M"]~seq(-5, 3, length.out = 200), col = colo["M"], lwd = 1.5)
+legend("topright", bty = "n", col = colo, legend = names(colo), lwd = 2)
+dev.off()
+##--
 
 
 # ----------------------
 # projection
 # ---------------------
 
-dataProj = read.csv("../data/transitionsFourState_inf1.csv")
+load("../data/transitionData.RData")
+
+dataProj = transitionData
 head(dataProj)
 dim(dataProj)
 str(dataProj)
