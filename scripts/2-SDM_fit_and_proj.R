@@ -277,7 +277,7 @@ dev.off()
 # projection
 # ---------------------
 
-load("../data/transitionData.RData")
+load("../data/transitions.rdata") ## all climatic vars
 
 dataProj = transitionData
 head(dataProj)
@@ -288,9 +288,6 @@ str(dataProj)
 select = unique(dataProj$plot[which(dataProj$annual_mean_temp<=10)])
 dataProj_subset10 = dataProj[dataProj$plot %in% select,]
 
-#pdf("../figures/transition plots.pdf")
-#plot(dataProj_subset10[,"longitude"], dataProj_subset10[,"latitude"], cex = .5, pch = 20, xlab = "longitude", ylab = "latitude", asp = 1)
-#dev.off()
 
 # rescale
 dataRescaledProj = dataProj_subset10[,selectedVars]
@@ -306,20 +303,6 @@ head(proj1)
 summary(proj1)
 # sauvegarde
 write.table(proj1, file = "../data/projection_multimod_complete.txt", quote=F, row.names=FALSE)
-
-# multinomial 2 states
-# ----------------------
-#load("../data/Multinom_complete_2steps.rObj")
-
-projR =  predict(SDM1.R,new=data.frame(dataRescaledProj),"response")
-proj1.2 = predict(SDM1.2,new=dataRescaledProj,"probs")
-proj1.2 = data.frame(proj1.2)
-proj1.2$R = projR
-proj1.2 = t(apply(proj1.2, 1, function(x)x/sum(x)))
-head(proj1.2)
-summary(proj1.2)
-# sauvegarde
-write.table(proj1.2, file = "../data/projection_multimod_complete_2steps.txt", quote=F, row.names=FALSE)
 
 
 # random Forest
