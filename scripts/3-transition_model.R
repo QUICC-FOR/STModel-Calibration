@@ -15,7 +15,7 @@ model = function(params, dat)
     ENV2 = dat$ENV2
     itime = dat$itime
 
-    ab0 = params["a0"]
+    ab0 = params[1]
     ab1 = params[2]
     ab2 = params[3]
     ab3 = params[4]
