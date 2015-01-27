@@ -15,7 +15,7 @@ model = function(params, dat)
     ENV2 = dat$ENV2
     itime = dat$itime
 
-    ab0 = params[1]
+    ab0 = params["a0"]
     ab1 = params[2]
     ab2 = params[3]
     ab3 = params[4]
@@ -137,7 +137,7 @@ model = function(params, dat)
     }
     
 
-    # return a value to minimiz e in GenSA
+    # return a value to minimize in GenSA
 	return(-sumLL)
 }
 

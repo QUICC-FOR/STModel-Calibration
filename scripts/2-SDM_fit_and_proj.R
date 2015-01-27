@@ -3,40 +3,46 @@ rm(list=ls())
 # Load data
 # ---------------------
 
-data = read.csv("../data/statesFourState_inf1.csv")
-head(data)
-dim(data)
-str(data)
+load("../data/stateData.RData")
+head(stateData)
+dim(stateData)
+str(stateData)
 
+#jpeg("plots_states.jpeg")
+#colo = c(T = "orange", B = "lightgreen", M = "blue", R =1  )
+#plot(stateData$lat~stateData$lon, pch = 20, cex=.2, asp = 1, col = colo[stateData$state])
+#dev.off()
 
 # ----------------------
 # Clean data
 # ---------------------
 
 # Clean Undefined state
-dat_wo_U <- subset(data, state != "U")
-dat_wo_U$state <- droplevels(dat_wo_U$state)
+dat_wo_U <- subset(stateData, state != "U")
+#dat_wo_U$state <- droplevels(dat_wo_U$state)
 
 # subset 10 degree
 select = unique(dat_wo_U$plot[which(dat_wo_U$annual_mean_temp<=10)])
 dat_subset10 = dat_wo_U[dat_wo_U$plot %in% select,]
 
 
+
+
 # ----------------------
 ### choice of variables
 # ----------------------
 #
-#varCor = cor(dat_subset10[,-c(1:5)]) # check correlation between variables
-#
-#nonCor = names(which(abs(varCor[,"annual_mean_temp"])<0.7))
-#varCor = varCor[nonCor,nonCor]
-#nonCor = names(which(abs(varCor[,"annual_pp"])<0.7))
-#varCor = varCor[nonCor,nonCor]
-#nonCor = names(which(abs(varCor[,"mean_diurnal_range"])<0.7))
-#varCor[nonCor,nonCor]
+varCor = cor(dat_subset10[,-c(1:9)]) # check correlation between variables
+
+nonCor = names(which(abs(varCor[,"annual_mean_temp"])<0.7))
+varCor = varCor[nonCor,nonCor]
+nonCor = names(which(abs(varCor[,"tot_annual_pp"])<0.7))
+varCor = varCor[nonCor,nonCor]
+nonCor = names(which(abs(varCor[,"mean_diurnal_range"])<0.7))
+varCor[nonCor,nonCor]
 
 
-selectedVars = c("annual_mean_temp", "annual_pp", "mean_diurnal_range", "pp_warmest_quarter", "mean_temperatre_wettest_quarter", "mean_temp_driest_quarter")
+selectedVars = c("annual_mean_temp", "tot_annual_pp", "mean_diurnal_range", "pp_warmest_quarter", "pp_wettest_period", "mean_temperatre_wettest_quarter", "mean_temp_driest_quarter")
 
 
 library("ade4")

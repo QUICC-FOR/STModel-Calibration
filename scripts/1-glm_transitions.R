@@ -2,15 +2,17 @@
 rm(list = ls())
 
 # Open data
-pair.dat <- read.csv("../data/transitionsFourState_inf1.csv")
+load("../data/transitionData.RData")
+# Rename and columns
+transitionData$annual_pp = transitionData$tot_annual_pp
+transitionData$st0 = transitionData$state1
+transitionData$st1 = transitionData$state2
+
+pair.dat <- transitionData
 
 # subset 10 degree
 select = unique(pair.dat$plot[which(pair.dat$annual_mean_temp<=10)])
 pair.dat_subset10 = pair.dat[pair.dat$plot %in% select,]
-
-# Rename and clean columns
-names(pair.dat_subset10)[7:8] <- c("st0","st1")
-#pair.dat <- pair.dat[,-c(9:12)]
 
 # Create transition column
 pair.dat_subset10$transition <- paste(pair.dat_subset10$st0,pair.dat_subset10$st1,sep="")
@@ -201,7 +203,7 @@ dev.off()
 }
 
 
-fig_all_glm(pair_dat0, "_inf1_", modelTransition = modelTransition_climate)
+fig_all_glm(pair_dat0, "_r1_", modelTransition = modelTransition_climate)
 
 
 
