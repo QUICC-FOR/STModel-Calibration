@@ -14,68 +14,27 @@ model = function(params, dat)
     ENV1 = dat$ENV1
     ENV2 = dat$ENV2
     itime = dat$itime
+    
+    names(params) = c("ab0", "ab1", "ab2", "ab3",
+"at0", "at1" , "at3", "at5",
+"bb0", "bb1", "bb2", "bb3", "bb4", "bb5", "bb6",
+"bt0", "bt1", "bt2", "bt3", "bt4", "bt5", "bt6",
+"tt0", 
+"t0", 
+"e0", "e1",  "e3","e5")
 
-    ab0 = params[1]
-    ab1 = params[2]
-    ab2 = params[3]
-    ab3 = params[4]
-    ab4 = params[5]
-    ab5 = params[6]
-    ab6 = params[7]
-    at0 = params[8]
-    at1 = params[9]
-    at2 = params[10]
-    at3 = params[11]
-    at4 = params[12]
-    at5 = params[13]
-    at6 = params[14]
-    bb0 = params[15]
-    bb1 = params[16]
-    bb2 = params[17]
-    bb3 = params[18]
-    bb4 = params[19]
-    bb5 = params[20]
-    bb6 = params[21]
-    bt0 = params[22]
-    bt1 = params[23]
-    bt2 = params[24]
-    bt3 = params[25]
-    bt4 = params[26]
-    bt5 = params[27]
-    bt6 = params[28]
-    tt0 = params[29]
-    tt1 = params[30]
-    tt2 = params[31]
-    tt3 = params[32]
-    tt4 = params[33]
-    tt5 = params[34]
-    tt6 = params[35]
-    t0 = params[36]
-    t1 = params[37]
-    t2 = params[38]
-    t3 = params[39]
-    t4 = params[40]
-    t5 = params[41]
-    t6 = params[42]
-    e0 = params[43]
-    e1 = params[44]
-    e2 = params[45]
-    e3 = params[46]
-    e4 = params[47]
-    e5 = params[48]
-    e6 = params[49]
-#    e7 = params[50]
+    ab4 = ab5 = ab6 = at2 = at4 = at6 = 0 = tt1 = tt2 = tt3 = tt4 = tt5 = tt6 = t1 = t2 = t3 = t4 = t5 = t6 = e2 = e4 = e6 = e7 = 0
+
     
 	lik = numeric(length(st0))
 
-    logit_alphab 	= ab0 + ab1*ENV1 + ab2*ENV2 + ab3*ENV1^2 + ab4*ENV2^2 + ab5*ENV1^3 + ab6*ENV2^3
-    logit_alphat 	= at0 + at1*ENV1 + at2*ENV2 + at3*ENV1^2 + at4*ENV2^2 + at5*ENV1^3 + at6*ENV2^3
-    logit_betab 	= bb0 + bb1*ENV1 + bb2*ENV2 + bb3*ENV1^2 + bb4*ENV2^2 + bb5*ENV1^3 + bb6*ENV2^3
-    logit_betat 	= bt0 + bt1*ENV1 + bt2*ENV2 + bt3*ENV1^2 + bt4*ENV2^2 + bt5*ENV1^3 + bt6*ENV2^3
-    logit_theta	= t0 + t1*ENV1 + t2*ENV2 + t3*ENV1^2 + t4*ENV2^2 + t5*ENV1^3 + t6*ENV2^3
-    logit_thetat	= tt0 + tt1*ENV1 + tt2*ENV2 + tt3*ENV1^2 + tt4*ENV2^2 + tt5*ENV1^3 + tt6*ENV2^3
-    logit_eps 	= e0  + e1*ENV1 + e2*ENV2  + e3*ENV1^2 + e4*ENV2^2 + e5*ENV1^3 + e6*ENV2^3  
-#    + e7*EB
+    logit_alphab 	= params["ab0"] + params["ab1"]*ENV1 + params["ab2"]*ENV2 + params["ab3"]*ENV1^2 + ab4*ENV2^2 + ab5*ENV1^3 + ab6*ENV2^3
+    logit_alphat 	= params["at0"] + params["at1"]*ENV1 + at2*ENV2 + params["at3"]*ENV1^2 + at4*ENV2^2 + params["at5"]*ENV1^3 + at6*ENV2^3
+    logit_betab 	= params["bb0"] + params["bb1"]*ENV1 + params["bb2"]*ENV2 + params["bb3"]*ENV1^2 + params["bb4"]*ENV2^2 + params["bb5"]*ENV1^3 + params["bb6"]*ENV2^3
+    logit_betat 	= params["bt0"] + params["bt1"]*ENV1 + params["bt2"]*ENV2 + params["bt3"]*ENV1^2 + params["bt4"]*ENV2^2 + params["bt5"]*ENV1^3 + params["bt6"]*ENV2^3
+    logit_theta	= params["t0"] + t1*ENV1 + t2*ENV2 + t3*ENV1^2 + t4*ENV2^2 + t5*ENV1^3 + t6*ENV2^3
+    logit_thetat	= params["tt0"] + tt1*ENV1 + tt2*ENV2 + tt3*ENV1^2 + tt4*ENV2^2 + tt5*ENV1^3 + tt6*ENV2^3
+    logit_eps 	= params["e0"]  + params["e1"]*ENV1 + e2*ENV2  + params["e3"]*ENV1^2 + e4*ENV2^2 + params["e5"]*ENV1^3 + e6*ENV2^3 + e7*EB
 
     # compute transitions accounting for interval time and logit transformation
     # ! might be NaN because exp(bigNumber) 

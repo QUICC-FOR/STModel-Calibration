@@ -19,53 +19,52 @@ print(fit)
 
 # neighborhood
 if(neiborgh == "rf") pred = read.table("../data/projection_rf_complete.txt", h=T)
-if(neiborgh == "multinom2") pred = read.table("../data/projection_multimod_complete_2steps.txt", h=T)
 if(neiborgh == "multinom") pred = read.table("../data/projection_multimod_complete.txt", h=T)
 
 
 ##-----------
 ## load dat
 ##-----------
-datProj = read.csv("../data/transitionsFourState_inf1.csv")
-head(datProj)
-dim(datProj)
-str(datProj)
+load("../data/transitions.rdata") ## all climatic vars
+
+dataProj = transitionData
+head(dataProj)
+dim(dataProj)
+str(dataProj)
 
 # subset 10 degree
-select = unique(datProj$plot[which(datProj$annual_mean_temp<=10)])
-datProj_subset10 = datProj[datProj$plot %in% select,]
+select = unique(dataProj$plot[which(dataProj$annual_mean_temp<=10)])
+dataProj_subset10 = dataProj[dataProj$plot %in% select,]
+pred = pred[pred$plot %in% select,]
 
-#pdf("../figures/transition plots.pdf")
-#plot(datProj_subset10[,"longitude"], datProj_subset10[,"latitude"], cex = .5, pch = 20, xlab = "longitude", ylab = "latitude", asp = 1)
-#dev.off()
 
 # rescale
 load("scale_info.Robj")
-dat_scale = datProj_subset10[c("annual_mean_temp", "annual_pp")]
-dat_scale = t(apply(dat_scale, 1, function(x) {(x-vars.means[c("annual_mean_temp", "annual_pp")])/vars.sd[c("annual_mean_temp", "annual_pp")]}))
+dat_scale = dataProj_subset10[c("annual_mean_temp", "tot_annual_pp")]
+dat_scale = t(apply(dat_scale, 1, function(x) {(x-vars.means[c("annual_mean_temp", "tot_annual_pp")])/vars.sd[c("annual_mean_temp", "tot_annual_pp")]}))
 dat_scale = data.frame(dat_scale)
 head(dat_scale)
-summary(dat_scale)
+dim(dat_scale)
 
 # remove transitions directes B->T ou T->B
-toremove = c(which(datProj_subset10$state1 == "T" & datProj_subset10$state2 == "B"), which(datProj_subset10$state1 == "B" & datProj_subset10$state2 == "T"))
+toremove = c(which(dataProj_subset10$state1 == "T" & dataProj_subset10$state2 == "B"), which(dataProj_subset10$state1 == "B" & dataProj_subset10$state2 == "T"))
 
 dat = data.frame(dat_scale[-toremove,])
 pred = pred[-toremove,]
-datProj_subset10= datProj_subset10[-toremove,]
+dataProj_subset10= dataProj_subset10[-toremove,]
 
 #rename variables
 colnames(dat) = c("ENV1", "ENV2")
 dat$EB = pred$B
 dat$ET = pred$T
 dat$EM = pred$M 
-dat$st0 = datProj_subset10$state1
-dat$st1 = datProj_subset10$state2
-dat$itime = datProj_subset10$interval
+dat$st0 = dataProj_subset10$state1
+dat$st1 = dataProj_subset10$state2
+dat$itime = dataProj_subset10$interval
 
 head(dat)
 
-rm(dat_scale, datProj)
+rm(dat_scale, dataProj)
 
 
 # Evaluate initial parameter values
@@ -118,13 +117,16 @@ logit_alphat_mn = log(alphat_mn/(1-alphat_mn))
 
 
 # List initial parameters
-params = c(ab0 =logit_alphab_mn, ab1 = 0, ab2 = 0, ab3=0, ab4=0, ab5=0, ab6=0,
-at0 = logit_alphat_mn, at1 = 0, at2 = 0, at3=0, at4=0, at5=0, at6=0,
-bb0 = logit_betab_mn, bb1 = 0, bb2 = 0, bb3=0, bb4=0, bb5=0, bb6=0,
-bt0 = logit_betat_mn, bt1 = 0, bt2 = 0, bt3=0, bt4=0, bt5=0, bt6=0,
-tt0 = logit_thetat_mn, tt1 = 0, tt2 = 0, tt3 =0, tt4=0, tt5=0, tt6=0,
-t0 = logit_theta_mn, t1 = 0, t2 = 0, t3=0, t4=0, t5=0, t6=0,
-e0 = logit_eps_mn, e1 = 0, e2 = 0, e3=0, e4=0, e5=0, e6=0)#, e7 =0)
+#    ab4 = ab5 = ab6 = at2 = at4 = at6 = 0 = tt1 = tt2 = tt3 = tt4 = tt5 = tt6 = t1 = t2 = t3 = t4 = t5 = t6 = e2 = e4 = e6 = e7 = 0
+    
+
+params = c(ab0 =as.numeric(logit_alphab_mn), ab1 = 0, ab2 = 0, ab3=0,
+at0 = as.numeric(logit_alphat_mn), at1 = 0, at3=0, at5=0,
+bb0 = as.numeric(logit_betab_mn), bb1 = 0, bb2 = 0, bb3=0, bb4=0, bb5=0, bb6=0,
+bt0 = as.numeric(logit_betat_mn), bt1 = 0, bt2 = 0, bt3=0, bt4=0, bt5=0, bt6=0,
+tt0 = as.numeric(logit_thetat_mn), 
+t0 = as.numeric(logit_theta_mn), 
+e0 = as.numeric(logit_eps_mn), e1 = 0,  e3=0,e5=0)
 
 # bounds
 # coeff variation
@@ -136,7 +138,7 @@ e0 = logit_eps_mn, e1 = 0, e2 = 0, e3=0, e4=0, e5=0, e6=0)#, e7 =0)
 #   rep(abs(logit_thetat_mn*cvar), 7) ,
 #   rep(abs(logit_theta_mn*cvar), 7) ,
 #   rep(abs(logit_eps_mn*cvar), 7) )
-scaleOfVar = c(rep(170, 14), rep(70, 35))
+scaleOfVar = c(rep(200, length(params)))
 
 par_lo = params - scaleOfVar
 
@@ -147,44 +149,20 @@ par_hi = params + scaleOfVar
 # sample data (stratified)
 #
 #------------------------------
+nrow(dataProj_subset10) == nrow(dat)
+dat_xy= merge(dataProj_subset10[,1:7], stateData[,1:4], by.x = "plot", by.y = "plot_id", all.x = TRUE, all.y = FALSE)
 
-require(lhs)
-sampl.raw = randomLHS(as.integer(subsetProp*nrow(dat)*1.25), 2)
-# transform to the data range
-sampl = data.frame(sampl.raw)
-sampl[,1] = sampl[,1]*(range(datProj_subset10$longitude)[2]-range(datProj_subset10$longitude)[1]) + range(datProj_subset10$longitude)[1]
-sampl[,2] = sampl[,2]*(range(datProj_subset10$latitude)[2]-range(datProj_subset10$latitude)[1]) + range(datProj_subset10$latitude)[1]
+source("subsample.r")
+select = subsample.space(dat_xy[,c("lon","lat")], .1)
 
+jpeg("../figures/subsample_fit.jpeg", height=5000, width=5000, res=600)
+plot(dat_xy[,c("lon","lat")], pch = 20, cex=.2, col = "grey")
+points(dat_xy[select,c("lon","lat")], pch = 20, cex=.2, col = 1)
+dev.off()
 
-# remove from outside the convex hull
-library(grDevices)
-hull = chull(datProj_subset10$longitude, datProj_subset10$latitude)
-library(splancs)
-inPoly <- inout(as.points(sampl[,1], sampl[,2]),as.points(datProj_subset10$longitude[hull], datProj_subset10$latitude[hull]))
-sampl2 = sampl[inPoly,]
-
-cat("sampl asked ", nrow(dat)*subsetProp, "\n")
-cat("sampl taken ", nrow(sampl2), "\n")
-
-library(sp)
-distance = spDists(as.matrix(datProj_subset10[,c("longitude","latitude")]), sampl2)
-#head(distance)
-
-select = rep(NA, nrow(sampl2))
-for( i in 1:nrow(sampl2))
-{
-select[i] = which.min(distance[,i])
-distance[select[i],] = 100
-}
 
 datSel = dat[select,]
 
-pdf(paste("../figures/spatially_stratified_sample_",fit,".pdf", sep=""))
-plot(datProj_subset10$longitude, datProj_subset10$latitude, pch = 19, cex=.5, main = "climatic space", xlab="temperature", ylab = "precipitations")
-points(datProj_subset10$longitude[select], datProj_subset10$latitude[select], pch = 19, cex=.5, main = "stratified sample", xlab="longitude", ylab = "latitude", col =2)
-polygon(datProj_subset10$longitude[hull], datProj_subset10$latitude[hull],  col = NA)
-dev.off()
-
 #-----------
-coords = cbind(datProj_subset10$longitude, datProj_subset10$latitude)
-save(datSel, coords, select,params, par_lo, par_hi, file = paste("initForFit_", fit,sep=""))
+#coords = cbind(dataProj_subset10$longitude, dataProj_subset10$latitude)
+save(datSel, dat_xy, select,params, par_lo, par_hi, file = paste("initForFit_", fit,sep=""))

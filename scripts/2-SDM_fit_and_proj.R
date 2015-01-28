@@ -284,13 +284,9 @@ head(dataProj)
 dim(dataProj)
 str(dataProj)
 
-# subset 10 degree
-select = unique(dataProj$plot[which(dataProj$annual_mean_temp<=10)])
-dataProj_subset10 = dataProj[dataProj$plot %in% select,]
-
 
 # rescale
-dataRescaledProj = dataProj_subset10[,selectedVars]
+dataRescaledProj = dataProj[,selectedVars]
 dataRescaledProj = t(apply(dataRescaledProj, 1, function(x) {(x-vars.means)/vars.sd}))
 
 
@@ -301,6 +297,8 @@ dataRescaledProj = t(apply(dataRescaledProj, 1, function(x) {(x-vars.means)/vars
 proj1 = predict(SDM1,new=dataRescaledProj,"prob")
 head(proj1)
 summary(proj1)
+proj1 = data.frame(proj1)
+proj1$plots = transitionData$plot
 # sauvegarde
 write.table(proj1, file = "../data/projection_multimod_complete.txt", quote=F, row.names=FALSE)
 
@@ -313,6 +311,9 @@ set.seed(rs)
 proj2 = predict(SDM2,new=dataRescaledProj,"prob", OOB=TRUE)
 head(proj2)
 summary(proj2)
+proj2 = data.frame(proj2)
+proj2$plots = transitionData$plot
+# sauvegarde
 # sauvegarde
 write.table(proj2, file = "../data/projection_rf_complete.txt", quote=F, row.names=FALSE)
 
