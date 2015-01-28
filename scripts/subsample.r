@@ -43,7 +43,7 @@ return(sel)
 #})
 
 select = unique(unlist(select))
-cat("sampl asked ", nrow(xy)*subsetProp, "\n")
+cat("sampl asked ", nrow(xyz)*subsetProp, "\n")
 cat("sampl taken ", length(select), "\n")
 
 return(select)
