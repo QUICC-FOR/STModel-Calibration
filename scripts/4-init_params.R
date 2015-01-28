@@ -153,7 +153,8 @@ nrow(dataProj_subset10) == nrow(dat)
 dat_xy= merge(dataProj_subset10[,1:7], stateData[,1:4], by.x = "plot", by.y = "plot_id", all.x = TRUE, all.y = FALSE)
 
 source("subsample.r")
-select = subsample.space(dat_xy[,c("lon","lat")], .1)
+select = subsample.stratif3D(dat_xy[,c("lon","lat", "annual_mean_temp")], subsetProp, adj = 5)
+
 
 jpeg("../figures/subsample_fit.jpeg", height=5000, width=5000, res=600)
 plot(dat_xy[,c("lon","lat")], pch = 20, cex=.2, col = "grey")

@@ -1,31 +1,37 @@
-subsample.space <- function(xy, subsetProp, buffer=.5)
+subsample.stratif3D <- function(xyz, subsetProp, adj = 2)
 {
 require(lhs)
-sampl.raw = randomLHS(as.integer(subsetProp*nrow(xy)*1.25), 2)
+sampl.raw = randomLHS(as.integer(subsetProp*nrow(xyz)*adj), 3)
 # transform to the data range
 sampl = data.frame(sampl.raw)
-sampl[,1] = sampl[,1]*(range(xy[,1])[2]-range(xy[,1])[1]) + range(xy[,1])[1]
-sampl[,2] = sampl[,2]*(range(xy[,2])[2]-range(xy[,2])[1]) + range(xy[,2])[1]
+sampl[,1] = sampl[,1]*(range(xyz[,1])[2]-range(xyz[,1])[1]) + range(xyz[,1])[1]
+sampl[,2] = sampl[,2]*(range(xyz[,2])[2]-range(xyz[,2])[1]) + range(xyz[,2])[1]
+sampl[,3] = sampl[,3]*(range(xyz[,3])[2]-range(xyz[,3])[1]) + range(xyz[,3])[1]
 
 
-# remove from outside the convex hull
-library(grDevices)
-hull = chull(xy[,1], xy[,2])
-library(splancs)
-inPoly <- inout(as.points(sampl[,1], sampl[,2]),as.points(xy[,1][hull], xy[,2][hull]))
-sampl2 = sampl[inPoly,]
+# remove from outside the convex hull (2 plans)
+require(grDevices)
+hull1 = chull(xyz[,1], xyz[,2])
+hull2 = chull(xyz[,3], xyz[,2])
 
+require(splancs)
+inPoly1 <- inout(as.points(sampl[,1], sampl[,2]),as.points(xyz[,1][hull1], xyz[,2][hull1]))
+inPoly2 <- inout(as.points(sampl[,3], sampl[,2]),as.points(xyz[,3][hull2], xyz[,2][hull2]))
 
-library(sp)
-distance = spDists(as.matrix(dat[,c("ENV1","ENV2")]), sampl2)
-#head(distance)
+sampl2 = sampl[inPoly1&inPoly2,]
 
-select = rep(NA, nrow(sampl2))
-for( i in 1:nrow(sampl2))
-{
-select[i] = which.min(distance[,i])
-distance[select[i],] = 100
-}
+require(sp)
+
+require(parallel)
+select = mclapply(1:nrow(sampl2), function(i){
+
+distance = spDists(as.matrix(xyz), sampl2[i,])
+inds = which(distance==min(distance))
+sel = ifelse(length(inds==1), inds, sample(inds,1))
+
+return(sel)
+})
+
 
 #require(parallel)
 #select = mclapply(1:nrow(sampl2), function(i){
@@ -36,7 +42,53 @@ distance[select[i],] = 100
 #return(select)
 #})
 
-select = unique(na.omit(unlist(select)))
+select = unique(unlist(select))
+cat("sampl asked ", nrow(xy)*subsetProp, "\n")
+cat("sampl taken ", length(select), "\n")
+
+return(select)
+}
+
+subsample.stratif <- function(xy, subsetProp, adj = 1.25)
+{
+require(lhs)
+sampl.raw = randomLHS(as.integer(subsetProp*nrow(xy)*adj), 2)
+# transform to the data range
+sampl = data.frame(sampl.raw)
+sampl[,1] = sampl[,1]*(range(xy[,1])[2]-range(xy[,1])[1]) + range(xy[,1])[1]
+sampl[,2] = sampl[,2]*(range(xy[,2])[2]-range(xy[,2])[1]) + range(xy[,2])[1]
+
+
+# remove from outside the convex hull
+require(grDevices)
+hull = chull(xy[,1], xy[,2])
+require(splancs)
+inPoly <- inout(as.points(sampl[,1], sampl[,2]),as.points(xy[,1][hull], xy[,2][hull]))
+sampl2 = sampl[inPoly,]
+
+require(sp)
+
+require(parallel)
+select = mclapply(1:nrow(sampl2), function(i){
+
+distance = spDists(as.matrix(xy), sampl2[i,])
+inds = which(distance==min(distance))
+sel = ifelse(length(inds==1), inds, sample(inds,1))
+
+return(sel)
+})
+
+
+#require(parallel)
+#select = mclapply(1:nrow(sampl2), function(i){
+#
+#inBuffer = inout(as.points(xy[,1], xy[,2]), as.points(c(rep(sampl2[i,1]-buffer, 2),rep(sampl2[i,1]+buffer, 2)), rep(c(sampl2[i,2]-buffer, sampl2[i,2]+buffer), 2)))
+#
+#select = ifelse(sum(inBuffer)==0, NA, sample(which(inBuffer),1))
+#return(select)
+#})
+
+select = unique(unlist(select))
 cat("sampl asked ", nrow(xy)*subsetProp, "\n")
 cat("sampl taken ", length(select), "\n")
 
