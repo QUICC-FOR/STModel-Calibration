@@ -1,7 +1,7 @@
 subsample.space <- function(xy, subsetProp, buffer=.5)
 {
 require(lhs)
-sampl.raw = randomLHS(as.integer(subsetProp*nrow(xy)*1.62), 2)
+sampl.raw = randomLHS(as.integer(subsetProp*nrow(xy)*1.25), 2)
 # transform to the data range
 sampl = data.frame(sampl.raw)
 sampl[,1] = sampl[,1]*(range(xy[,1])[2]-range(xy[,1])[1]) + range(xy[,1])[1]
@@ -16,14 +16,25 @@ inPoly <- inout(as.points(sampl[,1], sampl[,2]),as.points(xy[,1][hull], xy[,2][h
 sampl2 = sampl[inPoly,]
 
 
-require(parallel)
-select = mclapply(1:nrow(sampl2), function(i){
+library(sp)
+distance = spDists(as.matrix(dat[,c("ENV1","ENV2")]), sampl2)
+#head(distance)
 
-inBuffer = inout(as.points(xy[,1], xy[,2]), as.points(c(rep(sampl2[i,1]-buffer, 2),rep(sampl2[i,1]+buffer, 2)), rep(c(sampl2[i,2]-buffer, sampl2[i,2]+buffer), 2)))
+select = rep(NA, nrow(sampl2))
+for( i in 1:nrow(sampl2))
+{
+select[i] = which.min(distance[,i])
+distance[select[i],] = 100
+}
 
-select = ifelse(sum(inBuffer)==0, NA, sample(which(inBuffer),1))
-return(select)
-})
+#require(parallel)
+#select = mclapply(1:nrow(sampl2), function(i){
+#
+#inBuffer = inout(as.points(xy[,1], xy[,2]), as.points(c(rep(sampl2[i,1]-buffer, 2),rep(sampl2[i,1]+buffer, 2)), rep(c(sampl2[i,2]-buffer, sampl2[i,2]+buffer), 2)))
+#
+#select = ifelse(sum(inBuffer)==0, NA, sample(which(inBuffer),1))
+#return(select)
+#})
 
 select = unique(na.omit(unlist(select)))
 cat("sampl asked ", nrow(xy)*subsetProp, "\n")
@@ -51,3 +62,4 @@ cat("sampl taken ", length(select), "\n")
 
 return(select)
 }
+
