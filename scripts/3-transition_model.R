@@ -23,7 +23,7 @@ model = function(params, dat)
 "t0", 
 "e0", "e1",  "e3","e5")
 
-    ab4 = ab5 = ab6 = at2 = at4 = at6 = 0 = tt1 = tt2 = tt3 = tt4 = tt5 = tt6 = t1 = t2 = t3 = t4 = t5 = t6 = e2 = e4 = e6 = e7 = 0
+    ab4 = ab5 = ab6 = at2 = at4 = at6 = tt1 = tt2 = tt3 = tt4 = tt5 = tt6 = t1 = t2 = t3 = t4 = t5 = t6 = e2 = e4 = e6 = e7 = 0
 
     
 	lik = numeric(length(st0))
