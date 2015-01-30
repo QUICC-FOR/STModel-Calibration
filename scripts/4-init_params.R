@@ -30,7 +30,7 @@ load("../data/transitions_r1.RData")
 dataProj = transitionData
 head(dataProj)
 dim(dataProj)
-str(dataProj)
+#str(dataProj)
 
 # subset 10 degree
 select = unique(dataProj$plot[which(dataProj$annual_mean_temp<=10)])
@@ -60,9 +60,10 @@ dat$ET = pred$T
 dat$EM = pred$M 
 dat$st0 = dataProj_subset10$state1
 dat$st1 = dataProj_subset10$state2
-dat$itime = dataProj_subset10$interval
+dat$itime = dataProj_subset10$year2 - dataProj_subset10$year1
 
 head(dat)
+dim(dat)
 
 rm(dat_scale, dataProj)
 
@@ -152,12 +153,12 @@ par_hi = params + scaleOfVar
 nrow(dataProj_subset10) == nrow(dat)
 
 source("subsample.r")
-select = subsample.stratif3D(dat_xy[,c("lon","lat", "annual_mean_temp")], subsetProp, adj = 5)
+select = subsample.stratif3D(dataProj_subset10[,c("lon","lat", "annual_mean_temp")], subsetProp, adj = 5)
 
 
 jpeg("../figures/subsample_fit.jpeg", height=5000, width=5000, res=600)
-plot(dat_xy[,c("lon","lat")], pch = 20, cex=.2, col = "grey")
-points(dat_xy[select,c("lon","lat")], pch = 20, cex=.2, col = 1)
+plot(dataProj_subset10[,c("lon","lat")], pch = 20, cex=.2, col = "grey")
+points(dataProj_subset10[select,c("lon","lat")], pch = 20, cex=.2, col = 1)
 dev.off()
 
 
@@ -165,4 +166,4 @@ datSel = dat[select,]
 
 #-----------
 #coords = cbind(dataProj_subset10$longitude, dataProj_subset10$latitude)
-save(datSel, dat_xy, select,params, par_lo, par_hi, file = paste("initForFit_", fit,sep=""))
+save(datSel, dataProj_subset10, select,params, par_lo, par_hi, file = paste("initForFit_", fit,sep=""))
