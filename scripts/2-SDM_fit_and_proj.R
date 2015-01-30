@@ -3,17 +3,17 @@ rm(list=ls())
 # Load data
 # ---------------------
 
-load("../data/stateData.RData")
+load("../data/transitions_r1.rdata")
 head(stateData)
 dim(stateData)
 str(stateData)
 #
-#jpeg("../figures/plots_states.jpeg")
+#jpeg("../figures/plots_states.jpeg", height=5000, width=5000, res=600)
 #colo = c(R = rgb(.5,.5,.5,.5), T = rgb(1,0,0,.5), B = rgb(0.2,.8,.2,.5), M = rgb(0,0,1,.5))
 #plot(stateData$lat~stateData$lon, pch = 20, cex=.2, asp = 1, col = colo[stateData$state])
 #dev.off()
 #
-#jpeg("../figures/plots_Rstates.jpeg")
+#jpeg("../figures/plots_Rstates.jpeg", height=5000, width=5000, res=600)
 #plot(stateData$lat~stateData$lon, pch = 20, cex=.2, asp = 1, col = ifelse(stateData$state=="R", 1, "grey"), main="R states")
 #dev.off()
 

@@ -25,7 +25,7 @@ if(neiborgh == "multinom") pred = read.table("../data/projection_multimod_comple
 ##-----------
 ## load dat
 ##-----------
-load("../data/transitions.rdata") ## all climatic vars
+load("../data/transitions_r1.rdata")
 
 dataProj = transitionData
 head(dataProj)
@@ -150,7 +150,6 @@ par_hi = params + scaleOfVar
 #
 #------------------------------
 nrow(dataProj_subset10) == nrow(dat)
-dat_xy= merge(dataProj_subset10[,1:7], stateData[,1:4], by.x = "plot", by.y = "plot_id", all.x = TRUE, all.y = FALSE)
 
 source("subsample.r")
 select = subsample.stratif3D(dat_xy[,c("lon","lat", "annual_mean_temp")], subsetProp, adj = 5)
