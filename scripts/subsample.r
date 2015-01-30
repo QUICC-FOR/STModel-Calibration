@@ -1,4 +1,4 @@
-subsample.stratif3D <- function(xyz, subsetProp, adj = 2)
+subsample.stratif3D <- function(xyz, subsetProp, adj = 1.1)
 {
 require(lhs)
 sampl.raw = randomLHS(as.integer(subsetProp*nrow(xyz)*adj), 3)
@@ -22,15 +22,18 @@ sampl2 = sampl[inPoly1&inPoly2,]
 
 require(sp)
 
-require(parallel)
-select = mclapply(1:nrow(sampl2), function(i){
-
+#require(parallel)
+select = rep(NA, nrow(sampl2))
+for(i in 1:nrow(sampl2)){
+#print(i)
 distance = spDists(as.matrix(xyz), sampl2[i,])
-inds = which(distance==min(distance))
-sel = ifelse(length(inds==1), inds, sample(inds,1))
+mini = ifelse(i>1, min(distance[-select[1:(i-1)]]), min(distance) ) 
+inds = which(distance==mini)
+already_selected = inds%in%select
+if(sum(already_selected, na.rm=TRUE)>0) inds = inds[-which(inds%in%select)]
+select[i] = ifelse(length(inds==1), inds, sample(inds,1))
 
-return(sel)
-})
+}
 
 
 #require(parallel)

@@ -153,7 +153,7 @@ par_hi = params + scaleOfVar
 nrow(dataProj_subset10) == nrow(dat)
 
 source("subsample.r")
-select = subsample.stratif3D(dataProj_subset10[,c("lon","lat", "annual_mean_temp")], subsetProp, adj = 5)
+select = subsample.stratif3D(dataProj_subset10[,c("lon","lat", "annual_mean_temp")], subsetProp, adj = 4.2)
 
 
 jpeg("../figures/subsample_fit.jpeg", height=5000, width=5000, res=600)
