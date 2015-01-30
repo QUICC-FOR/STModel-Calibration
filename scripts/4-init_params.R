@@ -25,7 +25,7 @@ if(neiborgh == "multinom") pred = read.table("../data/projection_multimod_comple
 ##-----------
 ## load dat
 ##-----------
-load("../data/transitions_r1.rdata")
+load("../data/transitions_r1.RData")
 
 dataProj = transitionData
 head(dataProj)

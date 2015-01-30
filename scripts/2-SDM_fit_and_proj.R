@@ -277,7 +277,8 @@ dev.off()
 # projection
 # ---------------------
 
-load("../data/transitions.rdata") ## all climatic vars
+#load("../data/transitions_r1.rdata") ## all climatic vars
+#load("scale_info.Robj")
 
 dataProj = transitionData
 head(dataProj)
@@ -296,6 +297,7 @@ dataRescaledProj = t(apply(dataRescaledProj, 1, function(x) {(x-vars.means)/vars
 
 proj1 = predict(SDM1,new=dataRescaledProj,"prob")
 head(proj1)
+dim(proj1)
 summary(proj1)
 proj1 = data.frame(proj1)
 proj1$plots = transitionData$plot
@@ -310,6 +312,7 @@ write.table(proj1, file = "../data/projection_multimod_complete.txt", quote=F, r
 set.seed(rs)
 proj2 = predict(SDM2,new=dataRescaledProj,"prob", OOB=TRUE)
 head(proj2)
+dim(proj2)
 summary(proj2)
 proj2 = data.frame(proj2)
 proj2$plots = transitionData$plot
