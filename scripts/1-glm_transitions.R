@@ -2,7 +2,7 @@
 rm(list = ls())
 
 # Open data
-load("../data/transitionData.RData")
+load("../data/transitions_r1.RData")
 # Rename and columns
 transitionData$annual_pp = transitionData$tot_annual_pp
 transitionData$st0 = transitionData$state1
