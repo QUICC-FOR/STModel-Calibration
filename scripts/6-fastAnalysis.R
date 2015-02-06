@@ -1,10 +1,7 @@
 rm(list = ls())
 
-veget_pars = read.table("../estimated_params/GenSA_initForFit_multinom_0.01.txt")
-load("initForFit_multinom_0.01")
-
-veget_pars = read.table("../estimated_params/GenSA_initForFit_rf_0.01.txt")
-load("initForFit_rf_0.01")
+veget_pars = read.table("../estimated_params/GenSA_initForFit_rf_0.05.txt")
+load("initForFit_rf_0.05")
 
 #--
 
@@ -12,8 +9,8 @@ load("scale_info.Robj")
 
 #---
 pars = as.numeric(veget_pars[,1])
-names(pars) = rownames(veget_pars)
-pars = as.list(pars)
+#names(pars) = rownames(veget_pars)
+#pars = as.list(pars)
 
 
 #-----
@@ -38,13 +35,16 @@ ENV = expand.grid(TP =tpseq , PP = ppseq)
 ENV1 = ENV$TP
 ENV2 = ENV$PP
 
-    logit_alphab 	= pars$ab0 + pars$ab1*ENV1 + pars$ab2*ENV2 + pars$ab3*ENV1^2 + pars$ab4*ENV2^2 + pars$ab5*ENV1^3 + pars$ab6*ENV2^3
-    logit_alphat 	= pars$at0 + pars$at1*ENV1 + pars$at2*ENV2 + pars$at3*ENV1^2 + pars$at4*ENV2^2 + pars$at5*ENV1^3 + pars$at6*ENV2^3
-    logit_betab 	= pars$bb0 + pars$bb1*ENV1 + pars$bb2*ENV2 + pars$bb3*ENV1^2 + pars$bb4*ENV2^2 + pars$bb5*ENV1^3 + pars$bb6*ENV2^3
-    logit_betat 	= pars$bt0 + pars$bt1*ENV1 + pars$bt2*ENV2 + pars$bt3*ENV1^2 + pars$bt4*ENV2^2 + pars$bt5*ENV1^3 + pars$bt6*ENV2^3
-    logit_theta	= pars$t0 + pars$t1*ENV1 + pars$t2*ENV2 + pars$t3*ENV1^2 + pars$t4*ENV2^2 + pars$t5*ENV1^3 + pars$t6*ENV2^3
-    logit_thetat	= pars$tt0 + pars$tt1*ENV1 + pars$tt2*ENV2 + pars$tt3*ENV1^2 + pars$tt4*ENV2^2 + pars$tt5*ENV1^3 + pars$tt6*ENV2^3
-    logit_eps 	= pars$e0  + pars$e1*ENV1 + pars$e2*ENV2  + pars$e3*ENV1^2 + pars$e4*ENV2^2 + pars$e5*ENV1^3 + pars$e6*ENV2^3
+    ab4 = ab5 = ab6 = at2 = at4 = at6 = tt1 = tt2 = tt3 = tt4 = tt5 = tt6 = t1 = t2 = t3 = t4 = t5 = t6 = e2 = e4 = e6 = e7 = 0
+
+
+    logit_alphab 	= pars["ab0"] + pars["ab1"]*ENV1 + pars["ab2"]*ENV2 + pars["ab3"]*ENV1^2 + ab4*ENV2^2 + ab5*ENV1^3 + ab6*ENV2^3
+    logit_alphat 	= pars["at0"] + pars["at1"]*ENV1 + at2*ENV2 + pars["at3"]*ENV1^2 + at4*ENV2^2 + pars["at5"]*ENV1^3 + at6*ENV2^3
+    logit_betab 	= pars["bb0"] + pars["bb1"]*ENV1 + pars["bb2"]*ENV2 + pars["bb3"]*ENV1^2 + pars["bb4"]*ENV2^2 + pars["bb5"]*ENV1^3 + pars["bb6"]*ENV2^3
+    logit_betat 	= pars["bt0"] + pars["bt1"]*ENV1 + pars["bt2"]*ENV2 + pars["bt3"]*ENV1^2 + pars["bt4"]*ENV2^2 + pars["bt5"]*ENV1^3 + pars["bt6"]*ENV2^3
+    logit_theta	= pars["t0"] + t1*ENV1 + t2*ENV2 + t3*ENV1^2 + t4*ENV2^2 + t5*ENV1^3 + t6*ENV2^3
+    logit_thetat	= pars["tt0"] + tt1*ENV1 + tt2*ENV2 + tt3*ENV1^2 + tt4*ENV2^2 + tt5*ENV1^3 + tt6*ENV2^3
+    logit_eps 	= pars["e0"]  + pars["e1"]*ENV1 + e2*ENV2  + pars["e3"]*ENV1^2 + e4*ENV2^2 + pars["e5"]*ENV1^3 + e6*ENV2^3 
  
      logit_reverse <- function(x)
     {
@@ -76,6 +76,29 @@ for (i in 1:ncol(macroPars))
 image(x=tpseq, y=ppseq, z = matrix(macroPars[,i], ncol = length(ppseq), nrow = length(tpseq)),xlab = "Temperature", ylab = "Precipitations", col = pal(12), main = colnames(macroPars)[i])
 contour(x=tpseq, y=ppseq, z = matrix(macroPars[,i], ncol = length(ppseq), nrow = length(tpseq)), add=TRUE)
 }
+
+
+### 
+#------
+# probabilites transition (no neighborhood restriction)
+#------
+pTransitions = data.frame(pRT = macroPars$alphat*(1-macroPars$alphab), 
+pRB = macroPars$alphab*(1-macroPars$alphat),
+pRM = macroPars$alphat*macroPars$alphab,
+pMT = macroPars$theta*macroPars$thetat,
+pMB = macroPars$theta*(1-macroPars$thetat),
+pTM = macroPars$betab,
+pBM = macroPars$betat,
+eps = macroPars$eps)
+
+par(mfrow = c(2,4), mar = c(4,4,1,1), cex=0.8)
+
+for (i in 1:ncol(pTransitions))
+{
+image(x=tpseq, y=ppseq, z = matrix(pTransitions[,i], ncol = length(ppseq), nrow = length(tpseq)),xlab = "Temperature", ylab = "Precipitations", col = pal(12), main = colnames(pTransitions)[i])
+contour(x=tpseq, y=ppseq, z = matrix(pTransitions[,i], ncol = length(ppseq), nrow = length(tpseq)), add=TRUE)
+}
+
 
 ### 
 #------
