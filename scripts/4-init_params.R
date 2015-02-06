@@ -121,13 +121,13 @@ logit_alphat_mn = log(alphat_mn/(1-alphat_mn))
 #    ab4 = ab5 = ab6 = at2 = at4 = at6 = 0 = tt1 = tt2 = tt3 = tt4 = tt5 = tt6 = t1 = t2 = t3 = t4 = t5 = t6 = e2 = e4 = e6 = e7 = 0
     
 
-params = c(ab0 =as.numeric(logit_alphab_mn), ab1 = 0, ab2 = 0, ab3=0,
-at0 = as.numeric(logit_alphat_mn), at1 = 0, at3=0, at5=0,
+params = c(ab0 =as.numeric(logit_alphab_mn), ab1 = 0, ab2 = 0, ab3=0, ab4=0, ab5=0, ab6=0, 
+at0 = as.numeric(logit_alphat_mn), at1 = 0, at2=0, at3=0, at4=0, at5=0, at6=0,
 bb0 = as.numeric(logit_betab_mn), bb1 = 0, bb2 = 0, bb3=0, bb4=0, bb5=0, bb6=0,
 bt0 = as.numeric(logit_betat_mn), bt1 = 0, bt2 = 0, bt3=0, bt4=0, bt5=0, bt6=0,
-tt0 = as.numeric(logit_thetat_mn), 
-t0 = as.numeric(logit_theta_mn), 
-e0 = as.numeric(logit_eps_mn), e1 = 0,  e3=0,e5=0)
+tt0 = as.numeric(logit_thetat_mn), tt1=0, tt2=0, tt3=0, tt4=0, tt5=0, tt6=0,
+t0 = as.numeric(logit_theta_mn), t1=0, t2=0, t3=0, t4=0, t5=0, t6=0,
+e0 = as.numeric(logit_eps_mn), e1 = 0,  e2=0, e3=0, e4=0, e5=0, e6=0)
 
 # bounds
 # coeff variation
