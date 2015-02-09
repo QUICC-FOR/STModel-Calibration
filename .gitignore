@@ -4,3 +4,4 @@
 data/*
 .Rapp.history
 ggmapTemp*
+SDM_outputs/*
