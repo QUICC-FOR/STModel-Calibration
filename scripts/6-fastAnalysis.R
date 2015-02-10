@@ -9,7 +9,7 @@ load("scale_info.Robj")
 
 #---
 pars = as.numeric(veget_pars[,1])
-#names(pars) = rownames(veget_pars)
+names(pars) = rownames(veget_pars)
 #pars = as.list(pars)
 
 
@@ -18,7 +18,7 @@ pars = as.numeric(veget_pars[,1])
 #----
 parsBounds = cbind(unlist(par_lo), unlist(par_hi), unlist(pars))
 
-#par(mfrow = c(1,1), mar = c(2, 2, 2,1))
+par(mfrow = c(1,1), mar = c(2, 2, 2,1))
 
 plot(parsBounds[,1], ylim = c(min(parsBounds), max(parsBounds)), pch=15, cex=.5)
 points(parsBounds[,2], col=1, pch=15, cex=.5)
@@ -35,16 +35,18 @@ ENV = expand.grid(TP =tpseq , PP = ppseq)
 ENV1 = ENV$TP
 ENV2 = ENV$PP
 
-    ab4 = ab5 = ab6 = at2 = at4 = at6 = tt1 = tt2 = tt3 = tt4 = tt5 = tt6 = t1 = t2 = t3 = t4 = t5 = t6 = e2 = e4 = e6 = e7 = 0
+e7 = 0
+params=pars
 
 
-    logit_alphab 	= pars["ab0"] + pars["ab1"]*ENV1 + pars["ab2"]*ENV2 + pars["ab3"]*ENV1^2 + ab4*ENV2^2 + ab5*ENV1^3 + ab6*ENV2^3
-    logit_alphat 	= pars["at0"] + pars["at1"]*ENV1 + at2*ENV2 + pars["at3"]*ENV1^2 + at4*ENV2^2 + pars["at5"]*ENV1^3 + at6*ENV2^3
-    logit_betab 	= pars["bb0"] + pars["bb1"]*ENV1 + pars["bb2"]*ENV2 + pars["bb3"]*ENV1^2 + pars["bb4"]*ENV2^2 + pars["bb5"]*ENV1^3 + pars["bb6"]*ENV2^3
-    logit_betat 	= pars["bt0"] + pars["bt1"]*ENV1 + pars["bt2"]*ENV2 + pars["bt3"]*ENV1^2 + pars["bt4"]*ENV2^2 + pars["bt5"]*ENV1^3 + pars["bt6"]*ENV2^3
-    logit_theta	= pars["t0"] + t1*ENV1 + t2*ENV2 + t3*ENV1^2 + t4*ENV2^2 + t5*ENV1^3 + t6*ENV2^3
-    logit_thetat	= pars["tt0"] + tt1*ENV1 + tt2*ENV2 + tt3*ENV1^2 + tt4*ENV2^2 + tt5*ENV1^3 + tt6*ENV2^3
-    logit_eps 	= pars["e0"]  + pars["e1"]*ENV1 + e2*ENV2  + pars["e3"]*ENV1^2 + e4*ENV2^2 + pars["e5"]*ENV1^3 + e6*ENV2^3 
+    logit_alphab 	= params["ab0"] + params["ab1"]*ENV1 + params["ab2"]*ENV2 + params["ab3"]*ENV1^2 + params["ab4"]*ENV2^2 + params["ab5"]*ENV1^3 + params["ab6"]*ENV2^3
+    logit_alphat 	= params["at0"] + params["at1"]*ENV1 + params["at2"]*ENV2 + params["at3"]*ENV1^2 + params["at4"]*ENV2^2 + params["at5"]*ENV1^3 + params["at6"]*ENV2^3
+    logit_betab 	= params["bb0"] + params["bb1"]*ENV1 + params["bb2"]*ENV2 + params["bb3"]*ENV1^2 + params["bb4"]*ENV2^2 + params["bb5"]*ENV1^3 + params["bb6"]*ENV2^3
+    logit_betat 	= params["bt0"] + params["bt1"]*ENV1 + params["bt2"]*ENV2 + params["bt3"]*ENV1^2 + params["bt4"]*ENV2^2 + params["bt5"]*ENV1^3 + params["bt6"]*ENV2^3
+    logit_theta	= params["t0"] + params["t1"]*ENV1 + params["t2"]*ENV2 + params["t3"]*ENV1^2 + params["t4"]*ENV2^2 + params["t5"]*ENV1^3 + params["t6"]*ENV2^3
+    logit_thetat	= params["tt0"] + params["tt1"]*ENV1 + params["tt2"]*ENV2 + params["tt3"]*ENV1^2 + params["tt4"]*ENV2^2 + params["tt5"]*ENV1^3 + params["tt6"]*ENV2^3
+    logit_eps 	= params["e0"]  + params["e1"]*ENV1 + params["e2"]*ENV2  + params["e3"]*ENV1^2 + params["e4"]*ENV2^2 + params["e5"]*ENV1^3 + params["e6"]*ENV2^3 
+    #e7*EB
  
      logit_reverse <- function(x)
     {
