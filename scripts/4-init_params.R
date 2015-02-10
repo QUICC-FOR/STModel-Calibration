@@ -139,7 +139,7 @@ e0 = as.numeric(logit_eps_mn), e1 = 0,  e2=0, e3=0, e4=0, e5=0, e6=0)
 #   rep(abs(logit_thetat_mn*cvar), 7) ,
 #   rep(abs(logit_theta_mn*cvar), 7) ,
 #   rep(abs(logit_eps_mn*cvar), 7) )
-scaleOfVar = c(rep(200, length(params)))
+scaleOfVar = c(rep(200, 14), rep(50, 35))
 
 par_lo = params - scaleOfVar
 
@@ -156,7 +156,7 @@ source("subsample.r")
 select = subsample.stratif3D(dataProj_subset10[,c("lon","lat", "annual_mean_temp")], subsetProp, adj = 4.2)
 
 
-jpeg("../figures/subsample_fit.jpeg", height=5000, width=5000, res=600)
+jpeg(paste("../figures/subsample_",fit,".jpeg", sep=""), height=5000, width=5000, res=600)
 plot(dataProj_subset10[,c("lon","lat")], pch = 20, cex=.2, col = "grey")
 points(dataProj_subset10[select,c("lon","lat")], pch = 20, cex=.2, col = 1)
 dev.off()
@@ -166,4 +166,4 @@ datSel = dat[select,]
 
 #-----------
 #coords = cbind(dataProj_subset10$longitude, dataProj_subset10$latitude)
-save(datSel, dataProj_subset10, select,params, par_lo, par_hi, file = paste("initForFit_", fit,sep=""))
+save(datSel, dataProj_subset10, select,params, par_lo, par_hi, fit, file = paste("initForFit_", fit,sep=""))

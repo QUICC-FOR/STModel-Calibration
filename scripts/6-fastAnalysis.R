@@ -2,7 +2,7 @@ rm(list = ls())
 
 veget_pars = read.table("../estimated_params/GenSA_initForFit_rf_0.05.txt")
 load("initForFit_rf_0.05")
-
+load("../estimated_params/GenSA_initForFit_rf_0.05.RData")
 #--
 
 load("scale_info.Robj")
@@ -12,7 +12,17 @@ pars = as.numeric(veget_pars[,1])
 names(pars) = rownames(veget_pars)
 #pars = as.list(pars)
 
-
+#-----
+# diagnostic convergence
+#----
+jpeg(paste("../figures/diagnostic",fit,".jpeg", sep=""), height=5000, width=5000, res=600)
+par(mfrow = c(2,2), mar = c(4, 4, 2,1))
+mat = estim.pars$trace.mat
+plot(1:nrow(mat),mat[,"nb.steps"], xlab = "anneal time", ylab = "nb.steps", cex=.2)
+plot(temperature~nb.steps, data = mat, cex=.2)
+plot(function.value~nb.steps, data = mat, cex=.2)
+plot(current.minimum~nb.steps, data = mat, cex = .2)
+dev.off()
 #-----
 # check estimated params and bounds
 #----
