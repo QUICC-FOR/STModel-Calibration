@@ -7,19 +7,8 @@ args <- commandArgs(trailingOnly = TRUE)
 #neiborgh == "rf"
 #neiborgh == "multinom"
 #neiborgh == "multinom2"
-neiborgh <- as.character(args)[1]
-subsetProp = as.numeric(args)[2]
-
-# fit name
-fit = paste(neiborgh, subsetProp, sep="_")
-print(fit)
-##-----------
-## Choose neigborhood type
-##-----------
-
-# neighborhood
-if(neiborgh == "rf") pred = read.table("../data/projection_rf_complete.txt", h=T)
-if(neiborgh == "multinom") pred = read.table("../data/projection_multimod_complete.txt", h=T)
+#neiborgh <- as.character(args)[1]
+subsetProp = as.numeric(args)[1]
 
 
 ##-----------
@@ -35,8 +24,6 @@ dim(dataProj)
 # subset 10 degree
 select = unique(dataProj$plot[which(dataProj$annual_mean_temp<=10)])
 dataProj_subset10 = dataProj[dataProj$plot %in% select,]
-pred = pred[pred$plot %in% select,]
-
 
 # rescale
 load("scale_info.Robj")
@@ -48,24 +35,65 @@ dim(dat_scale)
 
 # remove transitions directes B->T ou T->B
 toremove = c(which(dataProj_subset10$state1 == "T" & dataProj_subset10$state2 == "B"), which(dataProj_subset10$state1 == "B" & dataProj_subset10$state2 == "T"))
+dataProj_subset10= dataProj_subset10[-toremove,]
 
 dat = data.frame(dat_scale[-toremove,])
-pred = pred[-toremove,]
-dataProj_subset10= dataProj_subset10[-toremove,]
 
 #rename variables
 colnames(dat) = c("ENV1", "ENV2")
-dat$EB = pred$B
-dat$ET = pred$T
-dat$EM = pred$M 
+
 dat$st0 = dataProj_subset10$state1
 dat$st1 = dataProj_subset10$state2
 dat$itime = dataProj_subset10$year2 - dataProj_subset10$year1
 
+rm(dat_scale, dataProj)
+
+#-------------------------------------------------------------------
+#
+# sample data (stratified)
+#
+#------------------------------
+nrow(dataProj_subset10) == nrow(dat)
+
+source("subsample.r")
+select2 = subsample.stratif3D(dataProj_subset10[,c("lon","lat", "annual_mean_temp")], subsetProp, adj = 4.2)
+
+
+jpeg(paste("../figures/subsample_",subsetProp,".jpeg", sep=""), height=5000, width=5000, res=600)
+plot(dataProj_subset10[,c("lon","lat")], pch = 20, cex=.2, col = "grey")
+points(dataProj_subset10[select2,c("lon","lat")], pch = 20, cex=.2, col = 1)
+dev.off()
+
+
+datSel = dat[select2,]
+
+
+#-------------------------------------------------------------------
+
+for(neiborgh in c("rf", "multinom"))
+{
+# fit name
+fit = paste(neiborgh, subsetProp, sep="_")
+print(fit)
+
+
+##-----------
+## Choose neigborhood type
+##-----------
+
+# neighborhood
+
+if(neiborgh == "rf") pred = read.table("../data/projection_rf_complete.txt", h=T)
+if(neiborgh == "multinom") pred = read.table("../data/projection_multimod_complete.txt", h=T)
+
+pred = pred[pred$plot %in% select,]
+pred = pred[-toremove,]
+
+dat$EB = pred$B
+dat$ET = pred$T
+dat$EM = pred$M 
 head(dat)
 dim(dat)
-
-rm(dat_scale, dataProj)
 
 
 # Evaluate initial parameter values
@@ -145,25 +173,10 @@ par_lo = params - scaleOfVar
 
 par_hi = params + scaleOfVar
 
-#-------------------------------------------------------------------
-#
-# sample data (stratified)
-#
-#------------------------------
-nrow(dataProj_subset10) == nrow(dat)
-
-source("subsample.r")
-select = subsample.stratif3D(dataProj_subset10[,c("lon","lat", "annual_mean_temp")], subsetProp, adj = 4.2)
-
-
-jpeg(paste("../figures/subsample_",fit,".jpeg", sep=""), height=5000, width=5000, res=600)
-plot(dataProj_subset10[,c("lon","lat")], pch = 20, cex=.2, col = "grey")
-points(dataProj_subset10[select,c("lon","lat")], pch = 20, cex=.2, col = 1)
-dev.off()
-
-
-datSel = dat[select,]
-
 #-----------
+
 #coords = cbind(dataProj_subset10$longitude, dataProj_subset10$latitude)
-save(datSel, dataProj_subset10, select,params, par_lo, par_hi, fit, file = paste("initForFit_", fit,sep=""))
+save(datSel, dataProj_subset10, select2,params, par_lo, par_hi, fit, file = paste("initForFit_", fit,sep=""))
+
+}
+

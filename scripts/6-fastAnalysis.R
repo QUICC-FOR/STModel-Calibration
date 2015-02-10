@@ -80,6 +80,7 @@ pal = colorRampPalette(c("lightblue", "yellow", "orange"), space = "rgb")
 
 #image(x=tpseq, y=ppseq, z = matrix(macroPars$alphab, ncol = length(ppseq), nrow = length(tpseq)),xlab = "Temperature", ylab = "Precipitations", col = pal(12), main = "alphab")
 #contour(x=tpseq, y=ppseq, z = matrix(macroPars$alphab, ncol = length(ppseq), nrow = length(tpseq)), add=TRUE)
+jpeg(paste("../figures/estim_pars_",fit,".jpeg", sep=""), height=3000, width=5000, res=600)
 
 par(mfrow = c(2,4), mar = c(4,4,1,1), cex=0.8)
 
@@ -88,7 +89,7 @@ for (i in 1:ncol(macroPars))
 image(x=tpseq, y=ppseq, z = matrix(macroPars[,i], ncol = length(ppseq), nrow = length(tpseq)),xlab = "Temperature", ylab = "Precipitations", col = pal(12), main = colnames(macroPars)[i])
 contour(x=tpseq, y=ppseq, z = matrix(macroPars[,i], ncol = length(ppseq), nrow = length(tpseq)), add=TRUE)
 }
-
+dev.off()
 
 ### 
 #------
