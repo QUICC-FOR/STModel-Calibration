@@ -176,7 +176,7 @@ par_hi = params + scaleOfVar
 #-----------
 
 #coords = cbind(dataProj_subset10$longitude, dataProj_subset10$latitude)
-save(datSel, dataProj_subset10, select2,params, par_lo, par_hi, fit, file = paste("initForFit_", fit,sep=""))
+save(datSel, dataProj_subset10, select2,params, par_lo, par_hi, fit, file = paste("initForFit_", fit,".RData",sep=""))
 
 }
 

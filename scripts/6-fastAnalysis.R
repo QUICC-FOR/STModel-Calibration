@@ -1,8 +1,8 @@
 rm(list = ls())
 
-veget_pars = read.table("../estimated_params/GenSA_initForFit_rf_0.05.txt")
-load("initForFit_rf_0.05")
-load("../estimated_params/GenSA_initForFit_rf_0.05.RData")
+veget_pars = read.table("../estimated_params/GenSA_initForFit_multinom_0.05.txt")
+load("initForFit_multinom_0.05")
+load("../estimated_params/GenSA_initForFit_multinom_0.05.RData")
 #--
 
 load("scale_info.Robj")
