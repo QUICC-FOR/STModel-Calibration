@@ -30,7 +30,7 @@ load("scale_info.Robj")
 dat_scale = dataProj_subset10[c("annual_mean_temp", "tot_annual_pp")]
 dat_scale = t(apply(dat_scale, 1, function(x) {(x-vars.means[c("annual_mean_temp", "tot_annual_pp")])/vars.sd[c("annual_mean_temp", "tot_annual_pp")]}))
 dat_scale = data.frame(dat_scale)
-head(dat_scale)
+#head(dat_scale)
 dim(dat_scale)
 
 # remove transitions directes B->T ou T->B
@@ -88,12 +88,13 @@ if(neiborgh == "multinom") pred = read.table("../data/projection_multimod_comple
 
 pred = pred[pred$plot %in% select,]
 pred = pred[-toremove,]
+pred = pred[select2,]
 
-dat$EB = pred$B
-dat$ET = pred$T
-dat$EM = pred$M 
+datSel$EB = pred$B
+datSel$ET = pred$T
+datSel$EM = pred$M 
 head(dat)
-dim(dat)
+dim(datSel)
 
 
 # Evaluate initial parameter values

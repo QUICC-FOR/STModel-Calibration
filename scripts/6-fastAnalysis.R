@@ -1,8 +1,8 @@
 rm(list = ls())
 
-veget_pars = read.table("../estimated_params/GenSA_initForFit_multinom_0.05.txt")
-load("initForFit_multinom_0.05")
-load("../estimated_params/GenSA_initForFit_multinom_0.05.RData")
+veget_pars = read.table("../estimated_params/GenSA_initForFit_rf_0.05.txt")
+load("initForFit_rf_0.05")
+load("../estimated_params/GenSA_initForFit_rf_0.05.RData")
 #--
 
 load("scale_info.Robj")
@@ -95,9 +95,13 @@ dev.off()
 #------
 # probabilites transition (no neighborhood restriction)
 #------
-pTransitions = data.frame(pRT = macroPars$alphat*(1-macroPars$alphab), 
-pRB = macroPars$alphab*(1-macroPars$alphat),
-pRM = macroPars$alphat*macroPars$alphab,
+nB = mean(datSel$EB)
+nT = mean(datSel$ET)
+nM = mean(datSel$EM)
+
+pTransitions = data.frame(pRT = macroPars$alphat*(nT+nM)*(1-macroPars$alphab*(nB+nM)),
+pRB = macroPars$alphab*(nB+nM)*(1-macroPars$alphat*(nT+nM)),
+pRM = macroPars$alphat*(nT+nM)*macroPars$alphab*(nB+nM),
 pMT = macroPars$theta*macroPars$thetat,
 pMB = macroPars$theta*(1-macroPars$thetat),
 pTM = macroPars$betab,
@@ -145,16 +149,16 @@ coexist = numeric(length(invT))
 
 ###both
 # Reciprocal resistance (alternative stable states)
-coexist[invT<0 & invB<0] = 1
+coexist[invT<0 & (alphaB-eps)>0 & invB<0 & (alphaT-eps)>0] = 1
 
 # Species B wins (instabilité au point B=0,T=kT + (ab-e)>0 et stabilité au point B=kB,T=0
 # 
-#coexist[invB>0 & invT<0 & (alphaB-eps)>0] = 2
-coexist[invB>0 & invT<0] = 2
+coexist[invB>0 & invT<0 & (alphaB-eps)>0] = 2
+#coexist[invB>0 & invT<0] = 2
 
 # Species T wins
-#coexist[invB<0 & invT>0 & (alphaT-eps)>0] = 3
-coexist[invB<0 & invT>0] = 3
+coexist[invB<0 & invT>0 & (alphaT-eps)>0] = 3
+#coexist[invB<0 & invT>0] = 3
 
 # Reciprocal invasibility
 #coexist[invB > 0 & invT > 0 & (alphaB-eps)>0 & (alphaT-eps)>0] = 4
@@ -173,7 +177,7 @@ coexist[alphaT==0&alphaB>0] = 2
 table(coexist)
 # Plot the results
 Z = matrix(coexist+1,nr = length(tpseq), nc = length(ppseq))
-quartz(width = 6, height = 6)
+#quartz(width = 6, height = 6)
 colo = c("white","pink", "darkgreen", "lightgreen", "orange")
 layout(matrix(c(1,2),nr=2,nc=1,byrow=TRUE),heights = c(1,6))
 par(mar=c(0,0,0,0))

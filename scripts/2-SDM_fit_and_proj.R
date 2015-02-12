@@ -75,7 +75,7 @@ rm(stateData, dat_wo_U)
 # ----------------------
 vars.means = apply(datSel[,2:8], 2, mean)
 vars.sd = apply(datSel[,2:8], 2, sd)
-save(vars.means, vars.sd, file = "scale_info.Robj")
+save(vars.means, vars.sd, file = "scale_info.RData")
 
 datSel[,2:8] = scale(datSel[,2:8])
 
@@ -201,7 +201,7 @@ rs = runif(1,0,1)
 set.seed(rs)
 SDM2 = randomForest(state ~ . , data = datSel, ntree = 500)
 
-save(SDM2,rs,file= "../data/RandomForest_complete.rObj")
+save(SDM2,rs,file= "../data/RandomForest_complete.RData")
 
 (imp = importance(SDM2))
 
@@ -245,7 +245,7 @@ dev.off()
 set.seed(rs)
 SDM2_cal = randomForest(state ~ . , data = datCal, ntree = 500)
 
-save(SDM2_cal,rs,file= "../data/RandomForest_cal.rObj")
+save(SDM2_cal,rs,file= "../data/RandomForest_cal.RData")
 
 (imp = importance(SDM2_cal))
 

@@ -8,7 +8,7 @@ initForFit <- as.character(args)[1]
 #------------------------------
 #setwd("/Users/isabelle/Documents/RESEARCH/RECHERCHE/2013-2015 UQAR/QUICCFOR/STModel-Calibration/scripts")
 source("3-transition_model.R")
-load(initForFit)
+load(paste(initForFit, ".RData", sep=""))
 
 #print(getwd())
 
