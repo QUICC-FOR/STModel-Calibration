@@ -1,11 +1,17 @@
 rm(list = ls())
 
 veget_pars = read.table("../estimated_params/GenSA_initForFit_rf_0.05.txt")
-load("initForFit_rf_0.05")
+load("initForFit_rf_0.05.RData")
 load("../estimated_params/GenSA_initForFit_rf_0.05.RData")
 #--
 
 load("scale_info.Robj")
+scaled.axis<- function(){
+temp = tpseq*vars.sd["annual_mean_temp"]+vars.means["annual_mean_temp"]
+precip = ppseq*vars.sd["tot_annual_pp"]+vars.means["tot_annual_pp"]
+axis(1, at = seq((round(min(temp))-vars.means["annual_mean_temp"])/vars.sd["annual_mean_temp"], (round(max(temp))-vars.means["annual_mean_temp"])/vars.sd["annual_mean_temp"], l=18), labels = seq(round(min(temp)), round(max(temp)), l = 18))
+axis(2, at = seq((700-vars.means["tot_annual_pp"])/vars.sd["tot_annual_pp"], (1800-vars.means["tot_annual_pp"])/vars.sd["tot_annual_pp"], l=12), labels = seq(700, 1800, l = 12))
+}
 
 #---
 pars = as.numeric(veget_pars[,1])
@@ -86,8 +92,9 @@ par(mfrow = c(2,4), mar = c(4,4,1,1), cex=0.8)
 
 for (i in 1:ncol(macroPars))
 {
-image(x=tpseq, y=ppseq, z = matrix(macroPars[,i], ncol = length(ppseq), nrow = length(tpseq)),xlab = "Temperature", ylab = "Precipitations", col = pal(12), main = colnames(macroPars)[i])
+image(x=tpseq, y=ppseq, z = matrix(macroPars[,i], ncol = length(ppseq), nrow = length(tpseq)),xlab = "Temperature", ylab = "Precipitations", col = pal(12), main = colnames(macroPars)[i], xaxt = "n", yaxat="n"))
 contour(x=tpseq, y=ppseq, z = matrix(macroPars[,i], ncol = length(ppseq), nrow = length(tpseq)), add=TRUE)
+scaled.axis()
 }
 dev.off()
 
@@ -112,8 +119,9 @@ par(mfrow = c(2,4), mar = c(4,4,1,1), cex=0.8)
 
 for (i in 1:ncol(pTransitions))
 {
-image(x=tpseq, y=ppseq, z = matrix(pTransitions[,i], ncol = length(ppseq), nrow = length(tpseq)),xlab = "Temperature", ylab = "Precipitations", col = pal(12), main = colnames(pTransitions)[i])
+image(x=tpseq, y=ppseq, z = matrix(pTransitions[,i], ncol = length(ppseq), nrow = length(tpseq)),xlab = "Temperature", ylab = "Precipitations", col = pal(12), main = colnames(pTransitions)[i], xaxt = "n", yaxat="n")
 contour(x=tpseq, y=ppseq, z = matrix(pTransitions[,i], ncol = length(ppseq), nrow = length(tpseq)), add=TRUE)
+scaled.axis()
 }
 
 
@@ -138,6 +146,25 @@ invT = apply(cbind(invT1, invT2), 1, function(x){max(x, na.rm=TRUE)})
 #invB = invB1
 invB = apply(cbind(invB1, invB2), 1, function(x){max(x, na.rm=TRUE)})
 
+##----
+invasion = data.frame(alphaT_eps = ifelse(alphaT-eps>0, 1, 0),
+alphaB_eps = ifelse(alphaB-eps>0, 1, 0),
+invT = ifelse(invT>0,1, 0),
+invB = ifelse(invB>0, 1, 0))
+
+jpeg(paste("../figures/estim_pars_invasibility_",fit,".jpeg", sep=""), height=3000, width=5000, res=600)
+
+par(mfrow = c(2,2), mar = c(4,4,1,1), cex=0.8)
+
+for (i in 1:ncol(invasion))
+{
+image(x=tpseq, y=ppseq, z = matrix(invasion[,i], ncol = length(ppseq), nrow = length(tpseq)),xlab = "Temperature", ylab = "Precipitations", col = pal(2), main = colnames(invasion)[i], xaxt = "n", yaxt="n")
+#contour(x=tpseq, y=ppseq, z = matrix(invasion[,i], ncol = length(ppseq), nrow = length(tpseq)), add=TRUE)
+scaled.axis()
+}
+dev.off()
+##--
+
 # Interpret the invasability criterion
 coexist = numeric(length(invT))
 # unisp
@@ -147,46 +174,47 @@ coexist = numeric(length(invT))
 #coexist[invB>0] = 2
 #coexist[invB<0] = 4
 
-###both
+# -- case 1 -- 
 # Reciprocal resistance (alternative stable states)
 coexist[invT<0 & (alphaB-eps)>0 & invB<0 & (alphaT-eps)>0] = 1
 
+# -- case 2 -- 
 # Species B wins (instabilité au point B=0,T=kT + (ab-e)>0 et stabilité au point B=kB,T=0
 # 
 coexist[invB>0 & invT<0 & (alphaB-eps)>0] = 2
-#coexist[invB>0 & invT<0] = 2
+## deal with cases where alphaB-eps or alphaT-eps < 0
+#coexist[(alphaT-eps)<0&(alphaB-eps)>0] = 0 
 
+# -- case 3 -- 
 # Species T wins
 coexist[invB<0 & invT>0 & (alphaT-eps)>0] = 3
-#coexist[invB<0 & invT>0] = 3
+## deal with cases where alphaB-eps or alphaT-eps < 0
+#coexist[(alphaB-eps)<0&(alphaT-eps)>0] = 0
 
+# -- case 4 -- 
 # Reciprocal invasibility
-#coexist[invB > 0 & invT > 0 & (alphaB-eps)>0 & (alphaT-eps)>0] = 4
-coexist[invB > 0 & invT > 0] = 4
-
-## deal with cases where alphaB or alphaT = 0
-coexist[alphaB==0&alphaT>0] = 3
-coexist[alphaT==0&alphaB>0] = 2
+coexist[invB > 0 & invT > 0 & (alphaB-eps)>0 & (alphaT-eps)>0] = 4
+#coexist[invB > 0 & invT > 0] = 4
 
 
-
-# instabilité vers crash
-#coexist[] = 0
-#
 
 table(coexist)
 # Plot the results
 Z = matrix(coexist+1,nr = length(tpseq), nc = length(ppseq))
 #quartz(width = 6, height = 6)
+
+jpeg(paste("../figures/equilibrium_map_",fit,".jpeg", sep=""), height=3000, width=3000, res = 300)
 colo = c("white","pink", "darkgreen", "lightgreen", "orange")
 layout(matrix(c(1,2),nr=2,nc=1,byrow=TRUE),heights = c(1,6))
+
 par(mar=c(0,0,0,0))
 plot(1, type = "n", axes=FALSE, xlab="", ylab="")
 #title(title,cex=2)
 legend("center",legend = c("other","AltSS","Boreal Wins","Temperate Wins","Coexistence"),fill = colo,bty = "n",horiz = TRUE,cex = 0.8)
 par(mar=c(5,5,0,2))
-image(tpseq,ppseq,Z,xlab = "Mean annual temperature", ylab = "Annual precipitation (mm)", cex.lab = 1.5, cex.axis = 1.25, col = colo, breaks = c(0:5))#grey(c(0:3)/3))
-
+image(tpseq,ppseq,Z,xlab = "Mean annual temperature", ylab = "Annual precipitation (mm)", cex.lab = 1.5, cex.axis = 1.25, col = colo, breaks = c(0:5), xaxt = "n", yaxt="n")#grey(c(0:3)/3))
+scaled.axis()
+dev.off()
 #dev.copy2pdf(file = "../figures/Coexistence_area_herbivores.pdf")
 #dev.copy2pdf(file = "../figures/Coexistence_area_sansHerbivores.pdf")
 
