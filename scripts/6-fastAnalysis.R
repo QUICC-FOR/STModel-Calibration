@@ -1,8 +1,15 @@
 rm(list = ls())
 
-veget_pars = read.table("../estimated_params/GenSA_initForFit_rf_0.05.txt")
-load("initForFit_rf_0.05.RData")
-load("../estimated_params/GenSA_initForFit_rf_0.05.RData")
+sdm = "rf"
+sdm = "multinom"
+propData = 0.05
+
+#--
+veget_pars = read.table(paste("../estimated_params/GenSA_initForFit_", sdm, "_",propData, ".txt", sep=""))
+load(paste("initForFit_",sdm, "_", propData, ".RData", sep = ""))
+load(paste("../estimated_params/GenSA_initForFit_", sdm, "_", propData, ".RData", sep = ""))
+#--
+print(fit)
 #--
 
 load("scale_info.Robj")
@@ -92,7 +99,7 @@ par(mfrow = c(2,4), mar = c(4,4,1,1), cex=0.8)
 
 for (i in 1:ncol(macroPars))
 {
-image(x=tpseq, y=ppseq, z = matrix(macroPars[,i], ncol = length(ppseq), nrow = length(tpseq)),xlab = "Temperature", ylab = "Precipitations", col = pal(12), main = colnames(macroPars)[i], xaxt = "n", yaxat="n"))
+image(x=tpseq, y=ppseq, z = matrix(macroPars[,i], ncol = length(ppseq), nrow = length(tpseq)),xlab = "Temperature", ylab = "Precipitations", col = pal(12), main = colnames(macroPars)[i], xaxt = "n", yaxt="n")
 contour(x=tpseq, y=ppseq, z = matrix(macroPars[,i], ncol = length(ppseq), nrow = length(tpseq)), add=TRUE)
 scaled.axis()
 }
