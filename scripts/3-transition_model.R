@@ -14,6 +14,11 @@ model = function(params, dat)
     ENV1 = dat$ENV1
     ENV2 = dat$ENV2
     itime = dat$itime
+    ENV1.sq = dat$ENV1.sq
+    ENV1.cu = dat$ENV1.cu
+    ENV2.sq = dat$ENV2.sq
+    ENV2.cu = dat$ENV2.cu
+    
     
     names(params) = c("ab0", "ab1", "ab2", "ab3","ab4","ab5","ab6",
 "at0", "at1" , "at2", "at3", "at4", "at5", "at6", 
@@ -29,13 +34,13 @@ e7 = 0
     
 	lik = numeric(length(st0))
 
-    logit_alphab 	= params["ab0"] + params["ab1"]*ENV1 + params["ab2"]*ENV2 + params["ab3"]*ENV1^2 + params["ab4"]*ENV2^2 + params["ab5"]*ENV1^3 + params["ab6"]*ENV2^3
-    logit_alphat 	= params["at0"] + params["at1"]*ENV1 + params["at2"]*ENV2 + params["at3"]*ENV1^2 + params["at4"]*ENV2^2 + params["at5"]*ENV1^3 + params["at6"]*ENV2^3
-    logit_betab 	= params["bb0"] + params["bb1"]*ENV1 + params["bb2"]*ENV2 + params["bb3"]*ENV1^2 + params["bb4"]*ENV2^2 + params["bb5"]*ENV1^3 + params["bb6"]*ENV2^3
-    logit_betat 	= params["bt0"] + params["bt1"]*ENV1 + params["bt2"]*ENV2 + params["bt3"]*ENV1^2 + params["bt4"]*ENV2^2 + params["bt5"]*ENV1^3 + params["bt6"]*ENV2^3
-    logit_theta	= params["t0"] + params["t1"]*ENV1 + params["t2"]*ENV2 + params["t3"]*ENV1^2 + params["t4"]*ENV2^2 + params["t5"]*ENV1^3 + params["t6"]*ENV2^3
-    logit_thetat	= params["tt0"] + params["tt1"]*ENV1 + params["tt2"]*ENV2 + params["tt3"]*ENV1^2 + params["tt4"]*ENV2^2 + params["tt5"]*ENV1^3 + params["tt6"]*ENV2^3
-    logit_eps 	= params["e0"]  + params["e1"]*ENV1 + params["e2"]*ENV2  + params["e3"]*ENV1^2 + params["e4"]*ENV2^2 + params["e5"]*ENV1^3 + params["e6"]*ENV2^3 + e7*EB
+    logit_alphab 	= params["ab0"] + params["ab1"]*ENV1 + params["ab2"]*ENV2 + params["ab3"]*ENV1.sq + params["ab4"]*ENV2.sq + params["ab5"]*ENV1.cu + params["ab6"]*ENV2.cu
+    logit_alphat 	= params["at0"] + params["at1"]*ENV1 + params["at2"]*ENV2 + params["at3"]*ENV1.sq + params["at4"]*ENV2.sq + params["at5"]*ENV1.cu + params["at6"]*ENV2.cu
+    logit_betab 	= params["bb0"] + params["bb1"]*ENV1 + params["bb2"]*ENV2 + params["bb3"]*ENV1.sq + params["bb4"]*ENV2.sq + params["bb5"]*ENV1.cu + params["bb6"]*ENV2.cu
+    logit_betat 	= params["bt0"] + params["bt1"]*ENV1 + params["bt2"]*ENV2 + params["bt3"]*ENV1.sq + params["bt4"]*ENV2.sq + params["bt5"]*ENV1.cu + params["bt6"]*ENV2.cu
+    logit_theta	= params["t0"] + params["t1"]*ENV1 + params["t2"]*ENV2 + params["t3"]*ENV1.sq + params["t4"]*ENV2.sq + params["t5"]*ENV1.cu + params["t6"]*ENV2.cu
+    logit_thetat	= params["tt0"] + params["tt1"]*ENV1 + params["tt2"]*ENV2 + params["tt3"]*ENV1.sq + params["tt4"]*ENV2.sq + params["tt5"]*ENV1.cu + params["tt6"]*ENV2.cu
+    logit_eps 	= params["e0"]  + params["e1"]*ENV1 + params["e2"]*ENV2  + params["e3"]*ENV1.sq + params["e4"]*ENV2.sq + params["e5"]*ENV1.cu + params["e6"]*ENV2.cu + e7*EB
 
     # compute transitions accounting for interval time and logit transformation
     # ! might be NaN because exp(bigNumber) 
