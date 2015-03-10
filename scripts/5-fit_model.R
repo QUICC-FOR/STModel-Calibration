@@ -19,9 +19,6 @@ load(paste(initForFit, ".RData", sep=""))
 # Maximum likelihood estimation
 library(GenSA)
 
-#test
-cat("starting logLik")
-print(model(params, datSel))
 
 ##----
 datSel$ENV1.sq = scale(datSel$ENV1^2)
@@ -34,6 +31,9 @@ scale_poly = list(means = c(ENV1.sq = mean(datSel$ENV1^2), ENV1.cu = mean(datSel
 save(scale_poly, file = paste(initForFit, "_scale_poly.RData", sep = ""))
 ##----
 
+#test
+cat("starting logLik")
+print(model(params, datSel))
 
 estim.pars = GenSA(par = params, fn = model, lower = par_lo, upper= par_hi, control = list(verbose =TRUE, maxit = 2000, smooth=FALSE), dat = datSel)
 
