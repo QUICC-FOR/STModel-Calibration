@@ -85,18 +85,21 @@ e7 = 0
 
     # lik might be equal = 0 -> give -Inf at log   
     # for instance when neighbor (seeds) = 0
-    lik[lik == 0] = .Machine$double.xmin
+    #lik[lik == 0] = .Machine$double.xmin
     
     # calculate sum log likelihood
     # lik might be <0 (in the 1 - other proba)
-    if(sum(lik<0)>0)
-    {
-    sumLL = -1000000
-    }else{
+#    if(sum(lik<0)>0)
+#    {
+#    sumLL = -.Machine$double.xmax
+#    }else{
     sumLL = sum(log(lik))
-    }
+#    }
     
-
+    if(is.infinite(sumLL)) sumLL = -.Machine$double.xmax
+	if(is.nan(sumLL)) sumLL = -.Machine$double.xmax
+	if(is.na(sumLL)) print("sumLL: na values!")
+	
     # return a value to minimize in GenSA
 	return(-sumLL)
 }
