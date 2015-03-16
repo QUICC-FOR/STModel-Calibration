@@ -2,7 +2,7 @@ rm(list = ls())
 
 sdm = "rf"
 sdm = "multinom"
-propData = 0.1
+propData = 0.05
 
 #--
 veget_pars = read.table(paste("../estimated_params/GenSA_initForFit_", sdm, "_",propData, ".txt", sep=""))
@@ -11,8 +11,10 @@ load(paste("../estimated_params/GenSA_initForFit_", sdm, "_", propData, ".RData"
 #--
 print(fit)
 #--
-
+tpseq=seq(-4,2,l=100)
+ppseq=seq(-2,5,l=100)
 load("scale_info.Robj")
+
 scaled.axis<- function(){
 temp = tpseq*vars.sd["annual_mean_temp"]+vars.means["annual_mean_temp"]
 precip = ppseq*vars.sd["tot_annual_pp"]+vars.means["tot_annual_pp"]
@@ -30,11 +32,12 @@ names(pars) = rownames(veget_pars)
 #----
 jpeg(paste("../figures/diagnostic",fit,".jpeg", sep=""), height=5000, width=5000, res=600)
 par(mfrow = c(2,2), mar = c(4, 4, 2,1))
-mat = estim.pars$trace.mat
-plot(1:nrow(mat),mat[,"nb.steps"], xlab = "anneal time", ylab = "nb.steps", cex=.2)
-plot(temperature~nb.steps, data = mat, cex=.2)
-plot(function.value~nb.steps, data = mat, cex=.2)
-plot(current.minimum~nb.steps, data = mat, cex = .2)
+mat = data.frame(estim.pars$trace.mat)
+mat$number = 1:nrow(mat)
+plot(nb.steps~number, data = mat, xlab = "anneal time", ylab = "nb.steps", cex=.2, type = "l")
+plot(temperature~number, data = mat, cex=.2, type = "l")
+plot(function.value~number, data = mat, cex=.2, type = "l")
+plot(current.minimum~number, data = mat, cex = .2, type="l")
 dev.off()
 #-----
 # check estimated params and bounds
@@ -52,8 +55,6 @@ title("estimated params and given bounds")
 # look at transition probabilities
 #------
 
-tpseq=seq(-4,2,l=100)
-ppseq=seq(-2,5,l=100)
 ENV = expand.grid(TP =tpseq , PP = ppseq)
 ENV1 = ENV$TP
 ENV2 = ENV$PP

@@ -1,6 +1,6 @@
 .Rproj.user
 .Rhistory
-.RData
+scripts/*.RData
 data/*
 .Rapp.history
 ggmapTemp*
