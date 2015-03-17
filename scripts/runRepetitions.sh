@@ -1,11 +1,11 @@
 #!/bin/bash
 run(){
-    Rscript 4-init_params.R 0.003$1
+    Rscript 4-init_params.R 0.3$1
     wait
-    Rscript 5-fit_model.R initForFit_multinom_0.003$1 &
-    Rscript 5-fit_model.R initForFit_rf_0.003$1 &
+    Rscript 5-fit_model.R initForFit_multinom_0.3$1 &
+    Rscript 5-fit_model.R initForFit_rf_0.3$1 &
 }
 export -f run
-parallel run ::: 1 2 3
+parallel -j 8 run ::: 1 2 3 4 5 6 7 8 9
 
 
