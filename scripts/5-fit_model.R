@@ -23,7 +23,7 @@ library(GenSA)
 cat("starting logLik")
 print(model(params, datSel))
 
-estim.pars = GenSA(par = params, fn = model, lower = par_lo, upper= par_hi, control = list(verbose =TRUE, maxit = 7000, smooth=FALSE), dat = datSel)
+estim.pars = GenSA(par = params, fn = model, lower = par_lo, upper= par_hi, control = list(verbose =TRUE, maxit = 7000, smooth=TRUE), dat = datSel)
 
 
 #save(estim.pars, file="../estimated_params/GenSA_test.rdata")
