@@ -9,7 +9,7 @@ initForFit <- as.character(args)[1]
 #setwd("/Users/isabelle/Documents/RESEARCH/RECHERCHE/2013-2015 UQAR/QUICCFOR/STModel-Calibration/scripts")
 source("3-transition_model.R")
 load(paste(initForFit, ".RData", sep=""))
-load(paste("../estimated_params/GenSA_initForFit_multinom_0.33.RData", sep = ""))
+load(paste("../scripts/GenSA_init.RObj", sep = ""))
 params = estim.pars$par
 
 #print(getwd())
