@@ -2,7 +2,7 @@ rm(list = ls())
 
 #sdm = "rf"
 sdm = "multinom"
-propData = 0.25
+propData = 0.33
 
 #--
 veget_pars = read.table(paste("../estimated_params/GenSA_initForFit_", sdm, "_",propData, ".txt", sep=""))
