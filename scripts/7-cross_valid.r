@@ -1,8 +1,8 @@
 rm(list = ls())
 
-#sdm = "rf"
-sdm = "multinom"
-propData = 0.25
+sdm = "rf"
+#sdm = "multinom"
+propData = 0.33
 
 #--
 veget_pars = read.table(paste("../estimated_params/GenSA_initForFit_", sdm, "_",propData, ".txt", sep=""))
@@ -121,6 +121,17 @@ HK <- function (Pred, Obs)
 
 ##---------------------------
 
+
+Obs = as.factor(datValid$state2)
+Pred = as.factor(pred.state)
+Start = datValid$state1
+
 HK(pred.state, datValid$state2)
+table(pred.state, datValid$state2)
+
+HK(Pred[Start=="R"], Obs[Start=="R"])
+HK(Pred[Start=="T"], Obs[Start=="T"])
+HK(Pred[Start=="B"], Obs[Start=="B"])
+HK(Pred[Start=="M"], Obs[Start=="M"])
 
 
