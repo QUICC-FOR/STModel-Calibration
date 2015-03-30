@@ -9,8 +9,8 @@ initForFit <- as.character(args)[1]
 #setwd("/Users/isabelle/Documents/RESEARCH/RECHERCHE/2013-2015 UQAR/QUICCFOR/STModel-Calibration/scripts")
 source("3-transition_model.R")
 load(paste(initForFit, ".RData", sep=""))
-load(paste("../estimated_params/GenSA_initForFit_multinom_0.33.RData", sep = ""))
-params = estim.pars$par
+load(paste("../estimated_params/GenSA_init_cst.Robj", sep = ""))
+params = initpars
 
 #print(getwd())
 
@@ -23,7 +23,7 @@ library(GenSA)
 cat("starting logLik")
 print(model(params, datSel))
 
-estim.pars = GenSA(par = params, fn = model, lower = par_lo, upper= par_hi, control = list(verbose =TRUE, maxit = 7000, smooth=TRUE), dat = datSel)
+estim.pars = GenSA(par = params, fn = model, lower = par_lo, upper= par_hi, control = list(verbose =TRUE, maxit = 7000, smooth=TRUE, nb.stop.improvement= 1000), dat = datSel)
 
 
 #save(estim.pars, file="../estimated_params/GenSA_test.rdata")
