@@ -298,25 +298,32 @@ head(dataProj)
 dim(dataProj)
 str(dataProj)
 
+##
+dat = merge(dataProj, addData, by.x = "plot", by.y = "plot_id", all.x=TRUE, all.y=FALSE)
+
+dim(dataProj)
+dim(dat)
+
+dataProj = dat
 
 # rescale
-dataRescaledProj = dataProj[,selectedVars]
+dataRescaledProj = dataProj[,c(selectedVars, "lat","lon")]
 dataRescaledProj = t(apply(dataRescaledProj, 1, function(x) {(x-vars.means)/vars.sd}))
 
 
 # multinomial
 # ----------------------
 #load("../data/Multinom_complete.rObj")
-
-proj1 = predict(SDM1,new=dataRescaledProj,"prob")
-head(proj1)
-dim(proj1)
-summary(proj1)
-proj1 = data.frame(proj1)
-proj1$plots = transitionData$plot
-# sauvegarde
-write.table(proj1, file = "../data/projection_multimod_complete.txt", quote=F, row.names=FALSE)
-
+#
+#proj1 = predict(SDM1,new=dataRescaledProj,"prob")
+#head(proj1)
+#dim(proj1)
+#summary(proj1)
+#proj1 = data.frame(proj1)
+#proj1$plots = transitionData$plot
+## sauvegarde
+#write.table(proj1, file = "../data/projection_multimod_complete.txt", quote=F, row.names=FALSE)
+#
 
 # random Forest
 # ----------------------
@@ -332,5 +339,25 @@ proj2$plots = transitionData$plot
 # sauvegarde
 # sauvegarde
 write.table(proj2, file = "../data/projection_rf_complete.txt", quote=F, row.names=FALSE)
+
+
+Temp.lim = c((-5-vars.means["annual_mean_temp"])/vars.sd["annual_mean_temp"], (10-vars.means["annual_mean_temp"])/vars.sd["annual_mean_temp"])
+Temp.ax = function(x)
+{
+temp = dataRescaledProj[,"annual_mean_temp"]*vars.sd["annual_mean_temp"]+vars.means["annual_mean_temp"]
+axis(1, at = seq((round(min(temp))-vars.means["annual_mean_temp"])/vars.sd["annual_mean_temp"], (round(max(temp))-vars.means["annual_mean_temp"])/vars.sd["annual_mean_temp"], l=30), labels = seq(round(min(temp)), round(max(temp)), l = 30))
+}
+
+
+par(mfrow = c(2,2))
+plot(proj2$B ~ dataRescaledProj[,"annual_mean_temp"], xlab = "temperature", ylab = "B neighborhood", cex = .2, xaxt="n", xlim = Temp.lim, ylim = c(0,.6))
+Temp.ax()
+points(proj2$T ~ dataRescaledProj[,"annual_mean_temp"], xlab = "temperature", ylab = "T neighborhood", cex = .2, xaxt="n", xlim = Temp.lim, ylim = c(0,.6))
+Temp.ax()
+plot(proj2$M ~ dataRescaledProj[,"annual_mean_temp"], xlab = "temperature", ylab = "M neighborhood", cex = .2, xaxt="n", xlim = Temp.lim, ylim = c(0,.6))
+Temp.ax()
+plot(proj2$R ~ dataRescaledProj[,"annual_mean_temp"], xlab = "temperature", ylab = "R neighborhood", cex = .2, xaxt="n", xlim = Temp.lim, ylim = c(0,.6))
+Temp.ax()
+
 
 
