@@ -1,13 +1,9 @@
 # R CMD BATCH --no-save --no-restore '--args choiceSDM subsetProp' 4-init_params.R r.out
-# or # R script 4-init_params.R choiceSDM subsetProp
+# or # R script 4-initForFit.R subsetProp
 #rm(list=ls())
 args <- commandArgs(trailingOnly = TRUE)
 
 # choice of the SDM
-#neiborgh == "rf"
-#neiborgh == "multinom"
-#neiborgh == "multinom2"
-#neiborgh <- as.character(args)[1]
 subsetProp = as.numeric(args)[1]
 
 
@@ -33,27 +29,49 @@ dat_scale = data.frame(dat_scale)
 #head(dat_scale)
 dim(dat_scale)
 
-# remove transitions directes B->T ou T->B
-toremove = c(which(dataProj_subset10$state1 == "T" & dataProj_subset10$state2 == "B"), which(dataProj_subset10$state1 == "B" & dataProj_subset10$state2 == "T"))
-dataProj_subset10= dataProj_subset10[-toremove,]
 
-dat = data.frame(dat_scale[-toremove,])
+# remove transitions directes B->T ou T->B
+trBT = c(which(dataProj_subset10$state1 == "T" & dataProj_subset10$state2 == "B"), which(dataProj_subset10$state1 == "B" & dataProj_subset10$state2 == "T"))
+
+# clean transition time
+dataProj_subset10$itime = dataProj_subset10$year2 - dataProj_subset10$year1
+rmItime= c(which(dataProj_subset10$itime<5), which(dataProj_subset10$itme>15))
+
+# clean dataset
+toremove = unique(c(trBT, rmItime))
+dataProj_subset10 = dataProj_subset10[-toremove,]
+
+# create dataset
+dat = dat_scale[-toremove,]
 
 #rename variables
 colnames(dat) = c("ENV1", "ENV2")
 
-dat$st0 = dataProj_subset10$state1
-dat$st1 = dataProj_subset10$state2
-dat$itime = dataProj_subset10$year2 - dataProj_subset10$year1
+dat$st0 = dataProj_subset10[,"state1"]
+dat$st1 = dataProj_subset10[,"state2"]
+dat$itime = dataProj_subset10[,"itime"]
+dat$plot_id = dataProj_subset10[,"plot"]
 
-rm(dat_scale, dataProj)
+
 
 #-------------------------------------------------------------------
+
+# neighborhood
+
+pred = read.table("../data/projection_rf_complete.txt", h=T)
+
+pred = pred[pred$plot %in% select,]
+pred = pred[-toremove,]
+
+dat$EB = pred$B
+dat$ET = pred$T
+dat$EM = pred$M 
+head(dat)
+
 #
 # sample data (stratified)
 #
 #------------------------------
-nrow(dataProj_subset10) == nrow(dat)
 
 source("subsample.r")
 #select2 = subsample.stratif3D(dataProj_subset10[,c("lon","lat", "annual_mean_temp")], subsetProp, adj = 4.2)
@@ -71,37 +89,24 @@ datSel = dat[select2,]
 
 #-------------------------------------------------------------------
 
-for(neiborgh in c("rf", "multinom"))
+for(neiborgh in c("rf", "cst"))
 {
+
 # fit name
 fit = paste(neiborgh, subsetProp, sep="_")
 print(fit)
 
-
-##-----------
-## Choose neigborhood type
-##-----------
-
-# neighborhood
-
-if(neiborgh == "rf") pred = read.table("../data/projection_rf_complete.txt", h=T)
-if(neiborgh == "multinom") pred = read.table("../data/projection_multimod_complete.txt", h=T)
-
-pred = pred[pred$plot %in% select,]
-pred = pred[-toremove,]
-pred = pred[select2,]
-
-datSel$EB = pred$B
-datSel$ET = pred$T
-datSel$EM = pred$M 
-head(dat)
-dim(datSel)
-
+if(neiborgh=="cst") 
+{
+datSel$EB = rep(0.25, nrow(datSel))
+datSel$ET = rep(0.25, nrow(datSel))
+datSel$EM = rep(0.25, nrow(datSel))
+}
 
 # Evaluate initial parameter values
-transitions = paste(dat$st0,dat$st1,sep = "")
+transitions = paste(datSel$st0,dat$st1,sep = "")
 sum_transitions = table(transitions)
-initState = table(dat$st0)
+initState = table(datSel$st0)
 
 # estimates for initial parameters
 eps_mn = # proba x->R given x is T B or M
@@ -178,7 +183,7 @@ par_hi = params + scaleOfVar
 #-----------
 
 #coords = cbind(dataProj_subset10$longitude, dataProj_subset10$latitude)
-save(datSel, dataProj_subset10, select2,params, par_lo, par_hi, fit, file = paste("initForFit_", fit,".RData",sep=""))
+save(datSel, dataProj_subset10, select2,params, toremove, select, par_lo, par_hi, fit, file = paste("initForFit_", fit,".RData",sep=""))
 
 }
 
