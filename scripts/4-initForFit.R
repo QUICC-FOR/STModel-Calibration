@@ -165,22 +165,13 @@ th0 = as.numeric(logit_theta_mn), th1=0, th2=0, th3=0, th4=0, th5=0, th6=0,
 e0 = as.numeric(logit_eps_mn), e1 = 0,  e2=0, e3=0, e4=0, e5=0, e6=0)
 
 
-# bounds
-# coeff variation
-#cvar = 5
-#scaleOfVar = c(rep(abs(logit_alphab_mn*cvar), 7), 
-#   rep(abs(logit_alphat_mn*cvar), 7) ,
-#   rep(abs(logit_betab_mn*cvar), 7) ,
-#   rep(abs(logit_betat_mn*cvar), 7) ,
-#   rep(abs(logit_thetat_mn*cvar), 7) ,
-#   rep(abs(logit_theta_mn*cvar), 7) ,
-#   rep(abs(logit_eps_mn*cvar), 7) )
-scaleOfVar = c(rep(200, 14), rep(50, 35))
+scaleOfVar = c(rep(10, 49))
 
-par_lo = params - scaleOfVar
+par_lo = 0 - scaleOfVar
 
-par_hi = params + scaleOfVar
+par_hi = 0 + scaleOfVar
 
+names(par_lo) = names(par_hi) = names(params)
 #-----------
 
 #coords = cbind(dataProj_subset10$longitude, dataProj_subset10$latitude)

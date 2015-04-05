@@ -102,7 +102,7 @@ e7 = 0
 	if(is.nan(sumLL)) sumLL = -.Machine$double.xmax
 	if(is.na(sumLL)) print("sumLL: na values!")
 	
-	print(sumLL)
+#	print(sumLL)
     # return a value to minimize in GenSA
 	return(-sumLL)
 }

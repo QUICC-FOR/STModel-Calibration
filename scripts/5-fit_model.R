@@ -29,7 +29,7 @@ library(GenSA)
 cat("starting logLik")
 print(model(params, datSel))
 
-estim.pars = GenSA(par = params, fn = model, lower = par_lo, upper= par_hi, control = list(verbose =TRUE, maxit = 7000, smooth=FALSE, temperature = 7000, nb.stop.improvement= 1000, trace.fn = paste("traceMat_", initForFit, option, ".trMat", sep=""),max.time = 1000), dat = datSel)
+estim.pars = GenSA(par = params, fn = model, lower = par_lo, upper= par_hi, control = list(verbose =TRUE, smooth=FALSE, max.call = 1000, max.time = 1000, maxit = 2, nb.stop.improvement= 10, temperature = 7000,  trace.fn = paste("../estimated_params/traceMat_", initForFit, option, ".trMat", sep="")), dat = datSel)
 
 
 #save(estim.pars, file="../estimated_params/GenSA_test.rdata")

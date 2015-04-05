@@ -1,13 +1,18 @@
 rm(list = ls())
 
 sdm = "rf"
-sdm = "multinom"
-propData = 0.05
+sdm = "cst"
+propData = 0.331
+option = "_less"
+option = "5y"
+option = "_less5y"
+option = ""
 
 #--
-veget_pars = read.table(paste("../estimated_params/GenSA_initForFit_", sdm, "_",propData, ".txt", sep=""))
+veget_pars = read.table(paste("../estimated_params/GenSA_initForFit_", sdm, "_",propData, option, ".txt", sep=""))
 load(paste("initForFit_",sdm, "_", propData, ".RData", sep = ""))
-load(paste("../estimated_params/GenSA_initForFit_", sdm, "_", propData, ".RData", sep = ""))
+load(paste("../estimated_params/GenSA_initForFit_", sdm, "_", propData, option, ".RData", sep = ""))
+mat = read.table(paste("../estimated_params/traceMat_initForFit_", sdm, "_", propData, option, ".trMat", sep=""), h=T)
 #--
 print(fit)
 #--
@@ -23,16 +28,14 @@ axis(2, at = seq((700-vars.means["tot_annual_pp"])/vars.sd["tot_annual_pp"], (18
 }
 
 #---
-pars = as.numeric(veget_pars[,1])
-names(pars) = rownames(veget_pars)
-#pars = as.list(pars)
-
+pars = as.numeric(veget_pars[,2])
+names(pars) = veget_pars[,1]
+pars
 #-----
 # diagnostic convergence
 #----
-jpeg(paste("../figures/diagnostic",fit,".jpeg", sep=""), height=5000, width=5000, res=600)
+jpeg(paste("../figures/diagnostic",sdm, "_",propData, option,".jpeg", sep=""), height=5000, width=5000, res=600)
 par(mfrow = c(2,2), mar = c(4, 4, 2,1))
-mat = data.frame(estim.pars$trace.mat)
 mat$number = 1:nrow(mat)
 plot(nb.steps~number, data = mat, xlab = "anneal time", ylab = "nb.steps", cex=.2, type = "l")
 plot(temperature~number, data = mat, cex=.2, type = "l")
@@ -42,13 +45,13 @@ dev.off()
 #-----
 # check estimated params and bounds
 #----
-parsBounds = cbind(unlist(par_lo), unlist(par_hi), unlist(pars))
-
+parsBounds = data.frame(hi=unlist(par_hi),lo= unlist(par_lo))
+parsBounds$estim = rep(0, nrow(parsBounds))
+parsBounds[names(pars), "estim"] = pars
 par(mfrow = c(1,1), mar = c(2, 2, 2,1))
-
-plot(parsBounds[,1], ylim = c(min(parsBounds), max(parsBounds)), pch=15, cex=.5)
-points(parsBounds[,2], col=1, pch=15, cex=.5)
-points(parsBounds[,3], col=2, pch=19, cex=.5)
+plot(parsBounds$hi, ylim = c(min(parsBounds), max(parsBounds)), pch=15, cex=.5)
+points(parsBounds$lo, col=1, pch=15, cex=.5)
+points(parsBounds$estim, col=2, pch=19, cex=.5)
 title("estimated params and given bounds")
 
 #------
@@ -60,14 +63,14 @@ ENV1 = ENV$TP
 ENV2 = ENV$PP
 
 e7 = 0
-params=pars
-
+params=parsBounds$estim
+names(params) = rownames(parsBounds)
 
     logit_alphab 	= params["ab0"] + params["ab1"]*ENV1 + params["ab2"]*ENV2 + params["ab3"]*ENV1^2 + params["ab4"]*ENV2^2 + params["ab5"]*ENV1^3 + params["ab6"]*ENV2^3
     logit_alphat 	= params["at0"] + params["at1"]*ENV1 + params["at2"]*ENV2 + params["at3"]*ENV1^2 + params["at4"]*ENV2^2 + params["at5"]*ENV1^3 + params["at6"]*ENV2^3
     logit_betab 	= params["bb0"] + params["bb1"]*ENV1 + params["bb2"]*ENV2 + params["bb3"]*ENV1^2 + params["bb4"]*ENV2^2 + params["bb5"]*ENV1^3 + params["bb6"]*ENV2^3
     logit_betat 	= params["bt0"] + params["bt1"]*ENV1 + params["bt2"]*ENV2 + params["bt3"]*ENV1^2 + params["bt4"]*ENV2^2 + params["bt5"]*ENV1^3 + params["bt6"]*ENV2^3
-    logit_theta	= params["t0"] + params["t1"]*ENV1 + params["t2"]*ENV2 + params["t3"]*ENV1^2 + params["t4"]*ENV2^2 + params["t5"]*ENV1^3 + params["t6"]*ENV2^3
+    logit_theta	= params["th0"] + params["th1"]*ENV1 + params["th2"]*ENV2 + params["th3"]*ENV1^2 + params["th4"]*ENV2^2 + params["th5"]*ENV1^3 + params["th6"]*ENV2^3
     logit_thetat	= params["tt0"] + params["tt1"]*ENV1 + params["tt2"]*ENV2 + params["tt3"]*ENV1^2 + params["tt4"]*ENV2^2 + params["tt5"]*ENV1^3 + params["tt6"]*ENV2^3
     logit_eps 	= params["e0"]  + params["e1"]*ENV1 + params["e2"]*ENV2  + params["e3"]*ENV1^2 + params["e4"]*ENV2^2 + params["e5"]*ENV1^3 + params["e6"]*ENV2^3 
     #e7*EB
@@ -94,8 +97,8 @@ pal = colorRampPalette(c("lightblue", "yellow", "orange"), space = "rgb")
 
 #image(x=tpseq, y=ppseq, z = matrix(macroPars$alphab, ncol = length(ppseq), nrow = length(tpseq)),xlab = "Temperature", ylab = "Precipitations", col = pal(12), main = "alphab")
 #contour(x=tpseq, y=ppseq, z = matrix(macroPars$alphab, ncol = length(ppseq), nrow = length(tpseq)), add=TRUE)
-jpeg(paste("../figures/estim_pars_",fit,".jpeg", sep=""), height=3000, width=5000, res=600)
-
+jpeg(paste("../figures/estim_pars_",sdm, "_",propData, option,".jpeg", sep=""), height=3000, width=5000, res=600)
+#
 par(mfrow = c(2,4), mar = c(4,4,1,1), cex=0.8)
 
 for (i in 1:ncol(macroPars))
@@ -104,6 +107,7 @@ image(x=tpseq, y=ppseq, z = matrix(macroPars[,i], ncol = length(ppseq), nrow = l
 contour(x=tpseq, y=ppseq, z = matrix(macroPars[,i], ncol = length(ppseq), nrow = length(tpseq)), add=TRUE)
 scaled.axis()
 }
+#
 dev.off()
 
 ### 
@@ -135,97 +139,105 @@ scaled.axis()
 
 ### 
 #------
-# invasibility: TODO
+# invasibility
 #------
 
-alphaB = macroPars$alphab
-alphaT = macroPars$alphat
-betaB = macroPars$betab
-betaT= macroPars$betat
-theta = macroPars$theta
-thetaT = macroPars$thetat
-eps = macroPars$eps
+pars= data.frame(
+alphaB = macroPars$alphab,
+alphaT = macroPars$alphat,
+betaB = macroPars$betab,
+betaT= macroPars$betat,
+theta = macroPars$theta,
+thetaT = macroPars$thetat,
+eps = macroPars$eps)
 
-# Compute the first? eigenvalues for C and D as invaders
-source("invasibility_values.r")
 
-#invT = invT2
-invT = apply(cbind(invT1, invT2), 1, function(x){max(x, na.rm=TRUE)})
-#invB = invB1
-invB = apply(cbind(invB1, invB2), 1, function(x){max(x, na.rm=TRUE)})
-
-##----
-invasion = data.frame(alphaT_eps = ifelse(alphaT-eps>0, 1, 0),
-alphaB_eps = ifelse(alphaB-eps>0, 1, 0),
-invT = ifelse(invT>0,1, 0),
-invB = ifelse(invB>0, 1, 0))
-
-jpeg(paste("../figures/estim_pars_invasibility_",fit,".jpeg", sep=""), height=3000, width=5000, res=600)
-
-par(mfrow = c(2,2), mar = c(4,4,1,1), cex=0.8)
-
-for (i in 1:ncol(invasion))
+model <- function(ti, states, parms)
 {
-image(x=tpseq, y=ppseq, z = matrix(invasion[,i], ncol = length(ppseq), nrow = length(tpseq)),xlab = "Temperature", ylab = "Precipitations", col = pal(2), main = colnames(invasion)[i], xaxt = "n", yaxt="n")
-#contour(x=tpseq, y=ppseq, z = matrix(invasion[,i], ncol = length(ppseq), nrow = length(tpseq)), add=TRUE)
-scaled.axis()
+with(as.list(c(states, parms)), {
+R = 1 - T - B - M
+# Differential equations describing the dynamics of the state variables
+dB = theta*(1-thetaT)*(1-eps)*M + alphaB*(M+B)*(1-alphaT*(T+M))*R - betaT*(T+M)*(1-eps)*B - eps*B
+dT = theta*thetaT*(1-eps)*M + alphaT*(M+T)*(1-alphaB*(B+M))*R - betaB*(B+M)*(1-eps)*T - eps*T
+dM = betaT*(T+M)*(1-eps)*B + betaB*(B+M)*(1-eps)*T - theta*(1-eps)*M  - eps*M
+return(list(c(dT, dB, dM)))
+	})
 }
-dev.off()
+
+library(rootSolve)
+
+
+eq.eigen = function(pars, model, eqState = "B")
+{
+fparams = pars
+# Solve the model for the case where T/B and M are at 0
+# and B/T = 1 - eps/alphaB/T (ie a l'équilibre si T/B=0 et M=0)
+if(eqState=="B") init = c(T = 0, B = as.numeric(1-fparams["eps"]/fparams["alphaB"]), M=0)
+if(eqState=="T") init = c(T = as.numeric(1-fparams["eps"]/fparams["alphaT"]), B=0, M=0)
+if(is.infinite(sum(init))) init = c(T=0, B = 0, M=0)
+(eq = stode(y = init, func = model, parms = fparams, positive = TRUE)$y)
+(jacob = jacobian.full(y = eq, func= model, parms=fparams))
+return(eigen(jacob)$values)
+}
+
+invT = t(apply(pars, 1, eq.eigen, model =model, eqState="B"))
+invT.class = ifelse(invT[,3]<0, "stable", "invadeM")
+invT.class = ifelse(invT[,1]>0, "invadeT", invT.class)
+T.growth = apply(pars, 1, function(pars){1-pars["eps"]/pars["alphaT"]})
+invT.class[T.growth<0] = "stable"
+invT.class = as.factor(invT.class)
+
+invB = t(apply(pars, 1, eq.eigen, model =model, eqState="T"))
+invB.class = ifelse(invB[,3]<0, "stable", "invadeM")
+invB.class = ifelse(invB[,2]>0, "invadeB", invB.class)
+B.growth = apply(pars, 1, function(pars){1-pars["eps"]/pars["alphaB"]})
+invB.class[B.growth<0] = "stable"
+invB.class = as.factor(invB.class)
+
 ##--
-
-# Interpret the invasability criterion
 coexist = numeric(length(invT))
-# unisp
-#coexist[invT>0] = 3
-#coexist[invT<0] = 4
-#
-#coexist[invB>0] = 2
-#coexist[invB<0] = 4
+coexist[invT.class=="stable" & invB.class=="stable"] = "AltSS"
+coexist[invT.class=="stable" & invB.class=="invadeB"] = "B wins"
+coexist[invT.class=="stable" & invB.class=="invadeM"] = "B dominates (with M)"
 
-# -- case 1 -- 
-# Reciprocal resistance (alternative stable states)
-coexist[invT<0 & (alphaB-eps)>0 & invB<0 & (alphaT-eps)>0] = 1
+coexist[invT.class=="invadeM" & invB.class=="invadeM"] = "M wins (coexistence)"
+coexist[invT.class=="invadeM" & invB.class=="invadeB"] = "B dominates (with M)"
+coexist[invT.class=="invadeM" & invB.class=="stable"] = "T dominates (with M)"
 
-# -- case 2 -- 
-# Species B wins (instabilité au point B=0,T=kT + (ab-e)>0 et stabilité au point B=kB,T=0
-# 
-coexist[invB>0 & invT<0 & (alphaB-eps)>0] = 2
-## deal with cases where alphaB-eps or alphaT-eps < 0
-#coexist[(alphaT-eps)<0&(alphaB-eps)>0] = 0 
-
-# -- case 3 -- 
-# Species T wins
-coexist[invB<0 & invT>0 & (alphaT-eps)>0] = 3
-## deal with cases where alphaB-eps or alphaT-eps < 0
-#coexist[(alphaB-eps)<0&(alphaT-eps)>0] = 0
-
-# -- case 4 -- 
-# Reciprocal invasibility
-coexist[invB > 0 & invT > 0 & (alphaB-eps)>0 & (alphaT-eps)>0] = 4
-#coexist[invB > 0 & invT > 0] = 4
-
-
-
+coexist[invT.class=="invadeT" & invB.class=="stable"] = "T wins"
+coexist[invT.class=="invadeT" & invB.class=="invadeM"] = "T dominates (with M)"
+coexist[invT.class=="invadeT" & invB.class=="invadeB"] = "??"
 table(coexist)
-# Plot the results
-Z = matrix(coexist+1,nr = length(tpseq), nc = length(ppseq))
-#quartz(width = 6, height = 6)
+coexist = as.factor(coexist)
+levels(coexist)
+##---
+colo = c(stable = "grey", invadeM = "blue", invadeT = "lightgreen", invadeB = "darkgreen")
+par(mfrow = c(1,2), mar = c(4,4,1,1), cex=0.8)
 
-jpeg(paste("../figures/equilibrium_map_",fit,".jpeg", sep=""), height=3000, width=3000, res = 300)
-colo = c("white","pink", "darkgreen", "lightgreen", "orange")
+image(x=tpseq, y=ppseq, z = matrix(as.numeric(invT.class), ncol = length(ppseq), nrow = length(tpseq)),xlab = "Temperature", ylab = "Precipitations", col = colo[levels(invT.class)], main = "invasibility of T (when B every where)", xaxt = "n", yaxt="n")
+scaled.axis()
+legend("topleft",legend = levels(invT.class),fill = colo[levels(invT.class)],bty = "n", cex = 0.8, ncol =1)
+
+image(x=tpseq, y=ppseq, z = matrix(as.numeric(invB.class), ncol = length(ppseq), nrow = length(tpseq)),xlab = "Temperature", ylab = "Precipitations", col = colo[levels(invB.class)], main = "invasibility of B (when T everywhere)", xaxt = "n", yaxt="n")
+scaled.axis()
+legend("topleft",legend = levels(invB.class),fill = colo[levels(invB.class)],bty = "n", cex = 0.8, ncol =1)
+
+
+##-----
+jpeg(paste("../figures/equilibrium_map_", sdm, "_",propData, option, ".jpeg", sep=""), height=3000, width=3000, res = 300)
+#
+colo = c(AltSS = "pink", 'M wins (coexistence)' = "blue", 'B wins' = "darkgreen", 'B dominates (with M)' ="darkviolet", 'T dominates (with M)' = "violet", 'T wins' = "lightgreen", '??' = 1)
+
 layout(matrix(c(1,2),nr=2,nc=1,byrow=TRUE),heights = c(1,6))
 
 par(mar=c(0,0,0,0))
 plot(1, type = "n", axes=FALSE, xlab="", ylab="")
-#title(title,cex=2)
-legend("center",legend = c("other","AltSS","Boreal Wins","Temperate Wins","Coexistence"),fill = colo,bty = "n",horiz = TRUE,cex = 0.8)
+title("",cex=2)
+legend("center",legend = levels(coexist),fill = colo[levels(coexist)],bty = "n", cex = 0.8, ncol =2)
 par(mar=c(5,5,0,2))
-image(tpseq,ppseq,Z,xlab = "Mean annual temperature", ylab = "Annual precipitation (mm)", cex.lab = 1.5, cex.axis = 1.25, col = colo, breaks = c(0:5), xaxt = "n", yaxt="n")#grey(c(0:3)/3))
+
+image(x=tpseq, y=ppseq, z = matrix(as.numeric(coexist), ncol = length(ppseq), nrow = length(tpseq)),xlab = "Annual mean temperature (°C)", ylab = "Annual precipitations (mm)", col = colo[levels(coexist)], main = "", xaxt = "n", yaxt="n")
 scaled.axis()
+#
 dev.off()
-#dev.copy2pdf(file = "../figures/Coexistence_area_herbivores.pdf")
-#dev.copy2pdf(file = "../figures/Coexistence_area_sansHerbivores.pdf")
-
-
-
 

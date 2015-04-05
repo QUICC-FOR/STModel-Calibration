@@ -1,9 +1,8 @@
 .Rproj.user
 .Rhistory
-scripts/*.RData
+*.RData
 data/*
 .Rapp.history
 ggmapTemp*
 SDM_outputs/*
-estimated_params/*.RData
-.trMat
+*.trMat
