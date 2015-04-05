@@ -104,7 +104,7 @@ datSel$EM = rep(0.25, nrow(datSel))
 }
 
 # Evaluate initial parameter values
-transitions = paste(datSel$st0,dat$st1,sep = "")
+transitions = paste(datSel$st0,datSel$st1,sep = "")
 sum_transitions = table(transitions)
 initState = table(datSel$st0)
 
@@ -161,8 +161,9 @@ at0 = as.numeric(logit_alphat_mn), at1 = 0, at2=0, at3=0, at4=0, at5=0, at6=0,
 bb0 = as.numeric(logit_betab_mn), bb1 = 0, bb2 = 0, bb3=0, bb4=0, bb5=0, bb6=0,
 bt0 = as.numeric(logit_betat_mn), bt1 = 0, bt2 = 0, bt3=0, bt4=0, bt5=0, bt6=0,
 tt0 = as.numeric(logit_thetat_mn), tt1=0, tt2=0, tt3=0, tt4=0, tt5=0, tt6=0,
-t0 = as.numeric(logit_theta_mn), t1=0, t2=0, t3=0, t4=0, t5=0, t6=0,
+th0 = as.numeric(logit_theta_mn), th1=0, th2=0, th3=0, th4=0, th5=0, th6=0,
 e0 = as.numeric(logit_eps_mn), e1 = 0,  e2=0, e3=0, e4=0, e5=0, e6=0)
+
 
 # bounds
 # coeff variation

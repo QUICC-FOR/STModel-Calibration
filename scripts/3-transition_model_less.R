@@ -20,7 +20,7 @@ model = function(params, dat)
 "bb0", 
 "bt0", 
 "tt0", 
-"t0", 
+"th0", 
 "e0")
 
 #bb1 = bb2 = bb3 = bb4 = bb5 = bb6 = 0
@@ -38,7 +38,7 @@ model = function(params, dat)
     logit_alphat 	= params["at0"] + params["at1"]*ENV1 + params["at2"]*ENV2 + params["at3"]*ENV1^2 + params["at4"]*ENV2^2 + params["at5"]*ENV1^3 + params["at6"]*ENV2^3
     logit_betab 	= params["bb0"] #+ params["bb1"]*ENV1 + params["bb2"]*ENV2 + params["bb3"]*ENV1^2 + params["bb4"]*ENV2^2 + params["bb5"]*ENV1^3 + params["bb6"]*ENV2^3
     logit_betat 	= params["bt0"] #+ params["bt1"]*ENV1 + params["bt2"]*ENV2 + params["bt3"]*ENV1^2 + params["bt4"]*ENV2^2 + params["bt5"]*ENV1^3 + params["bt6"]*ENV2^3
-    logit_theta	= params["t0"] #+ params["t1"]*ENV1 + params["t2"]*ENV2 + params["t3"]*ENV1^2 + params["t4"]*ENV2^2 + params["t5"]*ENV1^3 + params["t6"]*ENV2^3
+    logit_theta	= params["th0"] #+ params["t1"]*ENV1 + params["t2"]*ENV2 + params["t3"]*ENV1^2 + params["t4"]*ENV2^2 + params["t5"]*ENV1^3 + params["t6"]*ENV2^3
     logit_thetat	= params["tt0"] #+ params["tt1"]*ENV1 + params["tt2"]*ENV2 + params["tt3"]*ENV1^2 + params["tt4"]*ENV2^2 + params["tt5"]*ENV1^3 + params["tt6"]*ENV2^3
     logit_eps 	= params["e0"]  #+ params["e1"]*ENV1 + params["e2"]*ENV2  + params["e3"]*ENV1^2 + params["e4"]*ENV2^2 + params["e5"]*ENV1^3 + params["e6"]*ENV2^3 + e7*EB
 
@@ -47,7 +47,10 @@ model = function(params, dat)
     annualProba <- function(x, itime)
     {
     expx = ifelse(exp(x)==Inf, .Machine$double.xmax, exp(x))
-    1 - (1 - expx/(1+expx))^itime
+#    1 - (1 - expx/(1+expx))^itime
+    proba = expx/(1+expx)
+    annualProba = 1 - exp(log(1-proba)/itime)
+    return(annualProba)
     }
     alphab = annualProba(logit_alphab, itime)
     alphat = annualProba(logit_alphat, itime)

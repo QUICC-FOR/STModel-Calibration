@@ -43,7 +43,7 @@ e7 = 0
     {
     expx = ifelse(exp(x)==Inf, .Machine$double.xmax, exp(x))
     proba = expx/(1+expx)
-    annualProba = 1 - exp(log(1-proba)/itime)
+    annualProba = 1 - exp(log(1-proba)/(itime/5))
     return(annualProba)
     }
     alphab = annualProba(logit_alphab, itime)
@@ -102,7 +102,6 @@ e7 = 0
 	if(is.nan(sumLL)) sumLL = -.Machine$double.xmax
 	if(is.na(sumLL)) print("sumLL: na values!")
 	
-	print(sumLL)
     # return a value to minimize in GenSA
 	return(-sumLL)
 }

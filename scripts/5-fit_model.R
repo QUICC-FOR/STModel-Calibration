@@ -1,19 +1,25 @@
-# R CMD BATCH --no-save --no-restore '--args initForFit_name' 5-fit_model.R r.out
+# R CMD BATCH --no-save --no-restore '--args initForFit_name option' 5-fit_model.R r.out
 # or # R script 5-fit_model.R initForFit_name
 #rm(list=ls())
 args <- commandArgs(trailingOnly = TRUE)
 
 initForFit <- as.character(args)[1]
+option <- as.character(args)[2]
+if(is.na(option)) option = ""
+
+initForFit = "initForFit_rf_0.331"
+option = ""
+
+if(grepl("less", option))
+{
+params = params[c("ab0", "ab1", "ab2", "ab3","ab4","ab5","ab6", "at0", "at1" , "at2", "at3", "at4", "at5", "at6", "bb0", "bt0", "tt0", "t0", "e0")]
+par_lo= par_lo[c("ab0", "ab1", "ab2", "ab3","ab4","ab5","ab6", "at0", "at1" , "at2", "at3", "at4", "at5", "at6", "bb0", "bt0", "tt0", "t0", "e0")]
+par_hi = par_hi[c("ab0", "ab1", "ab2", "ab3","ab4","ab5","ab6", "at0", "at1" , "at2", "at3", "at4", "at5", "at6", "bb0", "bt0", "tt0", "t0", "e0")]
+}
 
 #------------------------------
-#setwd("/Users/isabelle/Documents/RESEARCH/RECHERCHE/2013-2015 UQAR/QUICCFOR/STModel-Calibration/scripts")
-source("3-transition_model.R")
+source(paste("3-transition_model",option,".R", sep =""))
 load(paste(initForFit, ".RData", sep=""))
-load(paste("../estimated_params/GenSA_init_cst.Robj", sep = ""))
-params = initpars
-
-#print(getwd())
-
 #------------------------------
 
 # Maximum likelihood estimation
@@ -23,7 +29,7 @@ library(GenSA)
 cat("starting logLik")
 print(model(params, datSel))
 
-estim.pars = GenSA(par = params, fn = model, lower = par_lo, upper= par_hi, control = list(verbose =TRUE, maxit = 7000, smooth=TRUE, nb.stop.improvement= 1000), dat = datSel)
+estim.pars = GenSA(par = params, fn = model, lower = par_lo, upper= par_hi, control = list(verbose =TRUE, maxit = 7000, smooth=FALSE, temperature = 7000, nb.stop.improvement= 1000), dat = datSel)
 
 
 #save(estim.pars, file="../estimated_params/GenSA_test.rdata")
