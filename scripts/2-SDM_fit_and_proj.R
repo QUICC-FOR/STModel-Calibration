@@ -56,15 +56,16 @@ dat_subset10 = dat[dat$plot_id %in% select,]
 
 selectedVars = c("annual_mean_temp", "tot_annual_pp", "mean_diurnal_range","ph_2cm", "slp")
 
-
+#
 #library("ade4")
 #var.pca = dudi.pca(dat_subset10[,-c(1:9)], scannf=FALSE, nf = 5)
-##round((var.pca$eig / sum(var.pca$eig))*100)
-#
+#round((var.pca$eig / sum(var.pca$eig))*100)
+##
 #inertia.dudi(var.pca, row=F,col=T)
-#
-##pdf("../figures/PCA_selectedVariables.pdf")
-#s.arrow(var.pca$co[selectedVars,], clab = .6, xlim = c(-2,2), sub = "axe 1: 47% ; axe 2: 30 %")
+##
+###pdf("../figures/PCA_selectedVariables.pdf")
+#s.arrow(var.pca$co[selectedVars,], clab = .6, xlim = c(-2,2), sub = "axe 1: 43% ; axe 2: 27 %")
+#s.arrow(var.pca$co[selectedVars,], clab = .6, xlim = c(-2,2),yax=3, sub = "axe 1: 43% ; axe 3: 9 %")
 #dev.off()
 
 #varCor2 = cor(dat_subset10[, selectedVars])
@@ -86,7 +87,7 @@ rm(stateData, dat_wo_U)
 # ----------------------
 vars.means = apply(datSel[,2:8], 2, mean)
 vars.sd = apply(datSel[,2:8], 2, sd)
-save(vars.means, vars.sd, file = "scale_info.RData")
+save(vars.means, vars.sd, file = "scale_info.Robj")
 
 datSel[,2:3] = scale(datSel[,2:8])
 

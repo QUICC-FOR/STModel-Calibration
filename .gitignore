@@ -6,3 +6,4 @@ data/*
 ggmapTemp*
 SDM_outputs/*
 estimated_params/*.RData
+.trMat

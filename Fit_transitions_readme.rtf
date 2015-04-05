@@ -22,7 +22,7 @@
 \cf0 \
 Scripts:\
 \pard\tx220\tx720\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\li720\fi-720\pardirnatural
-\ls3\ilvl0\cf0 {\listtext	\'95	}3-transition_model.R\
+\ls3\ilvl0\cf0 {\listtext	\'95	}3-transition_model.R and variants\
 {\listtext	\'95	}4-init_params.R\
 {\listtext	\'95	}5-fit_model.R (main script)\
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
@@ -31,10 +31,12 @@ Run the fit:\
 \pard\tx220\tx720\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\li720\fi-720\pardirnatural
 \ls4\ilvl0\cf0 {\listtext	\'95	}run Rscript 4-init_params.R subsetProportion\
 \pard\tx940\tx1440\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\li1440\fi-1440\pardirnatural
-\ls4\ilvl1\cf0 {\listtext	\uc0\u8259 	}> would produce 2 files "initForFit_name", one with random forest predictions and one with multinomial predictions\
+\ls4\ilvl1\cf0 {\listtext	\uc0\u8259 	}> would produce 2 files "initForFit_name", one with random forest predictions and one with constant predictions\
 {\listtext	\uc0\u8259 	}> uses subsample.r to select a subset of the data\
 \pard\tx220\tx720\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\li720\fi-720\pardirnatural
-\ls4\ilvl0\cf0 {\listtext	\'95	}run Rscript 5-fit_model.R initForFit_name\
+\ls4\ilvl0\cf0 {\listtext	\'95	}run Rscript 5-fit_model.R initForFit_name option\
+\pard\tx940\tx1440\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\li1440\fi-1440\pardirnatural
+\ls4\ilvl1\cf0 {\listtext	\uc0\u8259 	}choose option among nothing, "_less", "5y", "_less5y"\
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
 \cf0 \
 Look at results:\
@@ -57,16 +59,19 @@ There are 50 parameters (max) to fit in the complete model (each of the seven pa
     logit_alphat = at0 + at1*ENV1 + at2*ENV2 + at3*ENV1^2 + at4*ENV2^2 + at5*ENV1^3 + at6*ENV2^3\
     logit_betab 	= bb0 + bb1*ENV1 + bb2*ENV2 + bb3*ENV1^2 + bb4*ENV2^2 + bb5*ENV1^3 + bb6*ENV2^3\
     logit_betat 	= bt0 + bt1*ENV1 + bt2*ENV2 + bt3*ENV1^2 + bt4*ENV2^2 + bt5*ENV1^3 + bt6*ENV2^3\
-    logit_theta	= t0 + t1*ENV1 + t2*ENV2 + t3*ENV1^2 + t4*ENV2^2 + t5*ENV1^3 + t6*ENV2^3\
+    logit_theta	= th0 + th1*ENV1 + th2*ENV2 + th3*ENV1^2 + th4*ENV2^2 + th5*ENV1^3 + th6*ENV2^3\
     logit_thetat	= tt0 + tt1*ENV1 + tt2*ENV2 + tt3*ENV1^2 + tt4*ENV2^2 + tt5*ENV1^3 + tt6*ENV2^3\
-    logit_eps 	= e0  + e1*ENV1 + e2*ENV2  + e3*ENV1^2 + e4*ENV2^2 + e5*ENV1^3 + e6*ENV2^3 + e7*EB
-\f0 \
-\
-N.B. Variables names are used here. Transitions are converted to annual transitions.\
-\
+    logit_eps 	= e0  + e1*ENV1 + e2*ENV2  + e3*ENV1^2 + e4*ENV2^2 + e5*ENV1^3 + e6*ENV2^3\
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
 
-\b \cf0 \ul Parameter initialization
+\f0 \cf0 \
+N.B. \
+Variables names are used here. The parameter vector in renamed internally in the transition model function. Be careful giving it in the right order.\
+Transitions are converted to annual transitions or quinquenal transitions in option "5y"\
+Only 19 parameters are estimated in the option "_less" (remove bb1 to bb6, bt1 to bt6, th1 to th6, tt1 to tt6 and e1 to e7  \
+\
+
+\b \ul Parameter initialization
 \b0 \ulnone  \
 \
 Parameters were initialized using estimated probabilities for epsilon, theta, thetaT, betaB, betaT, alphaT, and alphaB.\
@@ -106,7 +111,7 @@ To set up bound we tried with a coefficient of variation of 5 of the intercept t
 \
 script: subsample.r\
 \
-The subsample is stratified by space and temperature. In a sub-region, plots will be selected at different temperatures, which correspond to local differences in climate in space or time. This will correct for (or at least minimize) pseudo-replication bias.\
+The subsample is stratified by temperature. Plots are selected at different temperatures, which correspond to local differences in climate in space or time. This will correct for (or at least minimize) pseudo-replication bias.\
 \
 \
 }
