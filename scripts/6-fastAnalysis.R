@@ -127,6 +127,8 @@ pTM = macroPars$betab,
 pBM = macroPars$betat,
 eps = macroPars$eps)
 
+summary(pTransitions)
+
 par(mfrow = c(2,4), mar = c(4,4,1,1), cex=0.8)
 
 for (i in 1:ncol(pTransitions))
