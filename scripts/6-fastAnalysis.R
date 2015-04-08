@@ -34,14 +34,14 @@ pars
 #-----
 # diagnostic convergence
 #----
-jpeg(paste("../figures/diagnostic",sdm, "_",propData, option,".jpeg", sep=""), height=5000, width=5000, res=600)
+#jpeg(paste("../figures/diagnostic",sdm, "_",propData, option,".jpeg", sep=""), height=5000, width=5000, res=600)
 par(mfrow = c(2,2), mar = c(4, 4, 2,1))
 mat$number = 1:nrow(mat)
 plot(nb.steps~number, data = mat, xlab = "anneal time", ylab = "nb.steps", cex=.2, type = "l")
 plot(temperature~number, data = mat, cex=.2, type = "l")
 plot(function.value~number, data = mat, cex=.2, type = "l")
 plot(current.minimum~number, data = mat, cex = .2, type="l")
-dev.off()
+#dev.off()
 #-----
 # check estimated params and bounds
 #----
@@ -95,9 +95,8 @@ summary(macroPars)
 #colo = c(R = rgb(.5,.5,.5,.5), T = rgb(1,0,0,.5), B = rgb(0.2,.8,.2,.5), M = rgb(0,0,1,.5))
 pal = colorRampPalette(c("lightblue", "yellow", "orange"), space = "rgb")
 
-#image(x=tpseq, y=ppseq, z = matrix(macroPars$alphab, ncol = length(ppseq), nrow = length(tpseq)),xlab = "Temperature", ylab = "Precipitations", col = pal(12), main = "alphab")
-#contour(x=tpseq, y=ppseq, z = matrix(macroPars$alphab, ncol = length(ppseq), nrow = length(tpseq)), add=TRUE)
-jpeg(paste("../figures/estim_pars_",sdm, "_",propData, option,".jpeg", sep=""), height=3000, width=5000, res=600)
+
+#jpeg(paste("../figures/estim_pars_",sdm, "_",propData, option,".jpeg", sep=""), height=3000, width=5000, res=600)
 #
 par(mfrow = c(2,4), mar = c(4,4,1,1), cex=0.8)
 
@@ -107,8 +106,8 @@ image(x=tpseq, y=ppseq, z = matrix(macroPars[,i], ncol = length(ppseq), nrow = l
 contour(x=tpseq, y=ppseq, z = matrix(macroPars[,i], ncol = length(ppseq), nrow = length(tpseq)), add=TRUE)
 scaled.axis()
 }
-#
-dev.off()
+
+#dev.off()
 
 ### 
 #------
@@ -138,12 +137,9 @@ contour(x=tpseq, y=ppseq, z = matrix(pTransitions[,i], ncol = length(ppseq), nro
 scaled.axis()
 }
 
-
-### 
 #------
-# invasibility
-#------
-
+# equilibrium analysis
+##--------------------
 pars= data.frame(
 alphaB = macroPars$alphab,
 alphaT = macroPars$alphat,
@@ -169,6 +165,42 @@ return(list(c(dT, dB, dM)))
 library(rootSolve)
 
 
+eq.winner = function(pars, model)
+{
+fparams = pars
+init = c(T = 0.33, B = 0.33, M=0.33)
+(eq = stode(y = init, func = model, parms = fparams, positive = TRUE)$y)
+return(names(which.max(eq)))
+}
+
+eq = t(apply(pars, 1, eq.winner, model =model))
+
+##-----
+#jpeg(paste("../figures/equilibrium_map_", sdm, "_",propData, option, ".jpeg", sep=""), height=3000, width=3000, res = 300)
+#
+colo = c(M = "orange", B = "darkgreen", T = "lightgreen")
+
+layout(matrix(c(1,2),nr=2,nc=1,byrow=TRUE),heights = c(1,6))
+
+par(mar=c(0,0,0,0))
+plot(1, type = "n", axes=FALSE, xlab="", ylab="")
+title("",cex=2)
+legend("center",legend = levels(coexist),fill = colo[levels(coexist)],bty = "n", cex = 0.8, ncol =2)
+par(mar=c(5,5,0,2))
+
+image(x=tpseq, y=ppseq, z = matrix(as.numeric(coexist), ncol = length(ppseq), nrow = length(tpseq)),xlab = "Annual mean temperature (°C)", ylab = "Annual precipitations (mm)", col = colo[levels(coexist)], main = "", xaxt = "n", yaxt="n")
+scaled.axis()
+#
+#dev.off()
+
+
+### 
+#------
+# invasibility
+#------
+
+
+
 eq.eigen = function(pars, model, eqState = "B")
 {
 fparams = pars
@@ -179,6 +211,7 @@ if(eqState=="T") init = c(T = as.numeric(1-fparams["eps"]/fparams["alphaT"]), B=
 if(is.infinite(sum(init))) init = c(T=0, B = 0, M=0)
 (eq = stode(y = init, func = model, parms = fparams, positive = TRUE)$y)
 (jacob = jacobian.full(y = eq, func= model, parms=fparams))
+#print(jacob)
 return(eigen(jacob)$values)
 }
 
@@ -226,7 +259,7 @@ legend("topleft",legend = levels(invB.class),fill = colo[levels(invB.class)],bty
 
 
 ##-----
-jpeg(paste("../figures/equilibrium_map_", sdm, "_",propData, option, ".jpeg", sep=""), height=3000, width=3000, res = 300)
+#jpeg(paste("../figures/equilibrium_map_", sdm, "_",propData, option, ".jpeg", sep=""), height=3000, width=3000, res = 300)
 #
 colo = c(AltSS = "pink", 'M wins (coexistence)' = "blue", 'B wins' = "darkgreen", 'B dominates (with M)' ="darkviolet", 'T dominates (with M)' = "violet", 'T wins' = "lightgreen", '??' = 1)
 
@@ -241,5 +274,6 @@ par(mar=c(5,5,0,2))
 image(x=tpseq, y=ppseq, z = matrix(as.numeric(coexist), ncol = length(ppseq), nrow = length(tpseq)),xlab = "Annual mean temperature (°C)", ylab = "Annual precipitations (mm)", col = colo[levels(coexist)], main = "", xaxt = "n", yaxt="n")
 scaled.axis()
 #
-dev.off()
+#dev.off()
 
+estim.pars$value

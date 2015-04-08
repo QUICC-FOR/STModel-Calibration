@@ -165,7 +165,7 @@ th0 = as.numeric(logit_theta_mn), th1=0, th2=0, th3=0, th4=0, th5=0, th6=0,
 e0 = as.numeric(logit_eps_mn), e1 = 0,  e2=0, e3=0, e4=0, e5=0, e6=0)
 
 
-scaleOfVar = c(rep(15, 49))
+scaleOfVar = c(rep(50, 49))
 
 par_lo = 0 - scaleOfVar
 

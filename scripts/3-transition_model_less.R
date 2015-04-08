@@ -49,8 +49,9 @@ model = function(params, dat)
     expx = ifelse(exp(x)==Inf, .Machine$double.xmax, exp(x))
 #    1 - (1 - expx/(1+expx))^itime
     proba = expx/(1+expx)
-    annualProba = 1 - exp(log(1-proba)/itime)
-    return(annualProba)
+#    annualProba = 1 - exp(log(1-proba)/itime)
+    proba_itime = 1 - (1 - proba)^itime
+    return(proba_itime)
     }
     alphab = annualProba(logit_alphab, itime)
     alphat = annualProba(logit_alphat, itime)
