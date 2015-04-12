@@ -12,7 +12,7 @@ option = "_less5y2"
 
 #--
 veget_pars = read.table(paste("../estimated_params/GenSA_initForFit_", sdm, "_",propData, option, ".txt", sep=""))
-load(paste("initForFit_",sdm, "_", propData, ".RData", sep = ""))
+#load(paste("initForFit_",sdm, "_", propData, ".RData", sep = ""))
 load(paste("../estimated_params/GenSA_initForFit_", sdm, "_", propData, option, ".RData", sep = ""))
 mat = read.table(paste("../estimated_params/traceMat_initForFit_", sdm, "_", propData, option, ".trMat", sep=""), h=T)
 #--
