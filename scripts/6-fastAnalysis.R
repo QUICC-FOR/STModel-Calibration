@@ -2,11 +2,13 @@ rm(list = ls())
 
 sdm = "rf"
 sdm = "cst"
-propData = 0.331
+propData = 0.337
 option = "_less"
 option = "5y"
 option = "_less5y"
 option = ""
+option = "2"
+option = "_less5y2"
 
 #--
 veget_pars = read.table(paste("../estimated_params/GenSA_initForFit_", sdm, "_",propData, option, ".txt", sep=""))
@@ -31,6 +33,7 @@ axis(2, at = seq((700-vars.means["tot_annual_pp"])/vars.sd["tot_annual_pp"], (18
 pars = as.numeric(veget_pars[,2])
 names(pars) = veget_pars[,1]
 pars
+estim.pars$value
 #-----
 # diagnostic convergence
 #----
@@ -54,6 +57,8 @@ points(parsBounds$lo, col=1, pch=15, cex=.5)
 points(parsBounds$estim, col=2, pch=19, cex=.5)
 title("estimated params and given bounds")
 
+pp = parsBounds
+plot(parsBounds$estim, pp$estim)
 #------
 # look at transition probabilities
 #------
@@ -113,9 +118,22 @@ scaled.axis()
 #------
 # probabilites transition (no neighborhood restriction)
 #------
-nB = mean(datSel$EB)
-nT = mean(datSel$ET)
-nM = mean(datSel$EM)
+head(ENV)
+colnames(ENV) = c("annual_mean_temp", "tot_annual_pp")
+ENV$mean_diurnal_range = rep(0, nrow(ENV))
+ENV$pp_warmest_quarter = rep(0, nrow(ENV))
+ENV$pp_wettest_period = rep(0, nrow(ENV))
+ENV$mean_temp_wettest_quarter = rep(0, nrow(ENV))
+ENV$mean_temp_driest_quarter = rep(0, nrow(ENV))
+
+load("../data/RandomForest_complete.rObj")
+library(randomForest)
+set.seed(rs)
+proj2 = predict(SDM2,new=ENV,"prob", OOB=TRUE)
+
+nB = proj2["B"]
+nT = proj2["T"]
+nM = proj2["M"]
 
 pTransitions = data.frame(pRT = macroPars$alphat*(nT+nM)*(1-macroPars$alphab*(nB+nM)),
 pRB = macroPars$alphab*(nB+nM)*(1-macroPars$alphat*(nT+nM)),
@@ -162,36 +180,36 @@ return(list(c(dT, dB, dM)))
 	})
 }
 
-library(rootSolve)
-
-
-eq.winner = function(pars, model)
-{
-fparams = pars
-init = c(T = 0.33, B = 0.33, M=0.33)
-(eq = stode(y = init, func = model, parms = fparams, positive = TRUE)$y)
-return(names(which.max(eq)))
-}
-
-eq = t(apply(pars, 1, eq.winner, model =model))
-
-##-----
-#jpeg(paste("../figures/equilibrium_map_", sdm, "_",propData, option, ".jpeg", sep=""), height=3000, width=3000, res = 300)
+#library(rootSolve)
 #
-colo = c(M = "orange", B = "darkgreen", T = "lightgreen")
-
-layout(matrix(c(1,2),nr=2,nc=1,byrow=TRUE),heights = c(1,6))
-
-par(mar=c(0,0,0,0))
-plot(1, type = "n", axes=FALSE, xlab="", ylab="")
-title("",cex=2)
-legend("center",legend = levels(coexist),fill = colo[levels(coexist)],bty = "n", cex = 0.8, ncol =2)
-par(mar=c(5,5,0,2))
-
-image(x=tpseq, y=ppseq, z = matrix(as.numeric(coexist), ncol = length(ppseq), nrow = length(tpseq)),xlab = "Annual mean temperature (°C)", ylab = "Annual precipitations (mm)", col = colo[levels(coexist)], main = "", xaxt = "n", yaxt="n")
-scaled.axis()
 #
-#dev.off()
+#eq.winner = function(pars, model)
+#{
+#fparams = pars
+#init = c(T = 0.33, B = 0.33, M=0.33)
+#(eq = stode(y = init, func = model, parms = fparams, positive = TRUE)$y)
+#return(names(which.max(eq)))
+#}
+#
+##eq = t(apply(pars, 1, eq.winner, model =model))
+##eq = as.factor(eq)
+###-----
+##jpeg(paste("../figures/equilibrium_map_", sdm, "_",propData, option, ".jpeg", sep=""), height=3000, width=3000, res = 300)
+##
+#colo = c(M = "orange", B = "darkgreen", T = "lightgreen")
+#
+#layout(matrix(c(1,2),nr=2,nc=1,byrow=TRUE),heights = c(1,6))
+#
+#par(mar=c(0,0,0,0))
+#plot(1, type = "n", axes=FALSE, xlab="", ylab="")
+#title("",cex=2)
+#legend("center",legend = levels(eq),fill = colo[levels(eq)],bty = "n", cex = 0.8, ncol =2)
+#par(mar=c(5,5,0,2))
+#
+#image(x=tpseq, y=ppseq, z = matrix(as.numeric(eq), ncol = length(ppseq), nrow = length(tpseq)),xlab = "Annual mean temperature (°C)", ylab = "Annual precipitations (mm)", col = colo[levels(eq)], main = "", xaxt = "n", yaxt="n")
+#scaled.axis()
+##
+##dev.off()
 
 
 ### 
@@ -261,7 +279,7 @@ legend("topleft",legend = levels(invB.class),fill = colo[levels(invB.class)],bty
 ##-----
 #jpeg(paste("../figures/equilibrium_map_", sdm, "_",propData, option, ".jpeg", sep=""), height=3000, width=3000, res = 300)
 #
-colo = c(AltSS = "pink", 'M wins (coexistence)' = "blue", 'B wins' = "darkgreen", 'B dominates (with M)' ="darkviolet", 'T dominates (with M)' = "violet", 'T wins' = "lightgreen", '??' = 1)
+colo = c(AltSS = "pink", 'M wins (coexistence)' = "lightblue", 'B wins' = "darkgreen", 'B dominates (with M)' ="grey30", 'T dominates (with M)' = "grey70", 'T wins' = "lightgreen", '??' = 1)
 
 layout(matrix(c(1,2),nr=2,nc=1,byrow=TRUE),heights = c(1,6))
 

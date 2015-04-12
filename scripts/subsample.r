@@ -118,3 +118,28 @@ cat("sampl taken ", length(select), "\n")
 return(select)
 }
 
+subsample.temp.fix <- function(temp, nsample)
+{
+interval = seq(min(temp), max(temp), l= (nsample+1)/10)
+
+require(parallel)
+select = mclapply(2:length(interval), function(i){
+
+inZone = intersect(which(temp>=interval[i-1]), which(temp<interval[i]))
+
+if(length(inZone)==0) select = NA else select = sample(inZone,10, replace=TRUE)
+return(select)
+})
+bag = 1:length(temp)
+select = unlist(select)
+select2 = sample(bag[-na.omit(unlist(select))], 10*sum(is.na(select)))
+select = c(na.omit(select), select2)
+select[duplicated(select)] = sample(bag[-select], sum(duplicated(select)))
+
+select = unique(select)
+cat("sampl asked ", nsample, "\n")
+cat("sampl taken ", length(select), "\n")
+
+return(select)
+}
+

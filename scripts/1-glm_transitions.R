@@ -14,6 +14,10 @@ pair.dat <- transitionData
 select = unique(pair.dat$plot[which(pair.dat$annual_mean_temp<=10)])
 pair.dat_subset10 = pair.dat[pair.dat$plot %in% select,]
 
+#plot(pair.dat_subset10$annual_mean_temp, pair.dat_subset10$tot_annual_pp, cex =.2, xlab = "temperature", ylab ="precipitations")
+#title("Calibration plots")
+
+
 # Create transition column
 pair.dat_subset10$transition <- paste(pair.dat_subset10$st0,pair.dat_subset10$st1,sep="")
 

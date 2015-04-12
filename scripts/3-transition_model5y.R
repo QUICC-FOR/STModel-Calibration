@@ -44,7 +44,7 @@ e7 = 0
     expx = ifelse(exp(x)==Inf, .Machine$double.xmax, exp(x))
     proba = expx/(1+expx)
 #    annualProba = 1 - exp(log(1-proba)/itime)
-    proba_itime = 1 - (1 - proba)^itime
+    proba_itime = 1 - (1 - proba)^(itime/5)
     return(proba_itime)
     }
     alphab = annualProba(logit_alphab, itime)
