@@ -76,7 +76,7 @@ head(dat)
 source("subsample.r")
 #select2 = subsample.stratif3D(dataProj_subset10[,c("lon","lat", "annual_mean_temp")], subsetProp, adj = 4.2)
 
-nsampl = as.integer(subsetProp*nrow(dataProj_subset10))
+nsampl = as.integer((trunc(subsetProp*100)/100)*nrow(dataProj_subset10))
 select2 = subsample.temp.fix(dataProj_subset10[,c("annual_mean_temp")], nsampl)
 
 jpeg(paste("../figures/subsample_",subsetProp,".jpeg", sep=""), height=5000, width=5000, res=600)
