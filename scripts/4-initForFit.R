@@ -35,7 +35,7 @@ trBT = c(which(dataProj_subset10$state1 == "T" & dataProj_subset10$state2 == "B"
 
 # clean transition time
 dataProj_subset10$itime = dataProj_subset10$year2 - dataProj_subset10$year1
-rmItime= c(which(dataProj_subset10$itime<5), which(dataProj_subset10$itme>15))
+rmItime= c(which(dataProj_subset10$itime<5), which(dataProj_subset10$itime>15))
 
 # clean dataset
 toremove = unique(c(trBT, rmItime))
