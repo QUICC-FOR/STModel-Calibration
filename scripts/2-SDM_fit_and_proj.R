@@ -399,6 +399,8 @@ proj2 = predict(SDM2,new=ENV.df,"prob", OOB=TRUE)
 tomap = as.factor(colnames(proj2)[apply(proj2, 1, which.max)])
 colo = c(M = "lightgreen", B = rgb(44,133,113,maxColorValue=255), T = rgb(245,172,71,maxColorValue=255), R = rgb(218,78,48,maxColorValue=255))
 
+
+#jpeg("../figures/RF_neigborhood_plan_clim.jpeg", height=3000, width=5000, res=600)
 layout(matrix(c(1,2),nr=2,nc=1,byrow=TRUE),heights = c(1,6))
 
 par(mar=c(0,0,0,0))
@@ -410,7 +412,7 @@ par(mar=c(5,5,0,2))
 image(x=tpseq, y=ppseq, z = matrix(as.numeric(tomap), ncol = length(ppseq), nrow = length(tpseq)),xlab = "Annual mean temperature (°C)", ylab = "Annual precipitations (mm)", col = colo[levels(tomap)], main = "", xaxt = "n", yaxt="n")
 scaled.axis()
 
-
+#dev.off()
 
 
 

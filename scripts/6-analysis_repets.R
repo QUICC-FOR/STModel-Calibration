@@ -93,7 +93,7 @@ macroPars_tab= apply(veget_pars, 2, calcMacroPars, ENV=ENV)
 macroPars_tab = array(unlist(macroPars_tab), dim = c(nrow(macroPars_tab[[1]]), ncol(macroPars_tab[[1]]), length(macroPars_tab)))
 
 # w mean
-macroPars = data.frame(apply(macroPars_tab, c(1,2), function(x){sum(x*logll)/(sum(logll))}))
+macroPars = data.frame(apply(macroPars_tab, c(1,2), function(x){sum(x/logll)/(sum(1/logll))}))
 
 dim(macroPars)
 head(macroPars)
@@ -217,6 +217,34 @@ scaled.axis()
 #
 #dev.off()
 
+#------
+## reactivite
+#------
+#
+library(rootSolve)
+
+reactivity = function(pars, model)
+{
+fparams = pars
+init = c(T = 0.1, B = 0.1, M=0.8)
+(eq = stode(y = init, func = model, parms = fparams, positive = TRUE)$y)
+jacob = jacobian.full(y = eq, func= model, parms=fparams)
+M = (jacob + t(jacob))/2
+return(max(eigen(M)$values))
+}
+
+reac = apply(pars, 1, reactivity, model =model)
+reac2 = reac
+reac2[reac2<0] = 0
+
+#jpeg(paste("../figures/ave_", ordre, "_", step, "y_reactivity.jpeg", sep=""), height=3000, width=5000, res=600)
+
+par(mfrow = c(1,1), mar = c(4,4,4,4))
+image(x=tpseq, y=ppseq, z = matrix(reac2, ncol = length(ppseq), nrow = length(tpseq)),xlab = "Temperature", ylab = "Precipitations", col = c(rgb(0,0,0,.5),pal(12)), main = "reactivity (amplification)", xaxt = "n", yaxt="n")
+contour(x=tpseq, y=ppseq, z = matrix(reac2, ncol = length(ppseq), nrow = length(tpseq)), add=TRUE)
+scaled.axis()
+
+#dev.off()
 
 ### 
 #------
@@ -233,47 +261,48 @@ fparams = pars
 if(eqState=="B") init = c(T = 0, B = as.numeric(1-fparams["eps"]/fparams["alphaB"]), M=0)
 if(eqState=="T") init = c(T = as.numeric(1-fparams["eps"]/fparams["alphaT"]), B=0, M=0)
 if(is.infinite(sum(init))) init = c(T=0, B = 0, M=0)
-(eq = stode(y = init, func = model, parms = fparams, positive = TRUE)$y)
-(jacob = jacobian.full(y = eq, func= model, parms=fparams))
+#(eq = stode(y = init, func = model, parms = fparams, positive = TRUE)$y)
+(jacob = jacobian.full(y = init, func= model, parms=fparams))
 #print(jacob)
 return(eigen(jacob)$values)
 }
 
  
  invT = t(apply(pars, 1, eq.eigen, model =model, eqState="B"))
- invT.class = ifelse(invT[,3]<0, "stable", "invadeM")
- invT.class = ifelse(invT[,1]>0, "invadeT", invT.class)
+ invT.class = apply(invT, 1, function(x){ifelse(max(x[-1])>0, "instable", "stable")})
  T.growth = apply(pars, 1, function(pars){1-pars["eps"]/pars["alphaT"]})
  invT.class[T.growth<0] = "stable"
  invT.class = as.factor(invT.class)
+ table(invT.class)
 
  invB = t(apply(pars, 1, eq.eigen, model =model, eqState="T"))
- invB.class = ifelse(as.numeric(invB[,3])<0, "stable", "invadeM")
- invB.class = ifelse(as.numeric(invB[,2])>0, "invadeB", invB.class)
+ invB.class = apply(invB, 1, function(x){ifelse(max(x[-2])>0, "instable", "stable")})
  B.growth = apply(pars, 1, function(pars){1-pars["eps"]/pars["alphaB"]})
  invB.class[B.growth<0] = "stable"
  invB.class = as.factor(invB.class)
-
+ table(invB.class)
+ 
 ##--
 coexist = numeric(length(invT))
 coexist[invT.class=="stable" & invB.class=="stable"] = "AltSS"
-coexist[invT.class=="stable" & invB.class=="invadeB"] = "B/M invade"
-coexist[invT.class=="stable" & invB.class=="invadeM"] = "B/M invade"
-
-coexist[invT.class=="invadeM" & invB.class=="invadeM"] = "reciprocal invasion"
-coexist[invT.class=="invadeM" & invB.class=="invadeB"] = "reciprocal invasion"
-coexist[invT.class=="invadeM" & invB.class=="stable"] = "T/M invade"
-
-coexist[invT.class=="invadeT" & invB.class=="stable"] = "T/M invade"
-coexist[invT.class=="invadeT" & invB.class=="invadeM"] = "reciprocal invasion"
-coexist[invT.class=="invadeT" & invB.class=="invadeB"] = "reciprocal invasion"
+coexist[invT.class=="stable" & invB.class=="instable"] = "B dominates"
+coexist[invT.class=="instable" & invB.class=="instable"] = "Mixture"
+coexist[invT.class=="instable" & invB.class=="stable"] = "T dominates"
 table(coexist)
 coexist = as.factor(coexist)
 levels(coexist)
 ##---
-colo = c(AltSS = "pink", 'reciprocal invasion' = "lightblue", 'B/M invade' = "darkgreen", 'T/M invade' = "lightgreen", '??' = 1)
+colo = c(M = "lightgreen", B = rgb(44,133,113,maxColorValue=255), T = rgb(245,172,71,maxColorValue=255), R = rgb(218,78,48,maxColorValue=255))
+colo["AltSS"] = "pink"
+colo['Mixture'] = colo["M"]
+colo['B dominates'] = colo["B"]
+colo['T dominates'] = colo["T"]
+colo['??'] = 1
+
+#jpeg(paste("../figures/ave_", ordre, "_", step, "y_invasibility.jpeg", sep=""), height=3000, width=5000, res=600)
 
 layout(matrix(c(1,2),nr=2,nc=1,byrow=TRUE),heights = c(1,6))
+
 
 par(mar=c(0,0,0,0))
 plot(1, type = "n", axes=FALSE, xlab="", ylab="")
