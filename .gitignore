@@ -6,3 +6,6 @@ data/*
 ggmapTemp*
 SDM_outputs/*
 *.trMat
+figures/_archives/*
+*.zip
+estimated_params_avr2015/*
