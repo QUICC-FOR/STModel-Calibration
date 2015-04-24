@@ -4,12 +4,12 @@
 args <- commandArgs(trailingOnly = TRUE)
 
 initForFit <- as.character(args)[1]
-ordre <- as.character(args)[2]
-step <- as.character(args)[2]
+ordre <- as.numeric(args)[2]
+step <- as.numeric(args)[3]
 
-initForFit = "initForFit_rf_0.331"
-ordre = 0
-step=1
+#initForFit = "initForFit_rf_0.331"
+#ordre = 0
+#step=1
 
 (name = paste(substr(initForFit, 12, 19),"_", ordre, "_",step, "y",sep=""))
 #------------------------------
@@ -24,8 +24,8 @@ if(ordre==1) params = params[c("ab0", "ab1", "ab2", "at0", "at1" , "at2", "bb0",
 if(ordre==0) params = params[c("ab0", "at0", "bb0", "bt0", "tt0", "th0", "e0")]
 }
 
-par_lo = rep(-200, length(params))
-par_hi = rep(200, length(params))
+par_lo = rep(-50, length(params))
+par_hi = rep(50, length(params))
 
 # Maximum likelihood estimation
 library(GenSA)
@@ -34,7 +34,7 @@ library(GenSA)
 cat("starting logLik")
 print(model(params, datSel))
 
-estim.pars = GenSA(par = params, fn = model, lower = par_lo, upper= par_hi, control = list(verbose =TRUE, smooth=FALSE, max.time = 80000, temperature = 7000, nb.stop.improvement=1000, maxit= 100, trace.fn = paste("../estimated_params/traceMat_", name,".trMat", sep="")), dat = datSel, step=step)
+estim.pars = GenSA(par = params, fn = model, lower = par_lo, upper= par_hi, control = list(verbose =TRUE, smooth=FALSE, temperature = 7000, nb.stop.improvement=1000, maxit= 10000, trace.fn = paste("../estimated_params/traceMat_", name,".trMat", sep="")), dat = datSel, step=step)
 
 
 # max.time = 80000 = 24h
