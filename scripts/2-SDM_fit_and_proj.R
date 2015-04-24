@@ -328,7 +328,7 @@ dataRescaledProj = t(apply(dataRescaledProj, 1, function(x) {(x-vars.means)/vars
 
 # random Forest
 # ----------------------
-#load("../data/RandomForest_complete.rObj")
+#load("../data/RandomForest_complete.RData")
 
 set.seed(rs)
 proj2 = predict(SDM2,new=dataRescaledProj,"prob", OOB=TRUE)
@@ -364,5 +364,53 @@ points(proj2$R ~ dataRescaledProj[,"annual_mean_temp"], xlab = "temperature", yl
 legend("topleft", bty = "n", col = colo, legend = names(colo), pch = 20)
 #Temp.ax()
 dev.off()
+
+# random Forest - figure dans plan clim
+# ----------------------
+load("../data/RandomForest_complete.RData")
+load("scale_info.Robj")
+## Temp -4 à 10
+## PP 700 à 1300
+Trange = c(-4, 10)
+Tticks = max(Trange)-min(Trange)+1
+PPrange = c(700, 1300)
+Tbounds = (Trange - vars.means["annual_mean_temp"])/vars.sd["annual_mean_temp"]
+PPbounds = (PPrange - vars.means["tot_annual_pp"])/vars.sd["tot_annual_pp"]
+PPticks = (max(PPrange)-min(PPrange))/100 +1
+
+tpseq=seq(Tbounds[1],Tbounds[2],l=200)
+ppseq=seq(PPbounds[1],PPbounds[2],l=200)
+
+scaled.axis<- function(){
+temp = tpseq*vars.sd["annual_mean_temp"]+vars.means["annual_mean_temp"]
+precip = ppseq*vars.sd["tot_annual_pp"]+vars.means["tot_annual_pp"]
+axis(1, at = seq(Tbounds[1], Tbounds[2], l=Tticks), labels = seq(Trange[1], Trange[2], l = Tticks))
+axis(2, at = seq(PPbounds[1],PPbounds[2], l=PPticks), labels = seq(PPrange[1], PPrange[2], l = PPticks))
+}
+
+ENV = expand.grid(TP =tpseq , PP = ppseq)
+
+ENV.df = data.frame(annual_mean_temp = ENV$TP, tot_annual_pp = ENV$PP, mean_diurnal_range=rep(0, nrow(ENV)),ph_2cm= rep(0,  nrow(ENV)),slp= rep(0,  nrow(ENV)), lat=rep(0,  nrow(ENV)),lon= rep(0, nrow(ENV)) )
+
+set.seed(rs)
+proj2 = predict(SDM2,new=ENV.df,"prob", OOB=TRUE)
+
+#---
+tomap = as.factor(colnames(proj2)[apply(proj2, 1, which.max)])
+colo = c(M = "lightgreen", B = rgb(44,133,113,maxColorValue=255), T = rgb(245,172,71,maxColorValue=255), R = rgb(218,78,48,maxColorValue=255))
+
+layout(matrix(c(1,2),nr=2,nc=1,byrow=TRUE),heights = c(1,6))
+
+par(mar=c(0,0,0,0))
+plot(1, type = "n", axes=FALSE, xlab="", ylab="")
+title("",cex=2)
+legend("center",legend = levels(tomap),fill = colo[levels(tomap)],bty = "n", cex = 0.8, ncol =2)
+par(mar=c(5,5,0,2))
+
+image(x=tpseq, y=ppseq, z = matrix(as.numeric(tomap), ncol = length(ppseq), nrow = length(tpseq)),xlab = "Annual mean temperature (°C)", ylab = "Annual precipitations (mm)", col = colo[levels(tomap)], main = "", xaxt = "n", yaxt="n")
+scaled.axis()
+
+
+
 
 

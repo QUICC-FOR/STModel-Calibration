@@ -2,17 +2,17 @@ rm(list = ls())
 
 sdm = "rf"
 #sdm = "cst"
-propData = 0.338
+propData = 0.337
 ordre = 3
 step = 5
 
 (name = paste(sdm,"_", propData, "_", ordre, "_",step, "y",sep=""))
 
 #--
-veget_pars = read.table(paste("../estimated_params_avr2015/GenSA_", name, ".txt", sep=""))
+veget_pars = read.table(paste("../estimated_params/GenSA_", name, ".txt", sep=""))
 #load(paste("initForFit_",sdm, "_", propData, ".RData", sep = ""))
-load(paste("../estimated_params_avr2015/GenSA_", name, ".RData", sep = ""))
-mat = read.table(paste("../estimated_params_avr2015/traceMat_", name, ".trMat", sep=""), h=T)
+load(paste("../estimated_params/GenSA_", name, ".RData", sep = ""))
+mat = read.table(paste("../estimated_params/traceMat_", name, ".trMat", sep=""), h=T)
 #--
 load("scale_info.Robj")
 ## Temp -4 à 10
