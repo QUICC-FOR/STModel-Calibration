@@ -92,14 +92,18 @@ return(macroPars)
 macroPars_tab= apply(veget_pars, 2, calcMacroPars, ENV=ENV)
 macroPars_tab = array(unlist(macroPars_tab), dim = c(nrow(macroPars_tab[[1]]), ncol(macroPars_tab[[1]]), length(macroPars_tab)))
 
-macroPars = data.frame(apply(macroPars_tab, c(1,2), mean))
+# w mean
+macroPars = data.frame(apply(macroPars_tab, c(1,2), function(x){sum(x*logll)/(sum(logll))}))
+
+dim(macroPars)
 head(macroPars)
+
 colnames(macroPars) = c("alphab", "alphat", "betab", "betat", "theta", "thetat", "eps")
 #---
 #
 pal = colorRampPalette(c("lightblue", "yellow", "orange"), space = "rgb")
 
-#jpeg(paste("../figures/estim_pars_", sdm, "_03x9.jpeg", sep=""), height=3000, width=5000, res=600)
+#jpeg(paste("../figures/ave_", ordre, "_", step, "y_params.jpeg", sep=""), height=3000, width=5000, res=600)
 
 par(mfrow = c(2,4), mar = c(4,4,1,1), cex=0.8)
 
@@ -143,14 +147,18 @@ eps = macroPars$eps)
 
 summary(pTransitions)
 
+#jpeg(paste("../figures/ave_", ordre, "_", step, "y_transitions.jpeg", sep=""), height=3000, width=5000, res=600)
+
 par(mfrow = c(2,4), mar = c(4,4,1,1), cex=0.8)
 
 for (i in 1:ncol(pTransitions))
 {
-image(x=tpseq, y=ppseq, z = matrix(pTransitions[,i], ncol = length(ppseq), nrow = length(tpseq)),xlab = "Temperature", ylab = "Precipitations", col = pal(12), main = colnames(pTransitions)[i], xaxt = "n", yaxat="n")
-#contour(x=tpseq, y=ppseq, z = matrix(pTransitions[,i], ncol = length(ppseq), nrow = length(tpseq)), add=TRUE)
+image(x=tpseq, y=ppseq, z = matrix(pTransitions[,i], ncol = length(ppseq), nrow = length(tpseq)),xlab = "Temperature", ylab = "Precipitations", col = pal(12), main = colnames(pTransitions)[i], xaxt = "n", yaxt="n")
+contour(x=tpseq, y=ppseq, z = matrix(pTransitions[,i], ncol = length(ppseq), nrow = length(tpseq)), add=TRUE)
 scaled.axis()
 }
+
+#dev.off()
 
 ### 
 #------
@@ -184,7 +192,7 @@ library(rootSolve)
 eq.winner = function(pars, model)
 {
 fparams = pars
-init = c(T = 0.33, B = 0.33, M=0.33)
+init = c(T = 0.1, B = 0.1, M=0.8)
 (eq = stode(y = init, func = model, parms = fparams, positive = TRUE)$y)
 return(names(which.max(eq)))
 }
@@ -192,9 +200,9 @@ return(names(which.max(eq)))
 eq = t(apply(pars, 1, eq.winner, model =model))
 eq = as.factor(eq)
 ##-----
-#jpeg(paste("../figures/equilibrium_map_", sdm, "_",propData, option, ".jpeg", sep=""), height=3000, width=3000, res = 300)
+#jpeg(paste("../figures/ave_", ordre, "_", step, "y_equi.jpeg", sep=""), height=3000, width=5000, res=600)
 #
-colo = c(M = "orange", B = "darkgreen", T = "lightgreen")
+colo = c(M = "lightgreen", B = rgb(44,133,113,maxColorValue=255), T = rgb(245,172,71,maxColorValue=255), R = rgb(218,78,48,maxColorValue=255))
 
 layout(matrix(c(1,2),nr=2,nc=1,byrow=TRUE),heights = c(1,6))
 

@@ -293,7 +293,12 @@ levels(coexist)
 ##-----
 #jpeg(paste("../figures/equilibrium_map_", sdm, "_",propData, option, ".jpeg", sep=""), height=3000, width=3000, res = 300)
 #
-colo = c(AltSS = "pink", 'reciprocal invasion' = "lightblue", 'B/M invade' = "darkgreen", 'T/M invade' = "lightgreen", '??' = 1)
+colo = c(M = "lightgreen", B = rgb(44,133,113,maxColorValue=255), T = rgb(245,172,71,maxColorValue=255), R = rgb(218,78,48,maxColorValue=255))
+colo["AltSS"] = "pink"
+colo['reciprocal invasion'] = colo["M"]
+colo['B/M invade'] = colo["B"]
+colo['T/M invade'] = colo["T"]
+colo['??'] = 1
 
 layout(matrix(c(1,2),nr=2,nc=1,byrow=TRUE),heights = c(1,6))
 

@@ -42,3 +42,12 @@ dat$EM = pred$M
 head(dat)
 
 save(dat, file = "datAll.RData")
+
+#
+jpeg("../figures/calibration_data_in_climSpace.jpeg", height=3000, width=5000, res=600)
+
+plot(dataProj_subset10$annual_mean_temp, dataProj_subset10$tot_annual_pp, ylab = "precipitations", xlab = "temperature" , cex =.2, pch = 19)
+rect(xleft=-4, xright=10, ybottom=700, ytop=1300, col=NA, border = 2, lwd =1.2)
+
+
+dev.off()
