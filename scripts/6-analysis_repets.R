@@ -18,7 +18,11 @@ parnames = estimatedPars[,1]
 veget_pars[,i] = as.vector(estimatedPars[,2])
 
 load(paste("../estimated_params/GenSA_", sdm, "_", propData, i, "_", ordre, "_",step, "y.RData", sep=""))
+## cross validation
+load(paste("../scripts/initForFit_", sdm, "_", propData, i, ".RData", sep=""))
+
 logll[i]= estim.pars$value
+##====================
 }
 rownames(veget_pars) = parnames
 ##-------
