@@ -8,6 +8,9 @@ step = 5
 (name = paste(sdm,"_", propData, "_", ordre, "_",step, "y",sep=""))
 
 
+#-- load dat for datValid
+#pred = read.table("../data/projection_rf_complete.txt", h=T)
+
 #--
 veget_pars = data.frame(matrix(NA, ncol = 9, nrow = 49))
 logll = rep(0, 9)
@@ -19,18 +22,35 @@ veget_pars[,i] = as.vector(estimatedPars[,2])
 
 load(paste("../estimated_params/GenSA_", sdm, "_", propData, i, "_", ordre, "_",step, "y.RData", sep=""))
 ## cross validation
-load(paste("../scripts/initForFit_", sdm, "_", propData, i, ".RData", sep=""))
-
-logll[i]= estim.pars$value
-##====================
+load(paste("initForFit_", sdm, "_", propData, i, ".RData", sep=""))
+source(paste("3-transition_model_",ordre,".R", sep =""))
+#-- dat valid --
+#neig = pred[pred$plot %in% select,][-toremove,]
+#load("scale_info.Robj")
+#ENV1 = (dataProj_subset10$annual_mean_temp - vars.means["annual_mean_temp"])/ vars.sd["annual_mean_temp"]
+#ENV2 = (dataProj_subset10$tot_annual_pp - vars.means["tot_annual_pp"])/ vars.sd["tot_annual_pp"]
+#dat = data.frame(ENV1 = ENV1 , ENV2 = ENV2, st0 = dataProj_subset10[,"state1"], st1 = dataProj_subset10[,"state2"], itime = dataProj_subset10[,"itime"], plot_id= dataProj_subset10[,"plot"], EB = neig[,"B"], ET = neig[,"T"],EM = neig[,"M"])
+#datValid = dat[-select2,]
+#nrow(datValid)+nrow(datSel) == nrow(dataProj_subset10)
+#----------------
+logll[i] = model(estim.pars$par, datValid, step = step)
 }
 rownames(veget_pars) = parnames
+round((1/logll)/sum(1/logll), dig = 2)
 ##-------
 
 apply(veget_pars, 1, mean)
 apply(veget_pars, 1, sd)
 logll
 which.min(logll)
+
+tab = data.frame(value = unlist(veget_pars), name = rep(rownames(veget_pars), ncol(veget_pars)))
+
+boxplot(value~name, data=tab, notch=TRUE, border = "grey", outline = FALSE, ylim = c(-50,50))
+with(tab, points(value~name, pch = 20, cex =.2))
+#boxplot(Sepal.Length ~ Species, iris)
+#with(iris, stripchart(Sepal.Length ~ Species, vertical = TRUE, add =
+#TRUE)) 
 
 #--
 load("scale_info.Robj")
@@ -100,14 +120,14 @@ macroPars_tab = array(unlist(macroPars_tab), dim = c(nrow(macroPars_tab[[1]]), n
 macroPars = data.frame(apply(macroPars_tab, c(1,2), function(x){sum(x/logll)/(sum(1/logll))}))
 
 dim(macroPars)
+colnames(macroPars) = c("alphab", "alphat", "betab", "betat", "theta", "thetat", "eps")
 head(macroPars)
 
-colnames(macroPars) = c("alphab", "alphat", "betab", "betat", "theta", "thetat", "eps")
 #---
 #
 pal = colorRampPalette(c("lightblue", "yellow", "orange"), space = "rgb")
 
-#jpeg(paste("../figures/ave_", ordre, "_", step, "y_params.jpeg", sep=""), height=3000, width=5000, res=600)
+jpeg(paste("../figures/EF_", ordre, "_", step, "y_params.jpeg", sep=""), height=3000, width=5000, res=600)
 
 par(mfrow = c(2,4), mar = c(4,4,1,1), cex=0.8)
 
@@ -117,7 +137,7 @@ image(x=tpseq, y=ppseq, z = matrix(macroPars[,i], ncol = length(ppseq), nrow = l
 contour(x=tpseq, y=ppseq, z = matrix(macroPars[,i], ncol = length(ppseq), nrow = length(tpseq)), add=TRUE)
 scaled.axis()
 }
-#dev.off()
+dev.off()
 
 ### 
 #------
@@ -130,8 +150,12 @@ ENV$pp_warmest_quarter = rep(0, nrow(ENV))
 ENV$pp_wettest_period = rep(0, nrow(ENV))
 ENV$mean_temp_wettest_quarter = rep(0, nrow(ENV))
 ENV$mean_temp_driest_quarter = rep(0, nrow(ENV))
+ENV$ph_2cm = rep(0, nrow(ENV))
+ENV$slp = rep(0, nrow(ENV))
+ENV$lat = rep(0, nrow(ENV))
+ENV$lon = rep(0, nrow(ENV))
 
-load("../data/RandomForest_complete.rObj")
+load("../data/RandomForest_complete.RData")
 library(randomForest)
 set.seed(rs)
 proj2 = predict(SDM2,new=ENV,"prob", OOB=TRUE)
@@ -151,7 +175,7 @@ eps = macroPars$eps)
 
 summary(pTransitions)
 
-#jpeg(paste("../figures/ave_", ordre, "_", step, "y_transitions.jpeg", sep=""), height=3000, width=5000, res=600)
+jpeg(paste("../figures/EF_", ordre, "_", step, "y_transitions.jpeg", sep=""), height=3000, width=5000, res=600)
 
 par(mfrow = c(2,4), mar = c(4,4,1,1), cex=0.8)
 
@@ -162,7 +186,7 @@ contour(x=tpseq, y=ppseq, z = matrix(pTransitions[,i], ncol = length(ppseq), nro
 scaled.axis()
 }
 
-#dev.off()
+dev.off()
 
 ### 
 #------
@@ -204,7 +228,7 @@ return(names(which.max(eq)))
 eq = t(apply(pars, 1, eq.winner, model =model))
 eq = as.factor(eq)
 ##-----
-#jpeg(paste("../figures/ave_", ordre, "_", step, "y_equi.jpeg", sep=""), height=3000, width=5000, res=600)
+jpeg(paste("../figures/EF_", ordre, "_", step, "y_equi.jpeg", sep=""), height=3000, width=5000, res=600)
 #
 colo = c(M = "lightgreen", B = rgb(44,133,113,maxColorValue=255), T = rgb(245,172,71,maxColorValue=255), R = rgb(218,78,48,maxColorValue=255))
 
@@ -219,12 +243,16 @@ par(mar=c(5,5,0,2))
 image(x=tpseq, y=ppseq, z = matrix(as.numeric(eq), ncol = length(ppseq), nrow = length(tpseq)),xlab = "Annual mean temperature (°C)", ylab = "Annual precipitations (mm)", col = colo[levels(eq)], main = "", xaxt = "n", yaxt="n")
 scaled.axis()
 #
-#dev.off()
+dev.off()
 
 #------
 ## reactivite
 #------
 #
+
+greypal = colorRampPalette(c(rgb(1,1,1,.7), rgb(0,0,0,.7)), alpha=0.7)
+
+
 library(rootSolve)
 
 reactivity = function(pars, model)
@@ -241,14 +269,17 @@ reac = apply(pars, 1, reactivity, model =model)
 reac2 = reac
 reac2[reac2<0] = 0
 
-#jpeg(paste("../figures/ave_", ordre, "_", step, "y_reactivity.jpeg", sep=""), height=3000, width=5000, res=600)
+jpeg(paste("../figures/EF_", ordre, "_", step, "y_reactivity.jpeg", sep=""), height=3000, width=5000, res=600)
 
 par(mfrow = c(1,1), mar = c(4,4,4,4))
-image(x=tpseq, y=ppseq, z = matrix(reac2, ncol = length(ppseq), nrow = length(tpseq)),xlab = "Temperature", ylab = "Precipitations", col = c(rgb(0,0,0,.5),pal(12)), main = "reactivity (amplification)", xaxt = "n", yaxt="n")
-contour(x=tpseq, y=ppseq, z = matrix(reac2, ncol = length(ppseq), nrow = length(tpseq)), add=TRUE)
+image(x=tpseq, y=ppseq, z = matrix(as.numeric(eq), ncol = length(ppseq), nrow = length(tpseq)),xlab = "Annual mean temperature (°C)", ylab = "Annual precipitations (mm)", col = colo[levels(eq)], main = "", xaxt = "n", yaxt="n")
+
+
+image(x=tpseq, y=ppseq, z = matrix(reac2, ncol = length(ppseq), nrow = length(tpseq)),xlab = "Temperature", ylab = "Precipitations", col = greypal(20), main = "reactivity (amplification)", xaxt = "n", yaxt="n", add=TRUE)
+#contour(x=tpseq, y=ppseq, z = matrix(reac2, ncol = length(ppseq), nrow = length(tpseq)), add=TRUE, nlevels = 5)
 scaled.axis()
 
-#dev.off()
+dev.off()
 
 ### 
 #------
@@ -303,7 +334,7 @@ colo['B dominates'] = colo["B"]
 colo['T dominates'] = colo["T"]
 colo['??'] = 1
 
-#jpeg(paste("../figures/ave_", ordre, "_", step, "y_invasibility.jpeg", sep=""), height=3000, width=5000, res=600)
+jpeg(paste("../figures/EF_", ordre, "_", step, "y_invasibility.jpeg", sep=""), height=3000, width=5000, res=600)
 
 layout(matrix(c(1,2),nr=2,nc=1,byrow=TRUE),heights = c(1,6))
 
@@ -317,4 +348,4 @@ par(mar=c(5,5,0,2))
 image(x=tpseq, y=ppseq, z = matrix(as.numeric(coexist), ncol = length(ppseq), nrow = length(tpseq)),xlab = "Annual mean temperature (°C)", ylab = "Annual precipitations (mm)", col = colo[levels(coexist)], main = "", xaxt = "n", yaxt="n")
 scaled.axis()
 #
-#dev.off()
+dev.off()

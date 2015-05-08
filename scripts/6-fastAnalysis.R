@@ -2,11 +2,14 @@ rm(list = ls())
 
 sdm = "rf"
 #sdm = "cst"
-propData = 0.338
+propData = 0.337
 ordre = 3
 step = 5
 
 (name = paste(sdm,"_", propData, "_", ordre, "_",step, "y",sep=""))
+
+
+(name = paste(sdm,"_", propData, "_", ordre, "_",step, "y_alphabeta",sep=""))
 
 #--
 veget_pars = read.table(paste("../estimated_params/GenSA_", name, ".txt", sep=""))
@@ -85,6 +88,16 @@ params[names(pars)] = pars
 
 print(params)
 
+
+#------
+source("3-transition_model_alphabeta.R")
+#source("3-transition_model_3.R")
+load(paste("initForFit_",sdm, "_", propData, ".RData", sep=""))
+
+print(model(params, datValid, step=5))
+#------
+
+
     logit_alphab 	= params["ab0"] + params["ab1"]*ENV1 + params["ab2"]*ENV2 + params["ab3"]*ENV1^2 + params["ab4"]*ENV2^2 + params["ab5"]*ENV1^3 + params["ab6"]*ENV2^3
     logit_alphat 	= params["at0"] + params["at1"]*ENV1 + params["at2"]*ENV2 + params["at3"]*ENV1^2 + params["at4"]*ENV2^2 + params["at5"]*ENV1^3 + params["at6"]*ENV2^3
     logit_betab 	= params["bb0"] + params["bb1"]*ENV1 + params["bb2"]*ENV2 + params["bb3"]*ENV1^2 + params["bb4"]*ENV2^2 + params["bb5"]*ENV1^3 + params["bb6"]*ENV2^3
@@ -112,3 +125,5 @@ summary(macroPars)
 #---
 #
 # SUITE... CF analysis repets
+
+
