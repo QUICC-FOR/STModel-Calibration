@@ -123,11 +123,14 @@ dim(macroPars)
 colnames(macroPars) = c("alphab", "alphat", "betab", "betat", "theta", "thetat", "eps")
 head(macroPars)
 
-#---
+#----------------------------------------------------------------------
+#  FROM HERE FOR SINGLE ESTIMATIONS and starting with 6-fast analysis.r
+#----------------------------------------------------------------------
 #
 pal = colorRampPalette(c("lightblue", "yellow", "orange"), space = "rgb")
 
 jpeg(paste("../figures/EF_", ordre, "_", step, "y_params.jpeg", sep=""), height=3000, width=5000, res=600)
+#jpeg(paste("../figures/All_", ordre, "_", step, "y_params.jpeg", sep=""), height=3000, width=5000, res=600)
 
 par(mfrow = c(2,4), mar = c(4,4,1,1), cex=0.8)
 
@@ -176,6 +179,7 @@ eps = macroPars$eps)
 summary(pTransitions)
 
 jpeg(paste("../figures/EF_", ordre, "_", step, "y_transitions.jpeg", sep=""), height=3000, width=5000, res=600)
+#jpeg(paste("../figures/All_", ordre, "_", step, "y_transitions.jpeg", sep=""), height=3000, width=5000, res=600)
 
 par(mfrow = c(2,4), mar = c(4,4,1,1), cex=0.8)
 
@@ -229,6 +233,7 @@ eq = t(apply(pars, 1, eq.winner, model =model))
 eq = as.factor(eq)
 ##-----
 jpeg(paste("../figures/EF_", ordre, "_", step, "y_equi.jpeg", sep=""), height=3000, width=5000, res=600)
+#jpeg(paste("../figures/All_", ordre, "_", step, "y_equi.jpeg", sep=""), height=3000, width=5000, res=600)
 #
 colo = c(M = "lightgreen", B = rgb(44,133,113,maxColorValue=255), T = rgb(245,172,71,maxColorValue=255), R = rgb(218,78,48,maxColorValue=255))
 
@@ -270,6 +275,7 @@ reac2 = reac
 reac2[reac2<0] = 0
 
 jpeg(paste("../figures/EF_", ordre, "_", step, "y_reactivity.jpeg", sep=""), height=3000, width=5000, res=600)
+#jpeg(paste("../figures/All_", ordre, "_", step, "y_reactivity.jpeg", sep=""), height=3000, width=5000, res=600)
 
 par(mfrow = c(1,1), mar = c(4,4,4,4))
 image(x=tpseq, y=ppseq, z = matrix(as.numeric(eq), ncol = length(ppseq), nrow = length(tpseq)),xlab = "Annual mean temperature (°C)", ylab = "Annual precipitations (mm)", col = colo[levels(eq)], main = "", xaxt = "n", yaxt="n")
@@ -334,7 +340,8 @@ colo['B dominates'] = colo["B"]
 colo['T dominates'] = colo["T"]
 colo['??'] = 1
 
-jpeg(paste("../figures/EF_", ordre, "_", step, "y_invasibility.jpeg", sep=""), height=3000, width=5000, res=600)
+#jpeg(paste("../figures/EF_", ordre, "_", step, "y_invasibility.jpeg", sep=""), height=3000, width=5000, res=600)
+jpeg(paste("../figures/All_", ordre, "_", step, "y_invasibility.jpeg", sep=""), height=3000, width=5000, res=600)
 
 layout(matrix(c(1,2),nr=2,nc=1,byrow=TRUE),heights = c(1,6))
 

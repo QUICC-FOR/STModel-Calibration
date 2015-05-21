@@ -2,9 +2,12 @@ rm(list = ls())
 
 sdm = "rf"
 #sdm = "cst"
-propData = 0.337
+propData = "all"
 ordre = 3
 step = 5
+
+(name = paste(sdm,"_", propData, "_", ordre, "_",step,sep=""))
+
 
 (name = paste(sdm,"_", propData, "_", ordre, "_",step, "y",sep=""))
 
@@ -12,10 +15,13 @@ step = 5
 (name = paste(sdm,"_", propData, "_", ordre, "_",step, "y_alphabeta",sep=""))
 
 #--
-veget_pars = read.table(paste("../estimated_params/GenSA_", name, ".txt", sep=""))
+folder = "../estimated_params"
+folder = "../estimated_params/allData"
+
+veget_pars = read.table(paste(folder, "/GenSA_", name, ".txt", sep=""))
 #load(paste("initForFit_",sdm, "_", propData, ".RData", sep = ""))
-load(paste("../estimated_params/GenSA_", name, ".RData", sep = ""))
-mat = read.table(paste("../estimated_params/traceMat_", name, ".trMat", sep=""), h=T)
+load(paste(folder, "/GenSA_", name, ".RData", sep = ""))
+mat = read.table(paste(folder, "/traceMat_", name, ".trMat", sep=""), h=T)
 #--
 load("scale_info.Robj")
 ## Temp -4 à 10
@@ -45,14 +51,14 @@ estim.pars$value
 #-----
 # diagnostic convergence
 #----
-#jpeg(paste("../figures/diagnostic",sdm, "_",propData, option,".jpeg", sep=""), height=5000, width=5000, res=600)
+jpeg(paste("../figures/",name, "_diagnostic.jpeg", sep=""), height=5000, width=5000, res=600)
 par(mfrow = c(2,2), mar = c(4, 4, 2,1))
 mat$number = 1:nrow(mat)
 plot(nb.steps~number, data = mat, xlab = "anneal time", ylab = "nb.steps", cex=.2, type = "l")
 plot(temperature~number, data = mat, cex=.2, type = "l")
 plot(function.value~number, data = mat, cex=.2, type = "l")
 plot(current.minimum~number, data = mat, cex = .2, type="l")
-#dev.off()
+dev.off()
 #-----
 # check estimated params and bounds
 #----
@@ -90,10 +96,10 @@ print(params)
 
 
 #------
-source("3-transition_model_alphabeta.R")
-#source("3-transition_model_3.R")
+#source("3-transition_model_alphabeta.R")
+source("3-transition_model_3.R")
 load(paste("initForFit_",sdm, "_", propData, ".RData", sep=""))
-
+#load("datAll.RData")
 print(model(params, datValid, step=5))
 #------
 
