@@ -2,8 +2,8 @@ rm(list = ls())
 
 sdm = "rf"
 propData = 0.33
-ordre = 3
-step = 5
+ordre = 1
+step = 1
 
 (name = paste(sdm,"_", propData, "_", ordre, "_",step, "y",sep=""))
 
@@ -12,15 +12,19 @@ step = 5
 #pred = read.table("../data/projection_rf_complete.txt", h=T)
 
 #--
-veget_pars = data.frame(matrix(NA, ncol = 9, nrow = 49))
+if(ordre==3) npars = 49
+if(ordre==2) npars = 35
+if(ordre==1) npars = 21
+veget_pars = data.frame(matrix(NA, ncol = 9, nrow = npars))
 logll = rep(0, 9)
+nbcall = rep(0,9)
 for( i in 1:9)
 {
-estimatedPars = read.table(paste("../estimated_params/GenSA_", sdm, "_", propData, i, "_", ordre, "_",step, "y.txt", sep=""))
+estimatedPars = read.table(paste("../estimated_params/avr2015_shortRun/GenSA_", sdm, "_", propData, i, "_", ordre, "_",step, "y.txt", sep=""))
 parnames = estimatedPars[,1]
 veget_pars[,i] = as.vector(estimatedPars[,2])
 
-load(paste("../estimated_params/GenSA_", sdm, "_", propData, i, "_", ordre, "_",step, "y.RData", sep=""))
+load(paste("../estimated_params/avr2015_shortRun/GenSA_", sdm, "_", propData, i, "_", ordre, "_",step, "y.RData", sep=""))
 ## cross validation
 load(paste("initForFit_", sdm, "_", propData, i, ".RData", sep=""))
 source(paste("3-transition_model_",ordre,".R", sep =""))
@@ -33,7 +37,8 @@ source(paste("3-transition_model_",ordre,".R", sep =""))
 #datValid = dat[-select2,]
 #nrow(datValid)+nrow(datSel) == nrow(dataProj_subset10)
 #----------------
-logll[i] = model(estim.pars$par, datValid, step = step)
+logll[i] = model(estim.pars$par, dat, step = step)
+nbcall[i] = estim.pars$counts
 }
 rownames(veget_pars) = parnames
 round((1/logll)/sum(1/logll), dig = 2)
@@ -42,6 +47,7 @@ round((1/logll)/sum(1/logll), dig = 2)
 apply(veget_pars, 1, mean)
 apply(veget_pars, 1, sd)
 logll
+nbcall
 which.min(logll)
 
 tab = data.frame(value = unlist(veget_pars), name = rep(rownames(veget_pars), ncol(veget_pars)))
@@ -83,7 +89,7 @@ ENV = expand.grid(TP =tpseq , PP = ppseq)
 ENV1 = ENV$TP
 ENV2 = ENV$PP
 
-
+## ordre 3
 calcMacroPars = function(params, ENV)
 {
 names(params) = rownames(veget_pars)
@@ -113,8 +119,42 @@ eps = logit_reverse(logit_eps))
 return(macroPars)
 }
 
+## ordre 2
+calcMacroPars = function(params, ENV)
+{
+names(params) = rownames(veget_pars)
+    logit_alphab 	= params["ab0"] + params["ab1"]*ENV1 + params["ab2"]*ENV2 + params["ab3"]*ENV1^2 + params["ab4"]*ENV2^2 
+    logit_alphat 	= params["at0"] + params["at1"]*ENV1 + params["at2"]*ENV2 + params["at3"]*ENV1^2 + params["at4"]*ENV2^2 
+    logit_betab 	= params["bb0"] + params["bb1"]*ENV1 + params["bb2"]*ENV2 + params["bb3"]*ENV1^2 + params["bb4"]*ENV2^2
+    logit_betat 	= params["bt0"] + params["bt1"]*ENV1 + params["bt2"]*ENV2 + params["bt3"]*ENV1^2 + params["bt4"]*ENV2^2 
+    logit_theta	= params["th0"] + params["th1"]*ENV1 + params["th2"]*ENV2 + params["th3"]*ENV1^2 + params["th4"]*ENV2^2 
+    logit_thetat	= params["tt0"] + params["tt1"]*ENV1 + params["tt2"]*ENV2 + params["tt3"]*ENV1^2 + params["tt4"]*ENV2^2 
+    logit_eps 	= params["e0"]  + params["e1"]*ENV1 + params["e2"]*ENV2  + params["e3"]*ENV1^2 + params["e4"]*ENV2^2 
+    #e7*EB
+ 
+     logit_reverse <- function(x)
+    {
+    expx = ifelse(exp(x)==Inf, .Machine$double.xmax, exp(x))
+    expx/(1+expx)
+    }
+ 
+macroPars = data.frame(alphab = logit_reverse(logit_alphab), 
+alphat = logit_reverse(logit_alphat),
+betab = logit_reverse(logit_betab),
+betat = logit_reverse(logit_betat),
+theta = logit_reverse(logit_theta),
+thetat = logit_reverse(logit_thetat),
+eps = logit_reverse(logit_eps))
+
+return(macroPars)
+}
+
 macroPars_tab= apply(veget_pars, 2, calcMacroPars, ENV=ENV)
 macroPars_tab = array(unlist(macroPars_tab), dim = c(nrow(macroPars_tab[[1]]), ncol(macroPars_tab[[1]]), length(macroPars_tab)))
+
+#best
+macroPars = macroPars_tab[,,which.min(logll)]
+macroPars = macroPars_tab[,,2]
 
 # w mean
 macroPars = data.frame(apply(macroPars_tab, c(1,2), function(x){sum(x/logll)/(sum(1/logll))}))
@@ -122,6 +162,7 @@ macroPars = data.frame(apply(macroPars_tab, c(1,2), function(x){sum(x/logll)/(su
 dim(macroPars)
 colnames(macroPars) = c("alphab", "alphat", "betab", "betat", "theta", "thetat", "eps")
 head(macroPars)
+macroPars = as.data.frame(macroPars)
 
 #----------------------------------------------------------------------
 #  FROM HERE FOR SINGLE ESTIMATIONS and starting with 6-fast analysis.r
@@ -266,9 +307,14 @@ fparams = pars
 init = c(T = 0.1, B = 0.1, M=0.8)
 (eq = stode(y = init, func = model, parms = fparams, positive = TRUE)$y)
 jacob = jacobian.full(y = eq, func= model, parms=fparams)
-M = (jacob + t(jacob))/2
+#M = (jacob + t(jacob))/2
+M = (jacob)
+
 return(max(eigen(M)$values))
 }
+
+plot(reac[which(ENV$PP<0.5 & ENV$PP>-0.5)]~ENV$TP[which(ENV$PP<0.5 & ENV$PP>-0.5)])
+
 
 reac = apply(pars, 1, reactivity, model =model)
 reac2 = reac

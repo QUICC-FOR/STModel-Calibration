@@ -4,19 +4,17 @@ sdm = "rf"
 #sdm = "cst"
 propData = "all"
 ordre = 3
-step = 5
+step = 1
+#------- single
+#folder = "../estimated_params"
+#
+(name = paste(sdm,"_", propData, "_", ordre, "_",step, "y",sep=""))
+
+#------- all data
+folder = "../estimated_params/allData"
 
 (name = paste(sdm,"_", propData, "_", ordre, "_",step,sep=""))
 
-
-(name = paste(sdm,"_", propData, "_", ordre, "_",step, "y",sep=""))
-
-
-(name = paste(sdm,"_", propData, "_", ordre, "_",step, "y_alphabeta",sep=""))
-
-#--
-folder = "../estimated_params"
-folder = "../estimated_params/allData"
 
 veget_pars = read.table(paste(folder, "/GenSA_", name, ".txt", sep=""))
 #load(paste("initForFit_",sdm, "_", propData, ".RData", sep = ""))
