@@ -1,9 +1,9 @@
 rm(list = ls())
 
 sdm = "rf"
-propData = 0.33
-ordre = 1
-step = 1
+propData = "All"
+ordre = 2
+step = 5
 
 (name = paste(sdm,"_", propData, "_", ordre, "_",step, "y",sep=""))
 
@@ -20,11 +20,11 @@ logll = rep(0, 9)
 nbcall = rep(0,9)
 for( i in 1:9)
 {
-estimatedPars = read.table(paste("../estimated_params/avr2015_shortRun/GenSA_", sdm, "_", propData, i, "_", ordre, "_",step, "y.txt", sep=""))
+estimatedPars = read.table(paste("../estimated_params/GenSA_", sdm, "_", propData, i, "_", ordre, "_",step, "y.txt", sep=""))
 parnames = estimatedPars[,1]
 veget_pars[,i] = as.vector(estimatedPars[,2])
 
-load(paste("../estimated_params/avr2015_shortRun/GenSA_", sdm, "_", propData, i, "_", ordre, "_",step, "y.RData", sep=""))
+load(paste("../estimated_params/GenSA_", sdm, "_", propData, i, "_", ordre, "_",step, "y.RData", sep=""))
 ## cross validation
 load(paste("initForFit_", sdm, "_", propData, i, ".RData", sep=""))
 source(paste("3-transition_model_",ordre,".R", sep =""))
@@ -85,7 +85,6 @@ axis(2, at = seq(PPbounds[1],PPbounds[2], l=PPticks), labels = seq(PPrange[1], P
 # look at transition probabilities
 #------
 
-ENV = expand.grid(TP =tpseq , PP = ppseq)
 ENV1 = ENV$TP
 ENV2 = ENV$PP
 
@@ -170,8 +169,8 @@ macroPars = as.data.frame(macroPars)
 #
 pal = colorRampPalette(c("lightblue", "yellow", "orange"), space = "rgb")
 
-jpeg(paste("../figures/EF_", ordre, "_", step, "y_params.jpeg", sep=""), height=3000, width=5000, res=600)
-#jpeg(paste("../figures/All_", ordre, "_", step, "y_params.jpeg", sep=""), height=3000, width=5000, res=600)
+#jpeg(paste("../figures/EF_", ordre, "_", step, "y_params.jpeg", sep=""), height=3000, width=5000, res=600)
+jpeg(paste("../figures/All_", ordre, "_", step, "y_params.jpeg", sep=""), height=3000, width=5000, res=600)
 
 par(mfrow = c(2,4), mar = c(4,4,1,1), cex=0.8)
 
@@ -219,8 +218,8 @@ eps = macroPars$eps)
 
 summary(pTransitions)
 
-jpeg(paste("../figures/EF_", ordre, "_", step, "y_transitions.jpeg", sep=""), height=3000, width=5000, res=600)
-#jpeg(paste("../figures/All_", ordre, "_", step, "y_transitions.jpeg", sep=""), height=3000, width=5000, res=600)
+#jpeg(paste("../figures/EF_", ordre, "_", step, "y_transitions.jpeg", sep=""), height=3000, width=5000, res=600)
+jpeg(paste("../figures/All_", ordre, "_", step, "y_transitions.jpeg", sep=""), height=3000, width=5000, res=600)
 
 par(mfrow = c(2,4), mar = c(4,4,1,1), cex=0.8)
 
@@ -273,8 +272,8 @@ return(names(which.max(eq)))
 eq = t(apply(pars, 1, eq.winner, model =model))
 eq = as.factor(eq)
 ##-----
-jpeg(paste("../figures/EF_", ordre, "_", step, "y_equi.jpeg", sep=""), height=3000, width=5000, res=600)
-#jpeg(paste("../figures/All_", ordre, "_", step, "y_equi.jpeg", sep=""), height=3000, width=5000, res=600)
+#jpeg(paste("../figures/EF_", ordre, "_", step, "y_equi.jpeg", sep=""), height=3000, width=5000, res=600)
+jpeg(paste("../figures/All_", ordre, "_", step, "y_equi.jpeg", sep=""), height=3000, width=5000, res=600)
 #
 colo = c(M = "lightgreen", B = rgb(44,133,113,maxColorValue=255), T = rgb(245,172,71,maxColorValue=255), R = rgb(218,78,48,maxColorValue=255))
 
@@ -313,21 +312,25 @@ M = (jacob)
 return(max(eigen(M)$values))
 }
 
-plot(reac[which(ENV$PP<0.5 & ENV$PP>-0.5)]~ENV$TP[which(ENV$PP<0.5 & ENV$PP>-0.5)])
 
 
 reac = apply(pars, 1, reactivity, model =model)
 reac2 = reac
 reac2[reac2<0] = 0
 
-jpeg(paste("../figures/EF_", ordre, "_", step, "y_reactivity.jpeg", sep=""), height=3000, width=5000, res=600)
-#jpeg(paste("../figures/All_", ordre, "_", step, "y_reactivity.jpeg", sep=""), height=3000, width=5000, res=600)
+jpeg(paste("../figures/All_", ordre, "_", step, "y_maxeig2.jpeg", sep=""), height=3000, width=3000, res=600)
+plot(reac[which(ENV$PP<0.5 & ENV$PP>-0.5)]~ENV$TP[which(ENV$PP<0.5 & ENV$PP>-0.5)], cex = 0.2, xlab = "Temperature", xaxt = "n", ylab = "Maximum eigen value")
+axis(1, at = seq(Tbounds[1], Tbounds[2], l=Tticks), labels = seq(Trange[1], Trange[2], l = Tticks))
+dev.off()
+
+#jpeg(paste("../figures/EF_", ordre, "_", step, "y_reactivity.jpeg", sep=""), height=3000, width=5000, res=600)
+jpeg(paste("../figures/All_", ordre, "_", step, "y_maxeig.jpeg", sep=""), height=3000, width=5000, res=600)
 
 par(mfrow = c(1,1), mar = c(4,4,4,4))
 image(x=tpseq, y=ppseq, z = matrix(as.numeric(eq), ncol = length(ppseq), nrow = length(tpseq)),xlab = "Annual mean temperature (°C)", ylab = "Annual precipitations (mm)", col = colo[levels(eq)], main = "", xaxt = "n", yaxt="n")
 
 
-image(x=tpseq, y=ppseq, z = matrix(reac2, ncol = length(ppseq), nrow = length(tpseq)),xlab = "Temperature", ylab = "Precipitations", col = greypal(20), main = "reactivity (amplification)", xaxt = "n", yaxt="n", add=TRUE)
+image(x=tpseq, y=ppseq, z = matrix(reac, ncol = length(ppseq), nrow = length(tpseq)),xlab = "Temperature", ylab = "Precipitations", col = greypal(20), main = "max eigenvalue (stability)", xaxt = "n", yaxt="n", add=TRUE)
 #contour(x=tpseq, y=ppseq, z = matrix(reac2, ncol = length(ppseq), nrow = length(tpseq)), add=TRUE, nlevels = 5)
 scaled.axis()
 

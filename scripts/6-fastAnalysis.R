@@ -3,17 +3,17 @@ rm(list = ls())
 sdm = "rf"
 #sdm = "cst"
 propData = "all"
-ordre = 3
-step = 1
+ordre = 2
+step = 5
 #------- single
 #folder = "../estimated_params"
 #
 (name = paste(sdm,"_", propData, "_", ordre, "_",step, "y",sep=""))
 
 #------- all data
-folder = "../estimated_params/allData"
+folder = "../estimated_params/rep_order2_allDat"
 
-(name = paste(sdm,"_", propData, "_", ordre, "_",step,sep=""))
+(name = paste(sdm,"_", propData, "_", ordre, "_",step,"y_rep1", sep=""))
 
 
 veget_pars = read.table(paste(folder, "/GenSA_", name, ".txt", sep=""))
@@ -79,6 +79,43 @@ ENV = expand.grid(TP =tpseq , PP = ppseq)
 ENV1 = ENV$TP
 ENV2 = ENV$PP
 
+
+## ordre 2
+params=rep(0, 35)
+names(params) = c("ab0", "ab1", "ab2", "ab3","ab4",
+"at0", "at1" , "at2", "at3", "at4","bb0", "bb1", "bb2", "bb3", "bb4", "bt0", "bt1", "bt2", "bt3", "bt4", "tt0", "tt1", "tt2", "tt3", "tt4", 
+"th0", "th1", "th2", "th3", "th4", 
+"e0", "e1", "e2", "e3", "e4")
+
+params[names(pars)] = pars
+
+print(params)
+
+    logit_alphab 	= params["ab0"] + params["ab1"]*ENV1 + params["ab2"]*ENV2 + params["ab3"]*ENV1^2 + params["ab4"]*ENV2^2 
+    logit_alphat 	= params["at0"] + params["at1"]*ENV1 + params["at2"]*ENV2 + params["at3"]*ENV1^2 + params["at4"]*ENV2^2 
+    logit_betab 	= params["bb0"] + params["bb1"]*ENV1 + params["bb2"]*ENV2 + params["bb3"]*ENV1^2 + params["bb4"]*ENV2^2
+    logit_betat 	= params["bt0"] + params["bt1"]*ENV1 + params["bt2"]*ENV2 + params["bt3"]*ENV1^2 + params["bt4"]*ENV2^2 
+    logit_theta	= params["th0"] + params["th1"]*ENV1 + params["th2"]*ENV2 + params["th3"]*ENV1^2 + params["th4"]*ENV2^2 
+    logit_thetat	= params["tt0"] + params["tt1"]*ENV1 + params["tt2"]*ENV2 + params["tt3"]*ENV1^2 + params["tt4"]*ENV2^2 
+    logit_eps 	= params["e0"]  + params["e1"]*ENV1 + params["e2"]*ENV2  + params["e3"]*ENV1^2 + params["e4"]*ENV2^2 
+    #e7*EB
+ 
+     logit_reverse <- function(x)
+    {
+    expx = ifelse(exp(x)==Inf, .Machine$double.xmax, exp(x))
+    expx/(1+expx)
+    }
+ 
+macroPars = data.frame(alphab = logit_reverse(logit_alphab), 
+alphat = logit_reverse(logit_alphat),
+betab = logit_reverse(logit_betab),
+betat = logit_reverse(logit_betat),
+theta = logit_reverse(logit_theta),
+thetat = logit_reverse(logit_thetat),
+eps = logit_reverse(logit_eps))
+
+
+## ordre 3
 params=rep(0, 49)
 names(params) = c("ab0", "ab1", "ab2", "ab3","ab4","ab5","ab6",
 "at0", "at1" , "at2", "at3", "at4", "at5", "at6", 
