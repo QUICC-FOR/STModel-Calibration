@@ -9,4 +9,5 @@ SDM_outputs/*
 figures/_archives/*
 *.zip
 estimated_params/avr2015_shortRun/*
+estimated_params/.DS_Store/*
 mcmc/*
