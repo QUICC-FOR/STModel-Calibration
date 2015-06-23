@@ -238,7 +238,7 @@ dim(dataRescaledProj)
 #load("../data/RandomForest_complete.RData")
 #set.seed(rs)
 #proj2 = predict(SDM2,new=dataRescaledProj,"prob", OOB=TRUE)
-#proj2 = data.frame(cbind(proj2, dataRescaledProj[,-1]))
+#proj2 = data.frame(cbind(proj2, dataRescaledProj))
 #head(proj2)
 #dim(proj2)
 #summary(proj2)
@@ -250,13 +250,13 @@ dim(dataRescaledProj)
 load("../data/RandomForest_complete_woLatLon.RData")
 set.seed(rs)
 proj1 = predict(SDM2,new=dataRescaledProj,"prob", OOB=TRUE)
-proj1 = data.frame(cbind(proj1, dataRescaledProj[,-1]))
+proj1 = data.frame(cbind(proj1, dataRescaledProj))
 head(proj1)
 dim(proj1)
 summary(proj1)
 ## attention there are NAs !
 # sauvegarde
-write.table(proj2, file = "../data/projection_rf_complete_woLatLon.txt", quote=F, row.names=FALSE)
+write.table(proj1, file = "../data/projection_rf_complete_woLatLon.txt", quote=F, row.names=FALSE)
 
 
 
