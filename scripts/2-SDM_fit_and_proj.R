@@ -235,16 +235,16 @@ dim(dataRescaledProj)
 
 # random Forest
 # ----------------------
-load("../data/RandomForest_complete.RData")
-set.seed(rs)
-proj2 = predict(SDM2,new=dataRescaledProj,"prob", OOB=TRUE)
-proj2 = data.frame(cbind(proj2, dataRescaledProj[,-1]))
-head(proj2)
-dim(proj2)
-summary(proj2)
-## attention there are NAs !
-# sauvegarde
-write.table(proj2, file = "../data/projection_rf_complete.txt", quote=F, row.names=FALSE)
+#load("../data/RandomForest_complete.RData")
+#set.seed(rs)
+#proj2 = predict(SDM2,new=dataRescaledProj,"prob", OOB=TRUE)
+#proj2 = data.frame(cbind(proj2, dataRescaledProj[,-1]))
+#head(proj2)
+#dim(proj2)
+#summary(proj2)
+### attention there are NAs !
+## sauvegarde
+#write.table(proj2, file = "../data/projection_rf_complete.txt", quote=F, row.names=FALSE)
 
 
 load("../data/RandomForest_complete_woLatLon.RData")
@@ -270,19 +270,19 @@ axis(1, at = seq((round(min(temp))-vars.means["annual_mean_temp"])/vars.sd["annu
 
 colo = c(R = rgb(.5,.5,.5,.5), T = rgb(1,0,0,.5), B = rgb(0.2,.8,.2,.5), M = rgb(0,0,1,.5))
 
-jpeg("../figures/sdm/randomForest predictions_gradient.jpeg", height=5000, width=5000, res=600)
-
-par(mfrow = c(1,1))
-plot(proj2$B ~ dataRescaledProj[,"annual_mean_temp"], xlab = "temperature", ylab = "B neighborhood", cex = .2, pch = 20, xaxt="n", xlim = Temp.lim, ylim = c(0,.6), col = colo["B"])
-Temp.ax()
-points(proj2$T ~ dataRescaledProj[,"annual_mean_temp"], xlab = "temperature", ylab = "T neighborhood", cex = .2, pch = 20, xaxt="n", xlim = Temp.lim, ylim = c(0,.6), col=colo["T"])
-Temp.ax()
-points(proj2$M ~ dataRescaledProj[,"annual_mean_temp"], xlab = "temperature", ylab = "M neighborhood", cex = .2, pch = 20, xaxt="n", xlim = Temp.lim, ylim = c(0,.6), col = colo["M"])
-Temp.ax()
-points(proj2$R ~ dataRescaledProj[,"annual_mean_temp"], xlab = "temperature", ylab = "R neighborhood", cex = .2, xaxt="n", xlim = Temp.lim, ylim = c(0,.6), col = colo["R"])
-legend("topleft", bty = "n", col = colo, legend = names(colo), pch = 20)
+#jpeg("../figures/sdm/randomForest predictions_gradient.jpeg", height=5000, width=5000, res=600)
+#
+#par(mfrow = c(1,1))
+#plot(proj2$B ~ dataRescaledProj[,"annual_mean_temp"], xlab = "temperature", ylab = "B neighborhood", cex = .2, pch = 20, xaxt="n", xlim = Temp.lim, ylim = c(0,.6), col = colo["B"])
 #Temp.ax()
-dev.off()
+#points(proj2$T ~ dataRescaledProj[,"annual_mean_temp"], xlab = "temperature", ylab = "T neighborhood", cex = .2, pch = 20, xaxt="n", xlim = Temp.lim, ylim = c(0,.6), col=colo["T"])
+#Temp.ax()
+#points(proj2$M ~ dataRescaledProj[,"annual_mean_temp"], xlab = "temperature", ylab = "M neighborhood", cex = .2, pch = 20, xaxt="n", xlim = Temp.lim, ylim = c(0,.6), col = colo["M"])
+#Temp.ax()
+#points(proj2$R ~ dataRescaledProj[,"annual_mean_temp"], xlab = "temperature", ylab = "R neighborhood", cex = .2, xaxt="n", xlim = Temp.lim, ylim = c(0,.6), col = colo["R"])
+#legend("topleft", bty = "n", col = colo, legend = names(colo), pch = 20)
+##Temp.ax()
+#dev.off()
 
 jpeg("../figures/sdm/randomForest predictions_gradient_woLatLon.jpeg", height=5000, width=5000, res=600)
 
