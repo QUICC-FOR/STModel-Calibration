@@ -5,27 +5,31 @@ args <- commandArgs(trailingOnly = TRUE)
 ordre = 2
 step= as.numeric(args)[1]
 rep =as.numeric(args)[2]
-name = paste("rf_all_", ordre, "_", step,"y_rep",rep, sep="")
+name = paste("rf_all_woLatLon_", ordre, "_", step,"y_rep",rep, sep="")
 #------------------------------
 source(paste("3-transition_model_",ordre,".R", sep =""))
 #------------------------------
 
 ##-----------
 ##
-load("datAll.RData")
-datSel = dat
-veget_pars = read.table(paste("../estimated_params/GenSA_rf_0.339_",ordre,"_",step, "y.txt", sep=""))
+load("datAll_woLatLon.RData")
+veget_pars = read.table(paste("../estimated_params/rep_order2_allDat/GenSA_rf_all_2_",step, "y_rep2.txt", sep=""))
 params = veget_pars[,2]
 names(params) = veget_pars[,1]
 ##-----------
 
-if(ordre<3)
-{
-if(ordre==2) params = params[c("ab0", "ab1", "ab2", "ab3","ab4", "at0", "at1" , "at2", "at3", "at4", "bb0", "bb1", "bb2", "bb3", "bb4", "bt0", "bt1", "bt2", "bt3", "bt4", "tt0", "tt1", "tt2", "tt3", "tt4", "th0", "th1", "th2", "th3", "th4", "e0", "e1", "e2", "e3", "e4")]
-if(ordre==1) params = params[c("ab0", "ab1", "ab2", "at0", "at1" , "at2", "bb0", "bb1", "bb2",  "bt0", "bt1", "bt2", "tt0", "tt1", "tt2", "th0", "th1", "th2", "e0", "e1", "e2")]
-if(ordre==0) params = params[c("ab0", "at0", "bb0", "bt0", "tt0", "th0", "e0")]
-}
+#if(ordre<3)
+#{
+#if(ordre==2) params = params[c("ab0", "ab1", "ab2", "ab3","ab4", "at0", "at1" , "at2", "at3", "at4", "bb0", "bb1", "bb2", "bb3", "bb4", "bt0", "bt1", "bt2", "bt3", "bt4", "tt0", "tt1", "tt2", "tt3", "tt4", "th0", "th1", "th2", "th3", "th4", "e0", "e1", "e2", "e3", "e4")]
+#if(ordre==1) params = params[c("ab0", "ab1", "ab2", "at0", "at1" , "at2", "bb0", "bb1", "bb2",  "bt0", "bt1", "bt2", "tt0", "tt1", "tt2", "th0", "th1", "th2", "e0", "e1", "e2")]
+#if(ordre==0) params = params[c("ab0", "at0", "bb0", "bt0", "tt0", "th0", "e0")]
+#}
 
+dat$EB = dat$B
+dat$EM = dat$M
+dat$ET = dat$T
+
+datSel = dat[, c("st0", "st1", "itime", "EB", "ET", "EM", "ENV1", "ENV2")]
 
 #test
 cat("starting logLik")
