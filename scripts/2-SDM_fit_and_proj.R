@@ -152,10 +152,10 @@ rs = runif(1,0,1)
 # ----------------------
 
 set.seed(rs)
-#SDM2_cal = randomForest(state ~ annual_mean_temp + tot_annual_pp + mean_diurnal_range + ph_2cm + slp +lon +lat , data = datCal, ntree = 500)
-SDM2_cal = randomForest(state ~ annual_mean_temp + tot_annual_pp + mean_diurnal_range + ph_2cm + slp , data = datCal, ntree = 500)
-#save(SDM2_cal,rs,file= "../data/RandomForest_cal.RData")
-save(SDM2_cal,rs,file= "../data/RandomForest_cal_woLatLon.RData")
+SDM2_cal = randomForest(state ~ annual_mean_temp + tot_annual_pp + mean_diurnal_range + ph_2cm + slp +lon +lat , data = datCal, ntree = 500)
+# SDM2_cal = randomForest(state ~ annual_mean_temp + tot_annual_pp + mean_diurnal_range + ph_2cm + slp , data = datCal, ntree = 500)
+save(SDM2_cal,rs,file= "../data/RandomForest_cal.RData")
+# save(SDM2_cal,rs,file= "../data/RandomForest_cal_woLatLon.RData")
 (imp = importance(SDM2_cal))
 
 # evaluation random Forest
@@ -170,11 +170,11 @@ pred2 = predict(SDM2_cal,new=datEval,"response", OOB=TRUE)
 # ----------------------
 
 set.seed(rs)
-#SDM2 = randomForest(state ~ . , data = datSel, ntree = 500)
-SDM2 = randomForest(state ~ annual_mean_temp + tot_annual_pp + mean_diurnal_range + ph_2cm + slp , data = datSel, ntree = 500)
+SDM2 = randomForest(state ~ . , data = datSel, ntree = 500)
+# SDM2 = randomForest(state ~ annual_mean_temp + tot_annual_pp + mean_diurnal_range + ph_2cm + slp , data = datSel, ntree = 500)
 
-#save(SDM2,rs,file= "../data/RandomForest_complete.RData")
-save(SDM2,rs,file= "../data/RandomForest_complete_woLatLon.RData")
+save(SDM2,rs,file= "../data/RandomForest_complete.RData")
+# save(SDM2,rs,file= "../data/RandomForest_complete_woLatLon.RData")
 
 (imp = importance(SDM2))
 #
@@ -196,7 +196,7 @@ set.seed(rs)
 pred1_rc =  predict(SDM2,new=dat_rc,"prob")
 #
 ###--- 
-pdf("../figures/sdm/randomForest predictions_woLatLon.pdf", width = 8, height = 8)
+pdf("../figures/sdm/randomForest predictions_LatLon.pdf", width = 8, height = 8)
 colo = c(R = rgb(.5,.5,.5,.5), T = rgb(1,0,0,.5), B = rgb(0.2,.8,.2,.5), M = rgb(0,0,1,.5))
 plot(pred1_rc[,"R"]~seq(-5, 3, length.out = 200), type = "l", col = colo["R"], lwd = 1.5, ylim = c(0,1), xlab = "temperature gradient", ylab = "proportion of states", main = "random forest")
 lines(pred1_rc[,"T"]~seq(-5, 3, length.out = 200), col = colo["T"], lwd = 1.5)
@@ -205,7 +205,7 @@ lines(pred1_rc[,"M"]~seq(-5, 3, length.out = 200), col = colo["M"], lwd = 1.5)
 legend("topright", bty = "n", col = colo, legend = names(colo), lwd = 2)
 dev.off()
 ###--
-jpeg("../figures/sdm/randomForest predictions_map_woLatLon.jpeg", height=5000, width=5000, res=600)
+jpeg("../figures/sdm/randomForest predictions_map_LatLon.jpeg", height=5000, width=5000, res=600)
 plot(dat_subset10[,"lon"], dat_subset10[,"lat"], cex = .1, pch = 20, xlab = "longitude", ylab = "latitude", asp = 1, col = colo[as.character(pred2)])
 title("random forest")
 dev.off()
@@ -247,7 +247,7 @@ dim(dataRescaledProj)
 #write.table(proj2, file = "../data/projection_rf_complete.txt", quote=F, row.names=FALSE)
 
 
-load("../data/RandomForest_complete_woLatLon.RData")
+load("../data/RandomForest_complete.RData")
 set.seed(rs)
 proj1 = predict(SDM2,new=dataRescaledProj,"prob", OOB=TRUE)
 proj1 = data.frame(cbind(proj1, dataRescaledProj))
@@ -256,7 +256,7 @@ dim(proj1)
 summary(proj1)
 ## attention there are NAs !
 # sauvegarde
-write.table(proj1, file = "../data/projection_rf_complete_woLatLon.txt", quote=F, row.names=FALSE)
+write.table(proj1, file = "../data/projection_rf_complete_LatLon.txt", quote=F, row.names=FALSE)
 
 
 
@@ -284,7 +284,7 @@ colo = c(R = rgb(.5,.5,.5,.5), T = rgb(1,0,0,.5), B = rgb(0.2,.8,.2,.5), M = rgb
 ##Temp.ax()
 #dev.off()
 
-jpeg("../figures/sdm/randomForest predictions_gradient_woLatLon.jpeg", height=5000, width=5000, res=600)
+jpeg("../figures/sdm/randomForest predictions_gradient_LatLon.jpeg", height=5000, width=5000, res=600)
 
 par(mfrow = c(1,1))
 plot(proj1$B ~ dataRescaledProj[,"annual_mean_temp"], xlab = "temperature", ylab = "B neighborhood", cex = .2, pch = 20, xaxt="n", xlim = Temp.lim, ylim = c(0,.6), col = colo["B"])
@@ -300,8 +300,8 @@ dev.off()
 
 # random Forest - figure dans plan clim
 # ----------------------
-#load("../data/RandomForest_complete.RData")
-load("../data/RandomForest_complete_woLatLon.RData")
+load("../data/RandomForest_complete.RData")
+# load("../data/RandomForest_complete_woLatLon.RData")
 load("scale_info.Robj")
 ## Temp -4 à 10
 ## PP 700 à 1300
@@ -334,7 +334,7 @@ tomap = as.factor(colnames(proj2)[apply(proj2, 1, which.max)])
 colo = c(M = "lightgreen", B = rgb(44,133,113,maxColorValue=255), T = rgb(245,172,71,maxColorValue=255), R = rgb(218,78,48,maxColorValue=255))
 
 
-jpeg("../figures/sdm/RF_neigborhood_plan_clim_woLatLon.jpeg", height=3000, width=5000, res=600)
+jpeg("../figures/sdm/RF_neigborhood_plan_clim_LatLon.jpeg", height=3000, width=5000, res=600)
 layout(matrix(c(1,2),nr=2,nc=1,byrow=TRUE),heights = c(1,6))
 
 par(mar=c(0,0,0,0))
