@@ -3,7 +3,7 @@ rm(list=ls())
 ## load dat
 ##-----------
 
-dat = read.table("../data/projection_rf_complete_woLatLon.txt", h=T)
+dat = read.table("../data/projection_rf_complete_LatLon.txt", h=T)
 load("scale_info.Robj")
 head(dat)
 # subset 10 degree
@@ -35,7 +35,7 @@ dim(dat)
 dat = na.omit(dat)
 dim(dat)
 
-save(dat, file = "datAll_woLatLon.RData")
+save(dat, file = "datAll_LatLon.RData")
 
 #-----
 Temp.lim = c((-4-vars.means["annual_mean_temp"])/vars.sd["annual_mean_temp"], (10-vars.means["annual_mean_temp"])/vars.sd["annual_mean_temp"])
