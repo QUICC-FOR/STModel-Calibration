@@ -2,7 +2,7 @@
 
 args <- commandArgs(trailingOnly = TRUE)
 
-ordre = 3
+ordre = 2
 step= as.numeric(args)[1]
 name = paste("rf_all_", ordre, "_", step, sep="") 
 #------------------------------

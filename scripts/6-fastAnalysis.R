@@ -130,39 +130,39 @@ params[names(pars)] = pars
 print(params)
 
 
-#------
-#source("3-transition_model_alphabeta.R")
-source("3-transition_model_3.R")
-load(paste("initForFit_",sdm, "_", propData, ".RData", sep=""))
-#load("datAll.RData")
-print(model(params, datValid, step=5))
-#------
+# #------
+# #source("3-transition_model_alphabeta.R")
+# source("3-transition_model_2.R")
+# # load(paste("initForFit_",sdm, "_", propData, ".RData", sep=""))
+# #load("datAll.RData")
+# print(model(params, datValid, step=5))
+# #------
 
 
-    logit_alphab 	= params["ab0"] + params["ab1"]*ENV1 + params["ab2"]*ENV2 + params["ab3"]*ENV1^2 + params["ab4"]*ENV2^2 + params["ab5"]*ENV1^3 + params["ab6"]*ENV2^3
-    logit_alphat 	= params["at0"] + params["at1"]*ENV1 + params["at2"]*ENV2 + params["at3"]*ENV1^2 + params["at4"]*ENV2^2 + params["at5"]*ENV1^3 + params["at6"]*ENV2^3
-    logit_betab 	= params["bb0"] + params["bb1"]*ENV1 + params["bb2"]*ENV2 + params["bb3"]*ENV1^2 + params["bb4"]*ENV2^2 + params["bb5"]*ENV1^3 + params["bb6"]*ENV2^3
-    logit_betat 	= params["bt0"] + params["bt1"]*ENV1 + params["bt2"]*ENV2 + params["bt3"]*ENV1^2 + params["bt4"]*ENV2^2 + params["bt5"]*ENV1^3 + params["bt6"]*ENV2^3
-    logit_theta	= params["th0"] + params["th1"]*ENV1 + params["th2"]*ENV2 + params["th3"]*ENV1^2 + params["th4"]*ENV2^2 + params["th5"]*ENV1^3 + params["th6"]*ENV2^3
-    logit_thetat	= params["tt0"] + params["tt1"]*ENV1 + params["tt2"]*ENV2 + params["tt3"]*ENV1^2 + params["tt4"]*ENV2^2 + params["tt5"]*ENV1^3 + params["tt6"]*ENV2^3
-    logit_eps 	= params["e0"]  + params["e1"]*ENV1 + params["e2"]*ENV2  + params["e3"]*ENV1^2 + params["e4"]*ENV2^2 + params["e5"]*ENV1^3 + params["e6"]*ENV2^3 
-    #e7*EB
+#     logit_alphab 	= params["ab0"] + params["ab1"]*ENV1 + params["ab2"]*ENV2 + params["ab3"]*ENV1^2 + params["ab4"]*ENV2^2 + params["ab5"]*ENV1^3 + params["ab6"]*ENV2^3
+#     logit_alphat 	= params["at0"] + params["at1"]*ENV1 + params["at2"]*ENV2 + params["at3"]*ENV1^2 + params["at4"]*ENV2^2 + params["at5"]*ENV1^3 + params["at6"]*ENV2^3
+#     logit_betab 	= params["bb0"] + params["bb1"]*ENV1 + params["bb2"]*ENV2 + params["bb3"]*ENV1^2 + params["bb4"]*ENV2^2 + params["bb5"]*ENV1^3 + params["bb6"]*ENV2^3
+#     logit_betat 	= params["bt0"] + params["bt1"]*ENV1 + params["bt2"]*ENV2 + params["bt3"]*ENV1^2 + params["bt4"]*ENV2^2 + params["bt5"]*ENV1^3 + params["bt6"]*ENV2^3
+#     logit_theta	= params["th0"] + params["th1"]*ENV1 + params["th2"]*ENV2 + params["th3"]*ENV1^2 + params["th4"]*ENV2^2 + params["th5"]*ENV1^3 + params["th6"]*ENV2^3
+#     logit_thetat	= params["tt0"] + params["tt1"]*ENV1 + params["tt2"]*ENV2 + params["tt3"]*ENV1^2 + params["tt4"]*ENV2^2 + params["tt5"]*ENV1^3 + params["tt6"]*ENV2^3
+#     logit_eps 	= params["e0"]  + params["e1"]*ENV1 + params["e2"]*ENV2  + params["e3"]*ENV1^2 + params["e4"]*ENV2^2 + params["e5"]*ENV1^3 + params["e6"]*ENV2^3 
+#     #e7*EB
  
-     logit_reverse <- function(x)
-    {
-    expx = ifelse(exp(x)==Inf, .Machine$double.xmax, exp(x))
-    expx/(1+expx)
-    }
+#      logit_reverse <- function(x)
+#     {
+#     expx = ifelse(exp(x)==Inf, .Machine$double.xmax, exp(x))
+#     expx/(1+expx)
+#     }
     
-macroPars = data.frame(alphab = logit_reverse(logit_alphab), 
-alphat = logit_reverse(logit_alphat),
-betab = logit_reverse(logit_betab),
-betat = logit_reverse(logit_betat),
-theta = logit_reverse(logit_theta),
-thetat = logit_reverse(logit_thetat),
-eps = logit_reverse(logit_eps))
+# macroPars = data.frame(alphab = logit_reverse(logit_alphab), 
+# alphat = logit_reverse(logit_alphat),
+# betab = logit_reverse(logit_betab),
+# betat = logit_reverse(logit_betat),
+# theta = logit_reverse(logit_theta),
+# thetat = logit_reverse(logit_thetat),
+# eps = logit_reverse(logit_eps))
 
-summary(macroPars)
+# summary(macroPars)
 #---
 #
 # SUITE... CF analysis repets

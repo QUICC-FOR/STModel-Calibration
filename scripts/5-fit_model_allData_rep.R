@@ -5,15 +5,15 @@ args <- commandArgs(trailingOnly = TRUE)
 ordre = 2
 step= as.numeric(args)[1]
 rep =as.numeric(args)[2]
-name = paste("rf_all_woLatLon_", ordre, "_", step,"y_rep",rep, sep="")
+name = paste("rf_all_LatLon_", ordre, "_", step,"y_rep",rep, sep="")
 #------------------------------
 source(paste("3-transition_model_",ordre,".R", sep =""))
 #------------------------------
 
 ##-----------
 ##
-load("datAll_woLatLon.RData")
-veget_pars = read.table(paste("../estimated_params/rep_order2_allDat/GenSA_rf_all_2_",step, "y_rep2.txt", sep=""))
+load("datAll_LatLon.RData")
+veget_pars = read.table(paste("../estimated_params/rep_order2_allDat/GenSA_rf_all_2_",step, "y_rep12.txt", sep=""))
 params = veget_pars[,2]
 names(params) = veget_pars[,1]
 ##-----------

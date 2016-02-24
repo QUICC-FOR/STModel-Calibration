@@ -6,7 +6,7 @@ step= 5
 #
 opt = ""
 #
-opt = "_alphabeta"
+# opt = "_alphabeta"
 
 #--# 
 folder = paste("rep_order",ordre, "_allDat", opt, sep="")
@@ -17,7 +17,7 @@ veget_pars = data.frame(matrix(NA, ncol = 9, nrow = npars))
 logll = rep(0, 12)
 nbcall = rep(0,12)
 
-for( i in 1:12)
+for( i in 1)
 {
 print(i)
 estimatedPars = read.table(paste("../estimated_params/", folder, "/GenSA_rf_all", opt,"_", ordre, "_",step, "y_rep",i, ".txt", sep=""))
@@ -137,12 +137,12 @@ eps = logit_reverse(logit_eps))
 return(macroPars)
 }
 
-macroPars_tab= apply(veget_pars, 2, calcMacroPars, ENV=ENV)
-macroPars_tab = array(unlist(macroPars_tab), dim = c(nrow(macroPars_tab[[1]]), ncol(macroPars_tab[[1]]), length(macroPars_tab)))
-#
+# macroPars_tab= apply(veget_pars, 2, calcMacroPars, ENV=ENV)
+# macroPars_tab = array(unlist(macroPars_tab), dim = c(nrow(macroPars_tab[[1]]), ncol(macroPars_tab[[1]]), length(macroPars_tab)))
+# #
 ##best
 #macroPars = macroPars_tab[,,which.min(logll)]
-macroPars = macroPars_tab[,,2]
+macroPars = macroPars_tab[,,1]
 #
 ## w mean
 #macroPars = data.frame(apply(macroPars_tab, c(1,2), function(x){sum(x/logll)/(sum(1/logll))}))
@@ -158,8 +158,8 @@ macroPars = as.data.frame(macroPars)
 ##
 pal = colorRampPalette(c("lightblue", "yellow", "orange"), space = "rgb")
 
-jpeg(paste("../figures/EF_", ordre, "_", step, "y_params.jpeg", sep=""), height=3000, width=5000, res=600)
-#jpeg(paste("../figures/All_", ordre, "_", step, "y_params.jpeg", sep=""), height=3000, width=5000, res=600)
+# jpeg(paste("../figures/EF_", ordre, "_", step, "y_params.jpeg", sep=""), height=3000, width=5000, res=600)
+jpeg(paste("../figures/All_", ordre, "_", step, "y_params.jpeg", sep=""), height=3000, width=5000, res=600)
 
 par(mfrow = c(2,4), mar = c(4,4,1,1), cex=0.8)
 
