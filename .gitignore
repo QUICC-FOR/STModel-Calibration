@@ -1,6 +1,7 @@
 .Rproj.user
 .Rhistory
 *.RData
+*.DS_Store
 data/*
 .Rapp.history
 ggmapTemp*
@@ -11,3 +12,6 @@ figures/_archives/*
 estimated_params/avr2015_shortRun/*
 estimated_params/.DS_Store/*
 mcmc/*
+mcmc_4state/dat/*
+mcmc_4state/res/*
+mcmc_4state/bin/*
