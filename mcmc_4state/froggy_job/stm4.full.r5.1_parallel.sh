@@ -1,7 +1,7 @@
 #!/bin/sh
 #OAR -n stm4.full.r5.1.p
 #OAR -l /nodes=1/core=16,walltime=2:00:00
-#OAR --project test
+#OAR --project teembio
 #OAR --stdout stm4.full.r5.1.p.out
 #OAR --stderr stm4.full.r5.1.p.err
 
