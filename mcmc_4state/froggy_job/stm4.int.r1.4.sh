@@ -1,9 +1,9 @@
 #!/bin/bash
-#OAR -n stm4.full.r5.1.p
-#OAR -l /nodes=1/core=16,walltime=2:00:00
+#OAR -n stm4.int.r1.4.p
+#OAR -l /nodes=1/core=16,walltime=48:00:00
 #OAR --project teembio
-#OAR --stdout stm4.full.r5.1.p.out
-#OAR --stderr stm4.full.r5.1.p.err
+#OAR --stdout stm4.int.r1.4.out.log
+#OAR --stderr stm4.int.r1.4.err.log
 
 . /applis/ciment/v2/env.bash
 module load ciment/devel_gcc-4.6.2
@@ -19,10 +19,10 @@ DAT=$DIR/dat
 
 ##=================
 # VARIABLES to set for each run
-name=full_r5_1
-calib=$DAT/mcmc_calib_r5.txt
+name=int_r1_4
+calib=$DAT/mcmc_calib_r1.txt
 cores=16
-iter=10000
+iter=100000
 ##=================
 
 # variables set from run vars

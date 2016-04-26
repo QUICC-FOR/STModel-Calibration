@@ -25,7 +25,7 @@ module load gsl64/1.16
 
 ##=================
 # VARIABLES to set for each run
-name=full_r1_1
+name=full_r1_3
 calib=$DAT/mcmc_calib_r1.txt
 cores=24
 iter=100000

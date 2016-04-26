@@ -28,7 +28,7 @@ module load gsl64/1.16
 name=ab_r1_1
 calib=$DAT/mcmc_calib_r1.txt
 cores=24
-iter=10000
+iter=100000
 ##=================
 
 # variables set from run vars
