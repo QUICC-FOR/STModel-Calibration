@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #OAR -n stm4.full.r5.1.p
 #OAR -l /nodes=1/core=16,walltime=2:00:00
 #OAR --project teembio
