@@ -17,8 +17,17 @@ library(parallel)
 arg = commandArgs(trailingOnly = TRUE)
 
 r = 'r1'
-if('-r5' %in% arg) r = 'r5'
 ch.names = c('full', 'int', 'ab')
+if('-r5' %in% arg) {
+	r = 'r5'
+} else if('-g1' %in% arg) {
+	r = 'g1' 
+	ch.names = c('full', 'ab')
+} else if(-'g5' %in% arg) {
+	r = 'g5'
+	ch.names = c('full', 'ab')
+}
+
 
 
 shan = function(init, orig,length.out=3)

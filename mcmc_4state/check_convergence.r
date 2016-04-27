@@ -1,5 +1,12 @@
 #!/usr/bin/env Rscript
 
+# on mammouth:
+# module load R
+
+# on froggy
+# source /applis/ciment/v2/env.bash
+# module load R/3.2.3_gcc-4.6.2
+
 # check_convergence.r
 # March 1 2016
 # Matt Talluto
