@@ -1,9 +1,9 @@
 #!/bin/bash
-#OAR -n stm4.ab.g5.1
+#OAR -n stm4.int.r5.3
 #OAR -l /nodes=1/core=16,walltime=48:00:00
 #OAR --project teembio
-#OAR --stdout stm4.ab.g5.1.out.log
-#OAR --stderr stm4.ab.g5.1.err.log
+#OAR --stdout stm4.int.r5.3.out.log
+#OAR --stderr stm4.int.r5.3.err.log
 
 . /applis/ciment/v2/env.bash
 module load ciment/devel_gcc-4.6.2
@@ -19,15 +19,15 @@ DAT=$DIR/dat
 
 ##=================
 # VARIABLES to set for each run
-name=ab_g5_1
+name=int_r5_3
 calib=$DAT/mcmc_calib_r5.txt
 cores=16
-iter=10000
+iter=100000
 ##=================
 
 # variables set from run vars
 inits=$DAT/mcmcInits_"$name".txt
-outdir=$DIR/res/"$name"_par
+outdir=$DIR/res/"$name"
 
 # this is where stdout etc will get written
 cd $BASE
@@ -36,6 +36,6 @@ cd $BASE
 mkdir -p $outdir
 
 # run the models
-$BIN -g -d -p $inits -t $calib -o $outdir -i $iter -c $cores -l 5 -v 2 &
+$BIN -d -p $inits -t $calib -o $outdir -i $iter -c $cores -l 5 -v 2 &
 
 wait

@@ -1,6 +1,6 @@
 #!/bin/sh
 #PBS -q qwork
-#PBS -l walltime=85:00:00
+#PBS -l walltime=60:00:00
 #PBS -l nodes=1:ppn=1
 #PBS -r n
 
@@ -25,10 +25,10 @@ module load gsl64/1.16
 
 ##=================
 # VARIABLES to set for each run
-name=full_g5_1
+name=full_r5_3
 calib=$DAT/mcmc_calib_r5.txt
 cores=24
-iter=10000
+iter=100000
 ##=================
 
 # variables set from run vars
@@ -43,6 +43,6 @@ cd $BASE
 mkdir -p $outdir $LOG
 
 # run the models
-$BIN -g -d -p $inits -t $calib -o $outdir -i $iter -c $cores -l 5 -v 2 2>$logfile &
+$BIN -d -p $inits -t $calib -o $outdir -i $iter -c $cores -l 5 -v 2 2>$logfile &
 
 wait
