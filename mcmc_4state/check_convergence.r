@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 
 # on mammouth:
-# module load R
+# module load bioinformatics/R
 
 # on froggy
 # source /applis/ciment/v2/env.bash

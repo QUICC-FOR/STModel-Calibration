@@ -1,6 +1,6 @@
 #!/bin/bash
 #OAR -n stm4.int.r5.1
-#OAR -l /nodes=1/core=16,walltime=48:00:00
+#OAR -l /nodes=1/core=16,walltime=30:00:00
 #OAR --project teembio
 #OAR --stdout stm4.int.r5.1.out.log
 #OAR --stderr stm4.int.r5.1.err.log
@@ -28,6 +28,7 @@ iter=100000
 # variables set from run vars
 inits=$DAT/mcmcInits_"$name".txt
 outdir=$DIR/res/"$name"
+resume="$outdir"/resumeData.txt
 
 # this is where stdout etc will get written
 cd $BASE
@@ -36,6 +37,6 @@ cd $BASE
 mkdir -p $outdir
 
 # run the models
-$BIN -d -p $inits -t $calib -o $outdir -i $iter -c $cores -l 5 -v 2 &
+$BIN -r $resume  -t $calib -i $iter &
 
 wait
