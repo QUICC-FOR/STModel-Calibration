@@ -39,3 +39,16 @@ samples = lapply(samples, function(sam, tol=1e-8)
 samples.mcmc = as.mcmc.list(lapply(samples, mcmc))
 print(gelman.diag(samples.mcmc))
 
+## samples.mcmc = samples.mcmc[1]
+if(interactive())
+{
+	print(lapply(samples.mcmc, summary))
+	quartz(w=20, h=6)
+	par(mfcol=c(3, ceiling(ncol(samples.mcmc[[1]])/3)), mar=c(2, 2, 1.5, 0.5))
+	plot(samples.mcmc, ask=FALSE, auto.layout=FALSE, density=FALSE, smooth=FALSE)
+
+	quartz(w=20, h=6)
+	par(mfcol=c(3, ceiling(ncol(samples.mcmc[[1]])/3)), mar=c(2, 2, 1.5, 0.5))
+	plot(samples.mcmc, ask=FALSE, auto.layout=FALSE, density=TRUE, trace=FALSE)
+}
+

@@ -1,6 +1,6 @@
 #!/bin/sh
 #PBS -q qwork
-#PBS -l walltime=85:00:00
+#PBS -l walltime=96:00:00
 #PBS -l nodes=1:ppn=1
 #PBS -r n
 
@@ -28,13 +28,14 @@ module load gsl64/1.16
 name=ab_r1_1
 calib=$DAT/mcmc_calib_r1.txt
 cores=24
-iter=100000
+iter=103500
 ##=================
 
 # variables set from run vars
 inits=$DAT/mcmcInits_"$name".txt
 outdir=$DIR/res/$name
 logfile=$LOG/"$name".log
+resume="$outdir"/resumeData.txt
 
 # this is where stdout etc will get written
 cd $BASE
@@ -43,6 +44,6 @@ cd $BASE
 mkdir -p $outdir $LOG
 
 # run the models
-$BIN -d -p $inits -t $calib -o $outdir -i $iter -c $cores -l 5 -v 2 2>$logfile &
+$BIN -r $resume -t $calib -i $iter & 2>$logfile &
 
 wait
